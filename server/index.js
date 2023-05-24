@@ -3,7 +3,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const PORT = 4000;
-
+const { signUp, verifyToken } = require("./server");
 express()
   .use(function (req, res, next) {
     res.header(
@@ -21,4 +21,5 @@ express()
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
   .use("/", express.static(__dirname + "/"))
+  .post("/adminSignUp", signUp)
   .listen(PORT, () => console.info(`Listening on port ${PORT}`));

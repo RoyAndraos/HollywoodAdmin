@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "styled-components";
 import { NavLink } from "react-router-dom";
+
 const NavBar = () => {
   return (
     <Wrapper>
@@ -38,3 +39,15 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 export default NavBar;
+
+// {
+//   "given_name":"Roy",
+//   "family_name":"andraos",
+//   "nickname":"Roy_andraos",
+//   "name":"Roy andraos",
+//   "picture":"https://lh3.googleusercontent.com/a/AGNmyxZ42A67uSF3cQwZmkh3Ja5Nnjxonx7Q5HL2FYI9=s96-c",
+//   "locale":"en","updated_at":"2023-05-23T23:28:46.291Z",
+//   "email":"Roy_andraos@live.fr",
+//   "email_verified":true,
+//   "sub":"google-oauth2|105225886944241955254"
+// }

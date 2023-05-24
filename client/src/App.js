@@ -6,7 +6,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import BusinessData from "./components/BusinessData";
 import Services from "./components/Services";
 import Schedule from "./components/Schedule";
-import AvailabilityComponent from "./AvailabilityComponent.js";
+import AvailabilityComponent from "./components/AvailabilityComponent.js";
+import Check from "./components/Check";
 const App = () => {
   const { isAuthenticated } = useAuth0();
   return (
@@ -17,6 +18,7 @@ const App = () => {
       </Routes>
       <RequireAuth>
         <Routes>
+          <Route path="/dashboard/check" element={<Check />} />
           <Route path="/dashboard/data" element={<BusinessData />} />
           <Route path="/dashboard/services" element={<Services />} />
           <Route

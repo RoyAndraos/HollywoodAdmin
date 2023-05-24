@@ -1,9 +1,12 @@
 import styled from "styled-components";
 
+import TimeSelect from "./TimeSelect";
 const AvailabilityComponent = () => {
   return (
     <Wrapper>
-      <Container>Availability</Container>
+      <Container>
+        <TimeSelect />
+      </Container>
     </Wrapper>
   );
 };
@@ -17,12 +20,14 @@ const Wrapper = styled.div`
 `;
 const Container = styled.div`
   position: fixed;
-  height: 70vh;
-  width: 80vw;
-  background-color: black;
+  height: 80vh;
+  width: 100%;
+
+  background-color: transparent;
   border-radius: 30px;
   top: 50vh;
   left: 50vw;
   transform: translateX(-50%) translateY(-50%);
 `;
+
 export default AvailabilityComponent;

@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "styled-components";
 import { NavLink } from "react-router-dom";
+import LogoutButton from "./LogoutButton";
 
 const NavBar = () => {
   return (
@@ -8,6 +9,7 @@ const NavBar = () => {
       <StyledNavLink to="/dashboard/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/dashboard/services">Services</StyledNavLink>
       <StyledNavLink to="/dashboard/data">Business Data</StyledNavLink>
+      <LogoutButton/>
     </Wrapper>
   );
 };

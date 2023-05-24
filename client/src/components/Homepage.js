@@ -1,13 +1,21 @@
+import { styled } from "styled-components";
 import LoginButton from "./LoginButton";
-import LogoutButton from "./LogoutButton";
+
 
 const Homepage = () => {
   return (
-    <div>
+    <Wrapper>
       <LoginButton />
-      <LogoutButton />
-    </div>
+
+    </Wrapper>
   );
 };
+const Wrapper = styled.div`
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  width:fit-content;
+  transform: translateX(-50%) translateY(-50%);
+`
 
 export default Homepage;

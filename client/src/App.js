@@ -12,11 +12,11 @@ const App = () => {
   const location = useLocation();
   return (
     <div>
-      {location.pathname !== "/dashboard/check" && location.pathname.includes('/dashboard') && <NavBar />}
+      {location.pathname !== "/dashboard/check" &&
+        location.pathname.includes("/dashboard") && <NavBar />}
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/404" element={<NotGrant />} />
-
       </Routes>
       <RequireAuth>
         <Routes>

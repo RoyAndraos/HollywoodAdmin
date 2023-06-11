@@ -3,7 +3,7 @@ export const getDailyHours = () => {
   let hour = 9;
   let minute = 0;
 
-  while (hour <= 20) {
+  while (hour <= 19) {
     const suffix = hour < 12 ? "am" : "pm";
     const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
     const time = `${formattedHour}:${minute

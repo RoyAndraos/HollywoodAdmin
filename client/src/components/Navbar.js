@@ -9,7 +9,7 @@ const NavBar = () => {
       <StyledNavLink to="/dashboard/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/dashboard/services">Services</StyledNavLink>
       <StyledNavLink to="/dashboard/data">Business Data</StyledNavLink>
-      <LogoutButton/>
+      <LogoutButton />
     </Wrapper>
   );
 };
@@ -19,11 +19,7 @@ const Wrapper = styled.div`
   justify-content: space-evenly;
   font-size: 20px;
   font-weight: 600;
-  background-color: #2c3e50;
-  border-radius: 20px;
-  margin-top: 20px;
-  margin-right: 20px;
-  margin-left: 20px;
+  background-color: #035e3f;
 `;
 
 const StyledNavLink = styled(NavLink)`

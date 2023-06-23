@@ -3,9 +3,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styled, { keyframes } from "styled-components";
 import { UserContext } from "./UserContext";
-
+import { ReservationContext } from "./ReservationContext";
 const AddReservation = () => {
   const { userInfo } = useContext(UserContext);
+  const { reservations, setReservations } = useContext(ReservationContext);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedBarberForm, setBarber] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -16,6 +17,29 @@ const AddReservation = () => {
   const [numberError, setNumberError] = useState("");
   const [nameError, setNameError] = useState("");
   const [error, setError] = useState(true);
+  console.log(userInfo);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const reservation = {
+      barber: selectedBarberForm.given_name,
+      date: formatDate(selectedDate),
+      slot: selectedSlot,
+      clientName: clientName,
+      clientEmail: clientEmail,
+      clientNumber: clientNumber,
+    };
+    setReservations([...reservations, reservation]);
+    fetch("/addReservation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        reservation: reservation,
+      }),
+    });
+  };
+
   const handleChange = (e, name) => {
     e.preventDefault();
     switch (name) {
@@ -77,11 +101,12 @@ const AddReservation = () => {
             setError(false);
           }
         }
+        break;
       default:
         break;
     }
   };
-  const handleSubmit = (e) => {};
+
   const formatDate = (date) => {
     const options = { month: "short", weekday: "short", day: "numeric" };
     return date.toLocaleDateString(undefined, options);
@@ -162,6 +187,8 @@ const AddReservation = () => {
                           {slot.split("-")[1]}
                         </Slot>
                       );
+                    } else {
+                      return null;
                     }
                   })
                 ) : (
@@ -256,15 +283,14 @@ const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   height: 76vh;
   font-family: "Roboto", sans-serif;
 `;
 const Wrapper = styled.div`
   position: absolute;
-  top: 8%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   left: 50%;
   transform: translateX(-50%);
 `;
@@ -321,14 +347,14 @@ const SelectedSlot = styled.div`
 const SlotContainer = styled.div`
   display: grid;
   grid-template-columns: 33% 33% 33%;
-  width: 40vw;
+  width: 500px;
   justify-content: space-evenly;
   align-items: center;
   line-height: 30px;
 `;
 const SelectedSlotContainer = styled.div`
   display: flex;
-  width: 40vw;
+  width: 500px;
   justify-content: center;
 `;
 
@@ -361,7 +387,7 @@ const StyledInput = styled.input`
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   font-size: 15px;
-  width: 69.5%;
+  width: 100%;
 
   margin-left: 5px;
   padding: 10px 0 10px 0;

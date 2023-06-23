@@ -4,7 +4,7 @@ import App from "./App";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserContext";
-import { SelectedAdminProvider } from "./components/SelectedAdminContext";
+import { ReservationProvider } from "./components/ReservationContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -16,11 +16,11 @@ root.render(
       }}
     >
       <UserProvider>
-        <SelectedAdminProvider>
+        <ReservationProvider>
           <BrowserRouter>
             <App>{Children}</App>
           </BrowserRouter>
-        </SelectedAdminProvider>
+        </ReservationProvider>
       </UserProvider>
     </Auth0Provider>
   </React.StrictMode>

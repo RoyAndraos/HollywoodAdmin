@@ -3,7 +3,12 @@
 const express = require("express");
 const morgan = require("morgan");
 const PORT = 4000;
-const { adminCheck, getUserInfo, updateAvailability } = require("./server");
+const {
+  adminCheck,
+  getUserInfo,
+  updateAvailability,
+  addReservation,
+} = require("./server");
 express()
   .use(function (req, res, next) {
     res.header(
@@ -22,6 +27,7 @@ express()
   .use(express.urlencoded({ extended: false }))
   .use("/", express.static(__dirname + "/"))
   .get("/getUserInfo", getUserInfo)
+  .post("/addReservation", addReservation)
   .post("/checkIfAdmin", adminCheck)
   .patch("/updateAvailability", updateAvailability)
   .listen(PORT, () => console.info(`Listening on port ${PORT}`));

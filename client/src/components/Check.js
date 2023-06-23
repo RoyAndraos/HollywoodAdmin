@@ -2,9 +2,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
+import { ReservationContext } from "./ReservationContext";
 const Check = () => {
   const { user } = useAuth0();
   const { setUserInfo } = useContext(UserContext);
+  const { setReservations } = useContext(ReservationContext);
   const navigate = useNavigate();
   useEffect(() => {
     fetch("/checkIfAdmin", {
@@ -21,7 +23,8 @@ const Check = () => {
             fetch(`/getUserInfo`)
               .then((res) => res.json())
               .then((result) => {
-                setUserInfo(result.data);
+                setUserInfo(result.userInfo);
+                setReservations(result.reservations);
               })
               .then(() => navigate("/dashboard/schedule"));
             break;

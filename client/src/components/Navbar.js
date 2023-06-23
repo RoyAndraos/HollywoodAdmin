@@ -7,6 +7,7 @@ const NavBar = () => {
   return (
     <Wrapper>
       <StyledNavLink to="/dashboard/schedule">Schedule</StyledNavLink>
+      <StyledNavLink to="/dashboard/availability">Availability</StyledNavLink>
       <StyledNavLink to="/dashboard/services">Services</StyledNavLink>
       <StyledNavLink to="/dashboard/data">Business Data</StyledNavLink>
       <LogoutButton />

@@ -1,15 +1,9 @@
 import { styled } from "styled-components";
 import CalendarSchedule from "./CalendarSchedule";
 import ControlPanel from "./ControlPanel";
-import { useContext } from "react";
-import { SelectedAdminContext } from "./SelectedAdminContext";
 const Schedule = () => {
-  const { selectedAdminInfo } = useContext(SelectedAdminContext);
   return (
     <Wrapper>
-      {selectedAdminInfo && (
-        <BarberName>{selectedAdminInfo.given_name}</BarberName>
-      )}
       <ControlPanel />
       <CalendarSchedule />
     </Wrapper>

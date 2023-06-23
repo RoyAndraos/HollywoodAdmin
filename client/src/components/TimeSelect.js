@@ -4,13 +4,12 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getDailyHours } from "./helpers";
 import { UserContext } from "./UserContext";
+import { initialAvailability } from "./helpers";
 const TimeSelect = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const [selectedAdminInfo, setSelectedAdminInfo] = useState(userInfo[0]);
   const [showBarbers, setShowBarbers] = useState(false);
-  const [selectedCells, setSelectedCells] = useState(
-    selectedAdminInfo.availability || []
-  );
+  const [selectedCells, setSelectedCells] = useState(initialAvailability);
   useEffect(() => {
     setSelectedCells(selectedAdminInfo.availability);
   }, [selectedAdminInfo]);
@@ -38,14 +37,14 @@ const TimeSelect = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        _id: updatedUserInfo[adminToBeUpdated]._id,
+        _id: selectedAdminInfo._id,
         availability: selectedCells,
       }),
     });
     navigate("/dashboard/schedule");
   };
   const resetSchedule = () => {
-    setSelectedCells([]);
+    setSelectedCells(initialAvailability);
   };
   const firstDaily = [
     "9am",
@@ -66,26 +65,37 @@ const TimeSelect = () => {
   };
   const handleCellClick = (dayIndex, timeIndex) => {
     const cellKey = `${dayIndex}-${timeIndex}`;
-    const isSelected = selectedCells.includes(cellKey);
-    if (isSelected) {
-      setSelectedCells(selectedCells.filter((cell) => cell !== cellKey));
-    } else {
-      setSelectedCells([...selectedCells, cellKey]);
-    }
+    const updatedCells = selectedCells.map((cell) => {
+      if (cell.slot === cellKey) {
+        console.log(cell);
+        return {
+          ...cell,
+          available: !cell.available, // Toggle the availability
+        };
+      }
+      return cell;
+    });
+
+    setSelectedCells(updatedCells);
   };
 
   const handleRowClick = (day) => {
     const rowCells = daily.map((_) => `${day}-${_}`);
     const areAllCellsSelected = rowCells.every((cellKey) =>
-      selectedCells.includes(cellKey)
+      selectedCells.some((cell) => cell.slot === cellKey && cell.available)
     );
-    if (areAllCellsSelected) {
-      setSelectedCells(
-        selectedCells.filter((cell) => !rowCells.includes(cell))
-      );
-    } else {
-      setSelectedCells([...selectedCells, ...rowCells]);
-    }
+
+    const updatedCells = selectedCells.map((cell) => {
+      if (rowCells.includes(cell.slot)) {
+        return {
+          ...cell,
+          available: areAllCellsSelected ? false : true,
+        };
+      }
+      return cell;
+    });
+
+    setSelectedCells(updatedCells);
   };
 
   return (
@@ -131,7 +141,10 @@ const TimeSelect = () => {
                 <TH onClick={() => handleRowClick(day)}>{day}</TH>
                 {daily.map((_) => {
                   const cellKey = `${day}-${_}`;
-                  const isSelected = selectedCells.includes(cellKey);
+                  const cell = selectedCells.find(
+                    (cell) => cell.slot === cellKey
+                  );
+                  const isSelected = cell && cell.available;
                   return (
                     <td
                       value={_}
@@ -151,7 +164,7 @@ const TimeSelect = () => {
 };
 
 const Wrapper = styled.div`
-  width: 70%;
+  width: 90vw;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -160,7 +173,6 @@ const Wrapper = styled.div`
   transform: translateX(-50%) translateY(-50%);
   background-color: rgba(255, 255, 255, 0.7);
   height: 90%;
-  width: 80%;
   border-radius: 30px;
 `;
 
@@ -217,7 +229,7 @@ const Table = styled.table`
 `;
 
 const TableWrapper = styled.div`
-  width: 95%;
+  width: 85vw;
   height: 100%;
   overflow: auto;
   border-radius: 30px;
@@ -247,16 +259,15 @@ const FirstRow = styled.div`
   height: 40px;
   position: relative;
   top: 10%;
-  left: 8.2%;
-  max-width: 91.7%;
+  left: 4.34%;
+  max-width: 95.5%;
 `;
 const FirstRowDay = styled.div`
   background-color: #035e3f;
   border: 1px solid black;
-  width: 16.3%;
-  max-width: 16.3%;
-  justify-content: center;
+  width: 25%;
   display: flex;
+  justify-content: center;
   align-items: center;
   color: rgba(255, 255, 255, 0.9);
   border-top-left-radius: 5px;

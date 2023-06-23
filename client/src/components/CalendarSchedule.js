@@ -3,9 +3,12 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { styled } from "styled-components";
-
+import { useContext, useEffect, useState } from "react";
+import { ReservationContext } from "./ReservationContext";
 // #035e3f0
 const CalendarSchedule = () => {
+  const { reservations } = useContext(ReservationContext);
+  console.log(reservations);
   const customStyles = `
   .fc-scroller.fc-scroller-liquid-absolute::-webkit-scrollbar {
     display: none;

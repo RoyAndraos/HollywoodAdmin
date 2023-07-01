@@ -1,13 +1,13 @@
-import Homepage from "./components/Homepage";
-import RequireAuth from "./components/RequireAuth";
+import Homepage from "./components/login/Homepage";
+import RequireAuth from "./components/login/RequireAuth";
 import { Routes, Route, useLocation } from "react-router-dom";
 import NavBar from "./components/Navbar";
 import BusinessData from "./components/BusinessData";
-import Services from "./components/Services";
-import Schedule from "./components/Schedule";
-import AvailabilityComponent from "./components/AvailabilityComponent.js";
-import Check from "./components/Check";
-import NotGrant from "./components/NotGrant";
+import Services from "./components/websiteTools/Services";
+import Schedule from "./components/schedule/Schedule";
+import AvailabilityComponent from "./components/availability/AvailabilityComponent";
+import Check from "./components/login/Check";
+import NotGrant from "./components/login/NotGrant";
 const App = () => {
   const location = useLocation();
   return (

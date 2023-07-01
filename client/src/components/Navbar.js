@@ -1,14 +1,14 @@
 import React from "react";
 import { styled } from "styled-components";
 import { NavLink } from "react-router-dom";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "./login/LogoutButton";
 
 const NavBar = () => {
   return (
     <Wrapper>
       <StyledNavLink to="/dashboard/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/dashboard/availability">Availability</StyledNavLink>
-      <StyledNavLink to="/dashboard/services">Services</StyledNavLink>
+      <StyledNavLink to="/dashboard/services">Website Tools</StyledNavLink>
       <StyledNavLink to="/dashboard/data">Business Data</StyledNavLink>
       <LogoutButton />
     </Wrapper>

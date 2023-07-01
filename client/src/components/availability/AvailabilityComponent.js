@@ -1,5 +1,4 @@
 import styled from "styled-components";
-
 import TimeSelect from "./TimeSelect";
 const AvailabilityComponent = () => {
   return (

@@ -3,8 +3,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { BrowserRouter } from "react-router-dom";
-import { UserProvider } from "./components/UserContext";
-import { ReservationProvider } from "./components/ReservationContext";
+import { UserProvider } from "./components/contexts/UserContext";
+import { ReservationProvider } from "./components/contexts/ReservationContext";
+import { ServicesProvider } from "./components/contexts/ServicesContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -17,9 +18,11 @@ root.render(
     >
       <UserProvider>
         <ReservationProvider>
-          <BrowserRouter>
-            <App>{Children}</App>
-          </BrowserRouter>
+          <ServicesProvider>
+            <BrowserRouter>
+              <App>{Children}</App>
+            </BrowserRouter>
+          </ServicesProvider>
         </ReservationProvider>
       </UserProvider>
     </Auth0Provider>

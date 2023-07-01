@@ -32,9 +32,15 @@ const getUserInfo = async (req, res) => {
     const db = client.db("HollywoodBarberShop");
     const userInfo = await db.collection("admin").find().toArray();
     const reservations = await db.collection("reservations").find().toArray();
+    const services = await db.collection("services").find().toArray();
     res
       .status(200)
-      .json({ status: 200, userInfo: userInfo, reservations: reservations });
+      .json({
+        status: 200,
+        userInfo: userInfo,
+        reservations: reservations,
+        services: services,
+      });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {
@@ -65,7 +71,7 @@ const addReservation = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const result = await db.collection("reservations").insertOne({
+    await db.collection("reservations").insertOne({
       name: reservation.clientName,
       email: reservation.clientEmail,
       number: reservation.clientNumber,
@@ -73,7 +79,20 @@ const addReservation = async (req, res) => {
       date: reservation.date,
       slot: reservation.slot,
     });
-    res.status(200).json({ status: 200, data: result });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+const getServices = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const services = await db.collection("services").find().toArray();
+    res.status(200).json({ status: 200, services: services });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {
@@ -85,4 +104,5 @@ module.exports = {
   getUserInfo,
   updateAvailability,
   addReservation,
+  getServices,
 };

@@ -8,6 +8,7 @@ const {
   getUserInfo,
   updateAvailability,
   addReservation,
+  getServices,
 } = require("./server");
 express()
   .use(function (req, res, next) {
@@ -27,6 +28,7 @@ express()
   .use(express.urlencoded({ extended: false }))
   .use("/", express.static(__dirname + "/"))
   .get("/getUserInfo", getUserInfo)
+  .get("/getServices", getServices)
   .post("/addReservation", addReservation)
   .post("/checkIfAdmin", adminCheck)
   .patch("/updateAvailability", updateAvailability)

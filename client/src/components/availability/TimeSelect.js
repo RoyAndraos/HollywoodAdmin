@@ -2,9 +2,9 @@ import React, { useState, useContext, useEffect } from "react";
 import { styled } from "styled-components";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { getDailyHours } from "./helpers";
-import { UserContext } from "./UserContext";
-import { initialAvailability } from "./helpers";
+import { getDailyHours } from "../helpers";
+import { UserContext } from "../contexts/UserContext";
+import { initialAvailability } from "../helpers";
 const TimeSelect = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const [selectedAdminInfo, setSelectedAdminInfo] = useState(userInfo[0]);

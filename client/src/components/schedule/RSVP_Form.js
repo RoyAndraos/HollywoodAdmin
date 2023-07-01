@@ -1,11 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import DatePicker from "react-datepicker";
+import BarberSelect from "./rsvpComponents/BarberSelect";
 import "react-datepicker/dist/react-datepicker.css";
 import styled, { keyframes } from "styled-components";
-import { UserContext } from "./UserContext";
-import { ReservationContext } from "./ReservationContext";
+import { ReservationContext } from "../contexts/ReservationContext";
+import ServiceSelector from "./rsvpComponents/ServiceSelector";
+import SlotSelector from "./rsvpComponents/SlotSelector";
 const AddReservation = () => {
-  const { userInfo } = useContext(UserContext);
   const { reservations, setReservations } = useContext(ReservationContext);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedBarberForm, setBarber] = useState({});
@@ -16,14 +17,16 @@ const AddReservation = () => {
   const [emailError, setEmailError] = useState("");
   const [numberError, setNumberError] = useState("");
   const [nameError, setNameError] = useState("");
+  const [selectedService, setSelectedService] = useState("");
   const [error, setError] = useState(true);
-  console.log(userInfo);
+  useEffect(() => {}, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     const reservation = {
       barber: selectedBarberForm.given_name,
       date: formatDate(selectedDate),
       slot: selectedSlot,
+      service: selectedService,
       clientName: clientName,
       clientEmail: clientEmail,
       clientNumber: clientNumber,
@@ -117,20 +120,6 @@ const AddReservation = () => {
     setSelectedSlot("");
   };
 
-  const handleFormatDateForSlots = (date) => {
-    const options = { weekday: "short" };
-    return date.toLocaleDateString(undefined, options);
-  };
-
-  const handleSelectSlot = (slot, e) => {
-    e.preventDefault();
-    setSelectedSlot(slot);
-  };
-
-  const handleSelectAnotherSlot = () => {
-    setSelectedSlot("");
-  };
-
   return (
     <Wrapper>
       <StyledForm
@@ -148,68 +137,21 @@ const AddReservation = () => {
             calendarContainer={CalendarContainer}
           />
         </LabelInputWrapper>
-        <LabelInputWrapper>
-          <StyledLabel>Barber:</StyledLabel>
-          <div style={{ widh: "40vw", marginLeft: "4px" }}>
-            {Object.keys(selectedBarberForm).length === 0 ? (
-              userInfo.map((barber) => (
-                <BarberSlot
-                  key={barber.given_name}
-                  onClick={() => {
-                    setBarber(barber);
-                  }}
-                >
-                  {barber.given_name}
-                </BarberSlot>
-              ))
-            ) : (
-              <BarberSlot onClick={() => setBarber({})}>
-                {selectedBarberForm.given_name}
-              </BarberSlot>
-            )}
-          </div>
-        </LabelInputWrapper>
-        <LabelInputWrapper>
-          <StyledLabel>timeSlot:</StyledLabel>
-          <SlotContainer>
-            {selectedSlot === "" ? (
-              <SlotContainer>
-                {Object.keys(selectedBarberForm).length !== 0 ? (
-                  selectedBarberForm.availability.map((slot) => {
-                    if (slot.includes(handleFormatDateForSlots(selectedDate))) {
-                      return (
-                        <Slot
-                          key={slot}
-                          onClick={(e) => {
-                            handleSelectSlot(slot, e);
-                          }}
-                        >
-                          {slot.split("-")[1]}
-                        </Slot>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })
-                ) : (
-                  <SelectedSlotContainer>
-                    <SelectedSlot>select barber first</SelectedSlot>
-                  </SelectedSlotContainer>
-                )}
-              </SlotContainer>
-            ) : (
-              <SelectedSlotContainer>
-                <SelectedSlot
-                  onClick={() => {
-                    handleSelectAnotherSlot();
-                  }}
-                >
-                  {selectedSlot.split("-")[1]}
-                </SelectedSlot>
-              </SelectedSlotContainer>
-            )}
-          </SlotContainer>
-        </LabelInputWrapper>
+        <BarberSelect
+          selectedBarberForm={selectedBarberForm}
+          setBarber={setBarber}
+        />
+        <ServiceSelector
+          selectedService={selectedService}
+          setSelectedService={setSelectedService}
+        />
+        <SlotSelector
+          selectedSlot={selectedSlot}
+          selectedBarberForm={selectedBarberForm}
+          selectedService={selectedService}
+          selectedDate={selectedDate}
+          setSelectedSlot={setSelectedSlot}
+        />
         <LabelInputWrapper>
           <StyledLabel>Client Name:</StyledLabel>
           <SelectedSlotContainer>
@@ -271,19 +213,11 @@ const fadeIn = keyframes`
     opacity: 1;
   }
 `;
-const LabelInputWrapper = styled.div`
-  margin-top: 2vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  position: relative;
-`;
+
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 76vh;
   font-family: "Roboto", sans-serif;
 `;
@@ -316,7 +250,7 @@ const CalendarContainer = styled.div`
   animation: ${fadeIn} 0.2s ease-in-out;
   transform: scale(2) translateX(40%) translateY(40%);
 `;
-const Slot = styled.div`
+export const Slot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
   text-align: center;
@@ -329,36 +263,13 @@ const Slot = styled.div`
   }
 `;
 
-const SelectedSlot = styled.div`
-  border: 1px solid #ccc;
-  background-color: #fff;
-  text-align: center;
-  margin: 5px 5px 0 0;
-  transition: 0.3s ease-in-out;
-  width: 500px;
-  padding: 5px 10px 5px 10px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  &:hover {
-    cursor: pointer;
-    background-color: #ccc;
-  }
-`;
-
-const SlotContainer = styled.div`
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  width: 500px;
-  justify-content: space-evenly;
-  align-items: center;
-  line-height: 30px;
-`;
-const SelectedSlotContainer = styled.div`
+export const SelectedSlotContainer = styled.div`
   display: flex;
   width: 500px;
   justify-content: center;
 `;
 
-const BarberSlot = styled.div`
+export const BarberSlot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
   width: 500px;
@@ -371,12 +282,32 @@ const BarberSlot = styled.div`
     cursor: pointer;
     background-color: #ccc;
   }
+  &:first-of-type {
+    margin-top: 0;
+  }
 `;
 
-const StyledLabel = styled.label`
+export const StyledLabel = styled.label`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   font-weight: 600;
-  margin-bottom: 5px;
+  font-size: 20px;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-radius: -5px;
+  width: 100%;
+  text-align: center;
+  border-bottom: 3px solid #035e3f;
+  color: #035e3f;
+`;
+
+export const LabelInputWrapper = styled.div`
+  margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  position: relative;
+  background-color: transparent;
 `;
 
 const StyledInput = styled.input`

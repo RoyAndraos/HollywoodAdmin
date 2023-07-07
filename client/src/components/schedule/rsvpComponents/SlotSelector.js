@@ -3,8 +3,9 @@ import {
   StyledLabel,
   Slot,
   SelectedSlotContainer,
+  BarberSlot,
 } from "../RSVP_Form";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
 
@@ -16,39 +17,74 @@ const SlotSelector = ({
   setSelectedSlot,
 }) => {
   const { reservations } = useContext(ReservationContext);
+  const [availableSlots, setAvailableSlots] = useState([]);
+
+  const formatDate = (date) => {
+    const options = { month: "short", weekday: "short", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
+  };
+  useEffect(() => {
+    if (Object.keys(selectedBarberForm).length === 0) {
+      return;
+    } else {
+      const originalAvailableSlots = selectedBarberForm.availability
+        .filter((slot) =>
+          slot.slot.includes(handleFormatDateForSlots(selectedDate))
+        )
+        .map((slot) => {
+          if (slot.available === true) {
+            return slot.slot;
+          } else {
+            return "";
+          }
+        });
+      const todayReservations = reservations.filter((reservation) => {
+        const today =
+          formatDate(new Date(reservation.date)) === formatDate(selectedDate);
+        return selectedBarberForm.given_name === reservation.barber && today;
+      });
+      const filteredSlots = originalAvailableSlots.filter((slot) => {
+        return !todayReservations.some((reservation) => {
+          return reservation.slot === slot;
+        });
+      });
+      setAvailableSlots(
+        filteredSlots.filter((slot) => {
+          return slot !== "";
+        })
+      );
+    }
+  }, [selectedBarberForm, reservations, selectedDate]);
   const handleFormatDateForSlots = (date) => {
     const options = { weekday: "short" };
     return date.toLocaleDateString(undefined, options);
   };
-
-  console.log(reservations);
-
   return (
     <LabelInputWrapper>
       <StyledLabel>timeSlot:</StyledLabel>
       <SlotContainer>
         {selectedSlot === "" ? (
           <SlotContainer>
-            {Object.keys(selectedBarberForm).length !== 0 &&
-            selectedService !== "" ? (
-              selectedBarberForm.availability.map((slot) => {
-                if (
-                  slot.slot.includes(handleFormatDateForSlots(selectedDate))
-                ) {
+            {selectedService !== "" &&
+            Object.keys(selectedBarberForm).length !== 0 ? (
+              availableSlots.length !== 0 ? (
+                availableSlots.map((slot) => {
                   return (
                     <Slot
-                      key={slot.slot}
+                      key={slot}
                       onClick={() => {
-                        setSelectedSlot(slot.slot);
+                        setSelectedSlot(slot);
                       }}
                     >
-                      {slot.slot.split("-")[1]}
+                      {slot.split("-")[1]}
                     </Slot>
                   );
-                } else {
-                  return null;
-                }
-              })
+                })
+              ) : (
+                <SelectedSlotContainer>
+                  <BarberSlot>No slots available</BarberSlot>
+                </SelectedSlotContainer>
+              )
             ) : (
               <SelectedSlotContainer>
                 <SelectedSlot>select barber and service first</SelectedSlot>
@@ -71,26 +107,25 @@ const SlotSelector = ({
   );
 };
 
-const SlotContainer = styled.div`
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  width: 500px;
-  justify-content: space-evenly;
-  align-items: center;
-  line-height: 30px;
-`;
 const SelectedSlot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
   text-align: center;
   margin: 5px 5px 0 0;
   transition: 0.3s ease-in-out;
-  width: 500px;
-  padding: 5px 10px 5px 10px;
+  padding: 5px 0 5px 0;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  width: 20vw;
   &:hover {
     cursor: pointer;
     background-color: #ccc;
   }
+`;
+const SlotContainer = styled.div`
+  display: grid;
+  grid-template-columns: 33% 33% 33% || 100%;
+  justify-content: space-evenly;
+  align-items: center;
+  line-height: 30px;
 `;
 export default SlotSelector;

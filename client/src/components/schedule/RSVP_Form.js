@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import DatePicker from "react-datepicker";
 import BarberSelect from "./rsvpComponents/BarberSelect";
 import "react-datepicker/dist/react-datepicker.css";
@@ -19,12 +19,11 @@ const AddReservation = () => {
   const [nameError, setNameError] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [error, setError] = useState(true);
-  useEffect(() => {}, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     const reservation = {
       barber: selectedBarberForm.given_name,
-      date: formatDate(selectedDate),
+      date: selectedDate.toDateString(),
       slot: selectedSlot,
       service: selectedService,
       clientName: clientName,
@@ -133,7 +132,6 @@ const AddReservation = () => {
             selected={selectedDate}
             onChange={handleDateChange}
             minDate={new Date()}
-            value={formatDate(selectedDate)}
             calendarContainer={CalendarContainer}
           />
         </LabelInputWrapper>
@@ -227,12 +225,16 @@ const Wrapper = styled.div`
   flex-direction: column;
   left: 50%;
   transform: translateX(-50%);
+  top: -10px;
 `;
 const CustomDatePicker = styled(DatePicker)`
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   border: 1px solid #ccc;
-  padding: 10px;
+  width: 20vw;
+  padding: 5px 0 5px 0;
   font-size: 16px;
-  width: 500px;
   caret-color: transparent;
   text-align: center;
   transition: 0.3s ease-in-out;
@@ -256,6 +258,7 @@ export const Slot = styled.div`
   text-align: center;
   margin: 5px 5px 0 0;
   transition: 0.3s ease-in-out;
+  width: 20vw;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   &:hover {
     cursor: pointer;
@@ -265,17 +268,16 @@ export const Slot = styled.div`
 
 export const SelectedSlotContainer = styled.div`
   display: flex;
-  width: 500px;
   justify-content: center;
 `;
 
 export const BarberSlot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
-  width: 500px;
-  padding: 5px 10px 5px 10px;
+  padding: 5px 0 5px 0;
   text-align: center;
   margin: 10px 5px 0 0;
+  width: 20vw;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   &:hover {
@@ -308,19 +310,18 @@ export const LabelInputWrapper = styled.div`
   align-items: center;
   position: relative;
   background-color: transparent;
+  width: 30vw;
 `;
 
 const StyledInput = styled.input`
   border: 1px solid #ccc;
   background-color: #fff;
   text-align: center;
-  margin: 5px 5px 0 0;
+  margin: 5px 0 0 0;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   font-size: 15px;
-  width: 100%;
-
-  margin-left: 5px;
+  width: 20vw;
   padding: 10px 0 10px 0;
   &:hover {
     background-color: #ccc;
@@ -331,6 +332,8 @@ const StyledInput = styled.input`
 `;
 
 const Book = styled.button`
+  position: relative;
+  top: 10px;
   border-radius: 10px;
   border: 2px solid transparent;
   width: 15vw;
@@ -338,11 +341,10 @@ const Book = styled.button`
   color: white;
   padding: 10px 20px 10px 20px;
   text-align: center;
-  margin: 5px 5px 0 0;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  margin-left: 5px;
   font-size: 20px;
+
   &:hover {
     background-color: whitesmoke;
     color: #035e3f;
@@ -365,7 +367,7 @@ const Book = styled.button`
 const ErrorMessage = styled.span`
   color: red;
   position: absolute;
-  left: 6.1vw;
+  left: 0;
   bottom: -30%;
 `;
 export default AddReservation;

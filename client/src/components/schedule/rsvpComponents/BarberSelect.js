@@ -10,16 +10,18 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
       <StyledLabel>Barber:</StyledLabel>
       <div>
         {Object.keys(selectedBarberForm).length === 0 ? (
-          userInfo.map((barber) => (
-            <BarberSlot
-              key={barber.given_name}
-              onClick={() => {
-                setBarber(barber);
-              }}
-            >
-              {barber.given_name}
-            </BarberSlot>
-          ))
+          userInfo.map((barber) => {
+            return (
+              <BarberSlot
+                key={barber.given_name}
+                onClick={() => {
+                  setBarber(barber);
+                }}
+              >
+                {barber.given_name}
+              </BarberSlot>
+            );
+          })
         ) : (
           <BarberSlot onClick={() => setBarber({})}>
             {selectedBarberForm.given_name}

@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   display: grid;
   margin: 20px 20px 0 20px;
   border: 2px solid #033a27;
-  padding: 0 0 50px 0;
+  padding-bottom: 50px;
   background-color: whitesmoke;
   border-radius: 20px;
   grid-template-columns: 49% 49%;

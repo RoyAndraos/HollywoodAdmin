@@ -3,11 +3,151 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { styled } from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { ReservationContext } from "../contexts/ReservationContext";
-// #035e3f0
+
 const CalendarSchedule = () => {
   const { reservations } = useContext(ReservationContext);
+  const convertTomonthNumber = (month) => {
+    switch (month) {
+      case "Jan":
+        return "01";
+      case "Feb":
+        return "02";
+      case "Mar":
+        return "03";
+      case "Apr":
+        return "04";
+      case "May":
+        return "05";
+      case "Jun":
+        return "06";
+      case "Jul":
+        return "07";
+      case "Aug":
+        return "08";
+      case "Sep":
+        return "09";
+      case "Oct":
+        return "10";
+      case "Nov":
+        return "11";
+      case "Dec":
+        return "12";
+      default:
+        return "01";
+    }
+  };
+  const editDatetoCalendarFormat = (date) => {
+    const monthName = date.slice(4, 7);
+    const month = convertTomonthNumber(monthName);
+    const dayNumber = date.slice(8, 10);
+    const year = date.slice(11, 15);
+    const formattedDate = year + "-" + month + "-" + dayNumber;
+    return formattedDate;
+  };
+  const editTimeTo24 = (time, toEdit) => {
+    let editedTime;
+    if (toEdit === "a") {
+      editedTime = time;
+      const formattedTime = "0" + editedTime.slice(0, 4) + ":00";
+      return formattedTime;
+    } else {
+      let formattedTime;
+      if (time.split(":")[0] !== "12") {
+        editedTime = parseInt(time.split(":")[0]) + 12;
+        formattedTime =
+          editedTime.toString() + ":" + time.split(":")[1] + ":00";
+      } else {
+        editedTime = parseInt(time.split(":")[0]);
+        formattedTime =
+          editedTime.toString() + ":" + time.split(":")[1] + ":00";
+      }
+      return formattedTime.slice(0, 5) + formattedTime.slice(7, 10);
+    }
+  };
+
+  const getEndTime = (startTime, duration) => {
+    console.log(duration);
+    const startTimeMinute = parseInt(startTime.split(":")[1]);
+    let endTimeMinute;
+    if (duration == 2) {
+      endTimeMinute = startTimeMinute + 30;
+      if (endTimeMinute > 60) {
+        endTimeMinute = endTimeMinute - 60;
+        let newEndTimeMinute = endTimeMinute.toString();
+        if (newEndTimeMinute.length === 1) {
+          newEndTimeMinute = "0" + newEndTimeMinute;
+        }
+        let newEndTimeHour = (parseInt(startTime.slice(11, 13)) + 1).toString();
+        if (newEndTimeHour.length === 1) {
+          newEndTimeHour = "0" + newEndTimeHour;
+        }
+        const newEndTime =
+          startTime.slice(0, 11) +
+          newEndTimeHour +
+          ":" +
+          newEndTimeMinute +
+          ":00";
+        return newEndTime;
+      } else if (endTimeMinute === 60) {
+        let newEndTimeMinute = "00";
+        let newEndTimeHour = (parseInt(startTime.slice(11, 13)) + 1).toString();
+        if (newEndTimeHour.length === 1) {
+          newEndTimeHour = "0" + newEndTimeHour;
+        }
+        const newEndTime =
+          startTime.slice(0, 11) +
+          newEndTimeHour +
+          ":" +
+          newEndTimeMinute +
+          ":00";
+        return newEndTime;
+      } else {
+        let newEndTimeMinute = endTimeMinute.toString();
+        const newEndTime =
+          startTime.slice(0, 13) + ":" + newEndTimeMinute + ":00";
+        return newEndTime;
+      }
+    } else {
+      endTimeMinute = startTimeMinute + 15;
+      if (endTimeMinute === 60) {
+        let newEndTimeMinute = "00";
+        let newEndTimeHour = (parseInt(startTime.slice(11, 13)) + 1).toString();
+        if (newEndTimeHour.length === 1) {
+          newEndTimeHour = "0" + newEndTimeHour;
+        }
+        const newEndTime =
+          startTime.slice(0, 11) +
+          newEndTimeHour +
+          ":" +
+          newEndTimeMinute +
+          ":00";
+        return newEndTime;
+      } else {
+        let newEndTimeMinute = endTimeMinute.toString();
+        const newEndTime =
+          startTime.slice(0, 13) + ":" + newEndTimeMinute + ":00";
+        return newEndTime;
+      }
+    }
+  };
+
+  const events = reservations.map((reservation) => {
+    let time = reservation.slot.split("-")[1];
+    const toEdit = time.split("")[4];
+    const editedTime = editTimeTo24(time, toEdit);
+    const editedDate = editDatetoCalendarFormat(reservation.date);
+    const constructedDate = `${editedDate}T${editedTime}`;
+
+    const endTime = getEndTime(constructedDate, reservation.service.duration);
+    return {
+      title: reservation.service.name,
+      start: constructedDate,
+      end: endTime,
+    };
+  });
+  console.log(events);
   const customStyles = `
   .fc-scroller.fc-scroller-liquid-absolute::-webkit-scrollbar {
     display: none;
@@ -97,7 +237,7 @@ const CalendarSchedule = () => {
         slotMinTime="09:00:00"
         slotMaxTime="21:00:00"
         initialView="timeGridDay"
-        // events={}
+        events={events}
       />
     </Wrapper>
   );

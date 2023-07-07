@@ -14,7 +14,7 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
               <BarberSlot
                 key={service._id}
                 onClick={() => {
-                  setSelectedService(service.name);
+                  setSelectedService(service);
                 }}
               >
                 {service.name}
@@ -25,7 +25,7 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
       ) : (
         <SelectedSlotContainer>
           <BarberSlot onClick={() => setSelectedService("")}>
-            {selectedService}
+            {selectedService.name}
           </BarberSlot>
         </SelectedSlotContainer>
       )}

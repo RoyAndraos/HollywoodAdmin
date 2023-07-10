@@ -1,5 +1,9 @@
-import { StyledLabel, LabelInputWrapper, BarberSlot } from "../RSVP_Form";
-import { SelectedSlotContainer } from "../RSVP_Form";
+import {
+  StyledLabel,
+  LabelInputWrapper,
+  SelectedSlotContainer,
+} from "../RSVP_Form";
+import { BarberSlot } from "./BarberSelect";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import { useContext } from "react";
 const ServiceSelector = ({ selectedService, setSelectedService }) => {

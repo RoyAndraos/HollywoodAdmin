@@ -109,11 +109,6 @@ const AddReservation = () => {
     }
   };
 
-  const formatDate = (date) => {
-    const options = { month: "short", weekday: "short", day: "numeric" };
-    return date.toLocaleDateString(undefined, options);
-  };
-
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setSelectedSlot("");
@@ -252,41 +247,10 @@ const CalendarContainer = styled.div`
   animation: ${fadeIn} 0.2s ease-in-out;
   transform: scale(2) translateX(40%) translateY(40%);
 `;
-export const Slot = styled.div`
-  border: 1px solid #ccc;
-  background-color: #fff;
-  text-align: center;
-  margin: 5px 5px 0 0;
-  transition: 0.3s ease-in-out;
-  width: 20vw;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  &:hover {
-    cursor: pointer;
-    background-color: #ccc;
-  }
-`;
 
 export const SelectedSlotContainer = styled.div`
   display: flex;
   justify-content: center;
-`;
-
-export const BarberSlot = styled.div`
-  border: 1px solid #ccc;
-  background-color: #fff;
-  padding: 5px 0 5px 0;
-  text-align: center;
-  margin: 10px 5px 0 0;
-  width: 20vw;
-  transition: 0.3s ease-in-out;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  &:hover {
-    cursor: pointer;
-    background-color: #ccc;
-  }
-  &:first-of-type {
-    margin-top: 0;
-  }
 `;
 
 export const StyledLabel = styled.label`

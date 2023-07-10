@@ -1,10 +1,9 @@
 import {
   LabelInputWrapper,
   StyledLabel,
-  Slot,
   SelectedSlotContainer,
-  BarberSlot,
 } from "../RSVP_Form";
+import { BarberSlot } from "./BarberSelect";
 import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
@@ -122,10 +121,24 @@ const SelectedSlot = styled.div`
   }
 `;
 const SlotContainer = styled.div`
-  display: grid;
-  grid-template-columns: 33% 33% 33% || 100%;
+  display: flex;
+  flex-wrap: wrap;
+  width: 20vw;
   justify-content: space-evenly;
-  align-items: center;
   line-height: 30px;
+`;
+
+const Slot = styled.div`
+  border: 1px solid #ccc;
+  background-color: #fff;
+  text-align: center;
+  margin: 5px 5px 0 0;
+  transition: 0.3s ease-in-out;
+  width: 5vw;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  &:hover {
+    cursor: pointer;
+    background-color: #ccc;
+  }
 `;
 export default SlotSelector;

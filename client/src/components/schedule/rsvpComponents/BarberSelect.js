@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { LabelInputWrapper } from "../RSVP_Form";
-import { BarberSlot } from "../RSVP_Form";
+import styled from "styled-components";
 import { StyledLabel } from "../RSVP_Form";
 const BarberSelect = ({ selectedBarberForm, setBarber }) => {
   const { userInfo } = useContext(UserContext);
@@ -31,5 +31,23 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
     </LabelInputWrapper>
   );
 };
+
+export const BarberSlot = styled.div`
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 5px 0 5px 0;
+  text-align: center;
+  margin: 10px 5px 0 0;
+  width: 20vw;
+  transition: 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  &:hover {
+    cursor: pointer;
+    background-color: #ccc;
+  }
+  &:first-of-type {
+    margin-top: 0;
+  }
+`;
 
 export default BarberSelect;

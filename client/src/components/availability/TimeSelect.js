@@ -164,7 +164,7 @@ const TimeSelect = () => {
 };
 
 const Wrapper = styled.div`
-  width: 90vw;
+  width: 95vw;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -172,7 +172,7 @@ const Wrapper = styled.div`
   top: 50%;
   transform: translateX(-50%) translateY(-50%);
   background-color: rgba(255, 255, 255, 0.7);
-  height: 90%;
+  height: 90vh;
   border-radius: 30px;
 `;
 

@@ -75,6 +75,14 @@ const AddReservation = () => {
         reservation: reservation,
       }),
     });
+
+    setSelectedSlot("");
+    setBarber({});
+    setClientName("");
+    setClientEmail("");
+    setClientNumber("");
+    setSelectedService("");
+    setError(true);
   };
 
   const handleChange = (e, name) => {

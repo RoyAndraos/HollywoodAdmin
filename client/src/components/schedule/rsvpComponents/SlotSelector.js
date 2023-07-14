@@ -7,6 +7,7 @@ import { BarberSlot } from "./BarberSelect";
 import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
+import { filterSlotBeforeFor2Duration } from "../../helpers";
 
 const SlotSelector = ({
   selectedSlot,
@@ -17,7 +18,7 @@ const SlotSelector = ({
 }) => {
   const { reservations } = useContext(ReservationContext);
   const [availableSlots, setAvailableSlots] = useState([]);
-
+  const [filteredReservationFor2Duration, setFilteredReservationFor2Duration] = useState([]);
   const formatDate = (date) => {
     const options = { month: "short", weekday: "short", day: "numeric" };
     return date.toLocaleDateString(undefined, options);
@@ -42,7 +43,7 @@ const SlotSelector = ({
           formatDate(new Date(reservation.date)) === formatDate(selectedDate);
         return selectedBarberForm.given_name === reservation.barber && today;
       });
-      console.log(todayReservations);
+
       const filteredSlots = originalAvailableSlots.filter((slot) => {
         return !todayReservations.some((reservation) => {
           if (reservation.slot.length === 1) {
@@ -52,13 +53,23 @@ const SlotSelector = ({
           }
         });
       });
-      setAvailableSlots(
-        filteredSlots.filter((slot) => {
-          return slot !== "";
+
+      if(selectedService.duration === "2"){
+        const removedBeforeSlotsFor2Duration = todayReservations.map(reservation => {
+          return filterSlotBeforeFor2Duration(reservation.slot[0])
         })
-      );
+        setAvailableSlots(filteredSlots.filter((slot) => {
+          return slot !== "";
+        }).filter((item)=> !removedBeforeSlotsFor2Duration.includes(item)))
+      } else{
+        setAvailableSlots(
+          filteredSlots.filter((slot) => {
+            return slot !== "";
+          })
+        );
+      }
     }
-  }, [selectedBarberForm, reservations, selectedDate]);
+  }, [selectedBarberForm, reservations, selectedDate, selectedService]);
   const handleFormatDateForSlots = (date) => {
     const options = { weekday: "short" };
     return date.toLocaleDateString(undefined, options);

@@ -379,8 +379,7 @@ export const editTimeTo24 = (time, toEdit) => {
     editedTime = time;
     let formattedTime;
     if (time.split(":")[0].length === 1) {
-      formattedTime = "0" + editedTime.slice(0, 5) + ":00";
-      console.log(formattedTime);
+      formattedTime = "0" + editedTime.slice(0, 4) + ":00";
     } else {
       formattedTime = editedTime.slice(0, 5) + ":00";
     }
@@ -463,78 +462,31 @@ export const getEndTime = (startTime, duration) => {
   }
 };
 
-export const customStyles = `
-.fc-scroller.fc-scroller-liquid-absolute::-webkit-scrollbar {
-  display: none;
+
+
+export const filterSlotBeforeFor2Duration = (slot) =>{
+    const minuteToEdit = slot.slice(0,-2).split(":")[1]
+    if(minuteToEdit !== "00"){
+    const newMinute = parseInt(minuteToEdit) -15
+    if(newMinute === 0){
+      return slot.split(":")[0] + ":00" + slot.slice(-2)
+    } else{
+      return slot.slice(0,-2).split(":")[0] + ":" + newMinute.toString() + slot.slice(-2);
+    }
+  } else{
+    const newMinute = "45"
+    const hourToEdit = slot.slice(0,-2).split(":")[0]
+    if(hourToEdit !== "12"){
+      const newHour = (parseInt(slot.slice(0,-2).split(":")[0]) -1)
+      if (newHour.toString().length === 2){
+        return newHour.toString() + ":" + newMinute + slot.slice(-2)
+      } else{
+        return "0" + newHour.toString() + ":" + newMinute + slot.slice(-2)
+      }
+      
+    } else{
+      const newHour = "11"
+      return newHour + ":" + newMinute + "am"
+    }
+  }
 }
-.fc-button-primary{
-  background-color: #035e3f;
-}
-.fc{
-  font-family: 'Brandon Grotesque regular', sans-serif;
-  min-height: 76vh;
-  font-weight:600;
-  overflow:hidden;
-}
-.fc-scrollgrid {
-  border: 2px solid #2c3e50 !important;
-}
-.fc-col-header {
-  background-color: #035e3f;
-}
-.fc-col-header-cell-cushion{
-  color:white;
-}
-.fc-day {
-  border: 2px solid #2c3e50 !important;
-  color:black;
-}
-.fc-toolbar-title {
-  font-family: 'Brandon Grotesque regular', sans-serif;
-}
-.fc-toolbar .fc-button-group  button {
-  background-color: #035e3f;
-  color: white; 
-  border:none;
-}
-.fc-toolbar .fc-button-group  button:hover {
-  background-color: #035e3f;
-  color: white; 
-    transition: all 0.1s ease-in-out;
-  transform:scale(1.04)
-}
-.fc-timeGridDay-button.fc-button.fc-button-primary.fc-button-active {
-  background-color: transparent;
-  color: black;
-  font-weight: 600;
-  transform:scale(.96)
-  transition: all 0.1s ease-in-out;
-  border:2px solid black;
-  border-left:none;
-}
-.fc-timeGridWeek-button.fc-button.fc-button-primary.fc-button-active {
-  background-color: transparent;
-  color: black;
-  font-weight: 600;
-  transform:scale(.96)
-  transition: all 0.1s ease-in-out;
-  border:2px solid black;
-  border-left:none;
-  border-right:none;
-}
-.fc-dayGridMonth-button.fc-button.fc-button-primary.fc-button-active {
-  background-color: transparent;
-  color: black;
-  font-weight: 600;
-  transform:scale(.96)
-  transition: all 0.1s ease-in-out;
-  border:2px solid black;
-  border-right:none;
-}
-.fc-today-button.fc-button.fc-button-primary {
-  background-color:#035e3f ;
-}
-.fc-today-button.fc-button.fc-button-primary:hover {
-  cursor:pointer;
-}
-  `;

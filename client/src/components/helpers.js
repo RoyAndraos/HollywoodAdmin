@@ -375,9 +375,15 @@ export const editDatetoCalendarFormat = (date) => {
 };
 export const editTimeTo24 = (time, toEdit) => {
   let editedTime;
-  if (toEdit === "a") {
+  if (toEdit === "am") {
     editedTime = time;
-    const formattedTime = "0" + editedTime.slice(0, 4) + ":00";
+    let formattedTime;
+    if (time.split(":")[0].length === 1) {
+      formattedTime = "0" + editedTime.slice(0, 5) + ":00";
+      console.log(formattedTime);
+    } else {
+      formattedTime = editedTime.slice(0, 5) + ":00";
+    }
     return formattedTime;
   } else {
     let formattedTime;
@@ -395,7 +401,7 @@ export const editTimeTo24 = (time, toEdit) => {
 export const getEndTime = (startTime, duration) => {
   const startTimeMinute = parseInt(startTime.split(":")[1]);
   let endTimeMinute;
-  if (duration === 2) {
+  if (parseInt(duration) === 2) {
     endTimeMinute = startTimeMinute + 30;
     if (endTimeMinute > 60) {
       endTimeMinute = endTimeMinute - 60;

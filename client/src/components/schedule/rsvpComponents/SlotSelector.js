@@ -42,9 +42,14 @@ const SlotSelector = ({
           formatDate(new Date(reservation.date)) === formatDate(selectedDate);
         return selectedBarberForm.given_name === reservation.barber && today;
       });
+      console.log(todayReservations);
       const filteredSlots = originalAvailableSlots.filter((slot) => {
         return !todayReservations.some((reservation) => {
-          return reservation.slot === slot;
+          if (reservation.slot.length === 1) {
+            return reservation.slot[0] === slot;
+          } else {
+            return reservation.slot[0] === slot || reservation.slot[1] === slot;
+          }
         });
       });
       setAvailableSlots(
@@ -60,9 +65,9 @@ const SlotSelector = ({
   };
   return (
     <LabelInputWrapper>
-      <StyledLabel>timeSlot:</StyledLabel>
+      <StyledLabel>Time Slot:</StyledLabel>
       <SlotContainer>
-        {selectedSlot === "" ? (
+        {selectedSlot.length === 0 ? (
           <SlotContainer>
             {selectedService !== "" &&
             Object.keys(selectedBarberForm).length !== 0 ? (
@@ -72,7 +77,7 @@ const SlotSelector = ({
                     <Slot
                       key={slot}
                       onClick={() => {
-                        setSelectedSlot(slot);
+                        setSelectedSlot([slot]);
                       }}
                     >
                       {slot.split("-")[1]}
@@ -94,10 +99,10 @@ const SlotSelector = ({
           <SelectedSlotContainer>
             <SelectedSlot
               onClick={() => {
-                setSelectedSlot("");
+                setSelectedSlot([]);
               }}
             >
-              {selectedSlot.split("-")[1]}
+              {selectedSlot[0].split("-")[1]}
             </SelectedSlot>
           </SelectedSlotContainer>
         )}

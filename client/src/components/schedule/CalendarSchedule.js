@@ -15,12 +15,11 @@ const CalendarSchedule = () => {
   const { reservations } = useContext(ReservationContext);
 
   const events = reservations.map((reservation) => {
-    let time = reservation.slot.split("-")[1];
-    const toEdit = time.split("")[4];
+    let time = reservation.slot[0].split("-")[1];
+    const toEdit = time.slice(-2);
     const editedTime = editTimeTo24(time, toEdit);
     const editedDate = editDatetoCalendarFormat(reservation.date);
     const constructedDate = `${editedDate}T${editedTime}`;
-
     const endTime = getEndTime(constructedDate, reservation.service.duration);
     return {
       title: reservation.service.name,
@@ -28,7 +27,7 @@ const CalendarSchedule = () => {
       end: endTime,
     };
   });
-
+  console.log(events);
   return (
     <Wrapper>
       <style>{customStyles}</style>

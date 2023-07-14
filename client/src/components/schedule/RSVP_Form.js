@@ -19,17 +19,52 @@ const AddReservation = () => {
   const [nameError, setNameError] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [error, setError] = useState(true);
+
+  const selectNextSlot = (slot) => {
+    const day = slot.split("-")[0];
+    const timeToEdit = slot.split("-")[1].split(":")[1].slice(0, -2);
+    const hour = slot.split("-")[1].split(":")[0];
+    let AMPM = slot.slice(-2);
+    let newTimeMinute = parseInt(timeToEdit) + 15;
+    if (newTimeMinute === 60) {
+      newTimeMinute = "00";
+      const newHour = parseInt(slot.split("-")[1].split(":")[0]) + 1;
+      if (newHour === 12) {
+        AMPM = "pm";
+        return `${day}-${newHour}:${newTimeMinute}${AMPM}`;
+      } else {
+        return `${day}-${newHour}:${newTimeMinute}${AMPM}`;
+      }
+    } else {
+      return `${day}-${hour}:${newTimeMinute}${AMPM}`;
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const reservation = {
-      barber: selectedBarberForm.given_name,
-      date: selectedDate.toDateString(),
-      slot: selectedSlot,
-      service: selectedService,
-      clientName: clientName,
-      clientEmail: clientEmail,
-      clientNumber: clientNumber,
-    };
+    let reservation = {};
+    if (selectedService.duration === 1) {
+      reservation = {
+        barber: selectedBarberForm.given_name,
+        date: selectedDate.toDateString(),
+        slot: selectedSlot,
+        service: selectedService,
+        clientName: clientName,
+        clientEmail: clientEmail,
+        clientNumber: clientNumber,
+      };
+    } else {
+      const newSlotArray = [...selectedSlot, selectNextSlot(selectedSlot[0])];
+      reservation = {
+        barber: selectedBarberForm.given_name,
+        date: selectedDate.toDateString(),
+        slot: newSlotArray,
+        service: selectedService,
+        clientName: clientName,
+        clientEmail: clientEmail,
+        clientNumber: clientNumber,
+      };
+    }
+
     setReservations([...reservations, reservation]);
     fetch("/addReservation", {
       method: "POST",

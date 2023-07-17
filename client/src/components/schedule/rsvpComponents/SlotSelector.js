@@ -18,7 +18,6 @@ const SlotSelector = ({
 }) => {
   const { reservations } = useContext(ReservationContext);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [filteredReservationFor2Duration, setFilteredReservationFor2Duration] = useState([]);
   const formatDate = (date) => {
     const options = { month: "short", weekday: "short", day: "numeric" };
     return date.toLocaleDateString(undefined, options);
@@ -54,14 +53,20 @@ const SlotSelector = ({
         });
       });
 
-      if(selectedService.duration === "2"){
-        const removedBeforeSlotsFor2Duration = todayReservations.map(reservation => {
-          return filterSlotBeforeFor2Duration(reservation.slot[0])
-        })
-        setAvailableSlots(filteredSlots.filter((slot) => {
-          return slot !== "";
-        }).filter((item)=> !removedBeforeSlotsFor2Duration.includes(item)))
-      } else{
+      if (selectedService.duration === "2") {
+        const removedBeforeSlotsFor2Duration = todayReservations.map(
+          (reservation) => {
+            return filterSlotBeforeFor2Duration(reservation.slot[0]);
+          }
+        );
+        setAvailableSlots(
+          filteredSlots
+            .filter((slot) => {
+              return slot !== "";
+            })
+            .filter((item) => !removedBeforeSlotsFor2Duration.includes(item))
+        );
+      } else {
         setAvailableSlots(
           filteredSlots.filter((slot) => {
             return slot !== "";

@@ -5,12 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { styled } from "styled-components";
 import { useContext } from "react";
 import { ReservationContext } from "../contexts/ReservationContext";
-import {
-  editDatetoCalendarFormat,
-  editTimeTo24,
-  getEndTime,
-  
-} from "../helpers";
+import { editDatetoCalendarFormat, editTimeTo24, getEndTime } from "../helpers";
 const CalendarSchedule = () => {
   const { reservations } = useContext(ReservationContext);
 
@@ -30,6 +25,18 @@ const CalendarSchedule = () => {
       service: reservation.service.name,
     };
   });
+
+  const eventContent = (arg) => {
+    const { event } = arg;
+    console.log(event._def.extendedProps.service);
+    return (
+      <StyledTitle props={event._def.title}>
+        <span>{event.title.split("")[0]}.</span>
+        {"  "}
+        <OtherInfo>{event._def.extendedProps.service}</OtherInfo>
+      </StyledTitle>
+    );
+  };
   const customStyles = `
 .fc-scroller.fc-scroller-liquid-absolute::-webkit-scrollbar {
   display: none;
@@ -104,19 +111,17 @@ const CalendarSchedule = () => {
 .fc-today-button.fc-button.fc-button-primary:hover {
   cursor:pointer;
 }
+.fc-event {
+  border-radius: 10px;
+  width:15vw;
+  &:hover {
+    cursor:pointer;
+  }
+}
+.fc-timegrid-event-harness {
+  margin-left:5%;
+}
   `;
-
-  const eventContent = (arg) => {
-    const { event } = arg;
-    console.log(event._def.extendedProps.service);
-    return (
-        <StyledTitle props={event._def.title}>
-          <span>{event.title}</span>
-          {"  "}
-          <OtherInfo>{event._def.extendedProps.service}</OtherInfo>
-        </StyledTitle>
-    );
-  };
 
   return (
     <Wrapper>
@@ -144,14 +149,18 @@ const Wrapper = styled.div`
 `;
 
 const StyledTitle = styled.div`
-color: ${(props) => {
-  return props.props === "Alain" ? "black" : "white"}};
-  font-size:17px;
-  width:30%;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => {
+    return props.props === "Alain" ? "black" : "white";
+  }};
+  text-align: center;
+  font-size: 17px;
 `;
 
 const OtherInfo = styled.span`
   font-size: 12px;
-`
+`;
 
 export default CalendarSchedule;

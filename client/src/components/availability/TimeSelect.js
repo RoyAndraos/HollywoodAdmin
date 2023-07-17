@@ -67,7 +67,6 @@ const TimeSelect = () => {
     const cellKey = `${dayIndex}-${timeIndex}`;
     const updatedCells = selectedCells.map((cell) => {
       if (cell.slot === cellKey) {
-        console.log(cell);
         return {
           ...cell,
           available: !cell.available, // Toggle the availability

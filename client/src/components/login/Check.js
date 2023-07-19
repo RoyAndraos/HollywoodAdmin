@@ -33,9 +33,12 @@ const Check = () => {
             break;
           case 404:
             navigate("/404");
+            break;
+          default:
+            navigate("/404");
         }
       });
-  }, []);
+  }, [user, setReservations, setServices, setUserInfo, navigate]);
   return <div>Check</div>;
 };
 

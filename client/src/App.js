@@ -8,6 +8,7 @@ import Schedule from "./components/schedule/Schedule";
 import AvailabilityComponent from "./components/availability/AvailabilityComponent";
 import Check from "./components/login/Check";
 import NotGrant from "./components/login/NotGrant";
+import TakeTimeOff from "./components/availability/TakeTimeOff";
 const App = () => {
   const location = useLocation();
   return (
@@ -26,6 +27,10 @@ const App = () => {
           <Route
             path="/dashboard/availability"
             element={<AvailabilityComponent />}
+          />
+          <Route
+            path="/dashboard/timeOff/:barberId"
+            element={<TakeTimeOff />}
           />
           <Route path="/dashboard/schedule" element={<Schedule />} />
         </Routes>

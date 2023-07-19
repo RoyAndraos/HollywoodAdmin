@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
 import { filterSlotBeforeFor2Duration } from "../../helpers";
-
+import moment from "moment";
 const SlotSelector = ({
   selectedSlot,
   selectedBarberForm,
@@ -26,6 +26,14 @@ const SlotSelector = ({
     if (Object.keys(selectedBarberForm).length === 0) {
       return;
     } else {
+      if (selectedBarberForm.time_off[0].length !== 0) {
+        console.log(selectedBarberForm.time_off[0].startDate);
+        const startDate = moment(selectedBarberForm.time_off[0].startDate);
+        const endDate = moment(selectedBarberForm.time_off[0].endDate);
+        const timeOff = moment(selectedDate).isBetween(startDate, endDate);
+        console.log(startDate, endDate);
+        console.log(timeOff);
+      }
       const originalAvailableSlots = selectedBarberForm.availability
         .filter((slot) =>
           slot.slot.includes(handleFormatDateForSlots(selectedDate))

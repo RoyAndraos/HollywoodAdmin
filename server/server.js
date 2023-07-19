@@ -86,9 +86,37 @@ const addReservation = async (req, res) => {
   }
 };
 
+const addTimeOff = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const { startDate, endDate, _id } = req.body;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db.collection("admin").updateOne(
+      {
+        _id: new ObjectId(`${_id}`),
+      },
+      {
+        $push: {
+          time_off: {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        },
+      }
+    );
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 module.exports = {
   adminCheck,
   getUserInfo,
   updateAvailability,
   addReservation,
+  addTimeOff,
 };

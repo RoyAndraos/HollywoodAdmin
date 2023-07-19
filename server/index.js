@@ -8,6 +8,7 @@ const {
   getUserInfo,
   updateAvailability,
   addReservation,
+  addTimeOff,
 } = require("./server");
 express()
   .use(function (req, res, next) {
@@ -30,4 +31,5 @@ express()
   .post("/addReservation", addReservation)
   .post("/checkIfAdmin", adminCheck)
   .patch("/updateAvailability", updateAvailability)
+  .patch("/addTimeOff", addTimeOff)
   .listen(PORT, () => console.info(`Listening on port ${PORT}`));

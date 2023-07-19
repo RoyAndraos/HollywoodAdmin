@@ -97,34 +97,40 @@ const TimeSelect = () => {
     setSelectedCells(updatedCells);
   };
 
+  const handleNavToTimeOff = () => {
+    navigate(`/dashboard/timeOff/${selectedAdminInfo._id}`);
+  };
+
   return (
     <Wrapper>
-      <ButtonWrapper>
-        <BackButton onClick={(e) => handleExit(e)}>
-          <FaArrowLeft />
-        </BackButton>
-        <ControlPanel>
+      <BackButton onClick={(e) => handleExit(e)}>
+        <FaArrowLeft />
+      </BackButton>
+      <ControlPanel>
+        <AvailButtons>
           <Reset onClick={resetSchedule}>Reset</Reset>
           <SaveChanges onClick={saveChanges}>Save Changes</SaveChanges>
-          <AdminName onClick={() => setShowBarbers(!showBarbers)}>
-            {selectedAdminInfo.given_name}
-          </AdminName>
-          {showBarbers ? (
-            <BarberContainer>
-              {userInfo.map((barber) => {
-                return (
-                  <BarberCard
-                    key={barber.given_name}
-                    onClick={(e) => selectBarber(e, barber)}
-                  >
-                    {barber.given_name}
-                  </BarberCard>
-                );
-              })}
-            </BarberContainer>
-          ) : null}
-        </ControlPanel>
-      </ButtonWrapper>
+          <TimeOff onClick={handleNavToTimeOff}>Time Off</TimeOff>
+        </AvailButtons>
+        <AdminName onClick={() => setShowBarbers(!showBarbers)}>
+          {selectedAdminInfo.given_name}
+        </AdminName>
+
+        {showBarbers ? (
+          <BarberContainer>
+            {userInfo.map((barber) => {
+              return (
+                <BarberCard
+                  key={barber.given_name}
+                  onClick={(e) => selectBarber(e, barber)}
+                >
+                  {barber.given_name}
+                </BarberCard>
+              );
+            })}
+          </BarberContainer>
+        ) : null}
+      </ControlPanel>
 
       <TableWrapper>
         <FirstRow>
@@ -173,15 +179,7 @@ const Wrapper = styled.div`
   background-color: rgba(255, 255, 255, 0.7);
   height: 90vh;
   border-radius: 30px;
-`;
-
-const ButtonWrapper = styled.div`
-  margin-left: 50px;
-  margin-right: 50px;
-  position: relative;
-  display: grid;
-  grid-template-columns: 20% 80%;
-  margin-top: 50px;
+  z-index: 1;
 `;
 
 const BackButton = styled.button`
@@ -195,7 +193,9 @@ const BackButton = styled.button`
   width: 60px;
   height: 40px;
   transition: 0.2s ease-in-out;
-
+  position: absolute;
+  top: 2vh;
+  left: 1vw;
   &:hover {
     cursor: pointer;
     transform: scale(1.1);
@@ -205,14 +205,17 @@ const BackButton = styled.button`
 const Table = styled.table`
   position: relative;
   top: 10%;
+  width: 98%;
+  height: 80%;
 
-  width: 100%;
   td {
-    border: 1px solid black;
+    border: 1px solid #3e363f;
     padding: 8px;
     text-align: center;
     height: 40px;
     transition: 0.3s ease-in-out;
+    position: relative;
+    left: 1%;
     &.selected {
       background-color: #033a27;
       color: white;
@@ -229,25 +232,26 @@ const Table = styled.table`
 
 const TableWrapper = styled.div`
   width: 85vw;
-  height: 100%;
+  height: 80vh;
   overflow: auto;
   border-radius: 30px;
-  border: none;
-  margin-left: 2.5%;
+  margin-left: 5%;
 `;
 
 const TH = styled.th`
   background-color: #035e3f;
-  border: 1px solid black;
+  border: 2px solid #3e363f;
   color: rgba(255, 255, 255, 0.9);
   transition: 0.2s ease-in-out;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-
+  width: 3.5%;
+  position: relative;
+  left: 1%;
   &:hover {
     cursor: pointer;
-    background-color: #e5e2e2;
-    border: #035e3f solid 1px;
+    background-color: white;
+    border: #035e3f solid 2px;
     color: #035e3f;
   }
 `;
@@ -258,13 +262,13 @@ const FirstRow = styled.div`
   height: 40px;
   position: relative;
   top: 10%;
-  left: 4.34%;
-  max-width: 95.5%;
+  left: 4.5%;
+  max-width: 94.3%;
 `;
 const FirstRowDay = styled.div`
   background-color: #035e3f;
-  border: 1px solid black;
-  width: 25%;
+  /* border: 1px solid black; */
+  width: 24%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -314,26 +318,23 @@ const SaveChanges = styled.button`
 `;
 const ControlPanel = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  width: 80%;
+  transform: translateX(10%) translateY(100%);
+  z-index: 2;
 `;
 
 const AdminName = styled.div`
-  border: 3px solid rgba(0, 0, 0, 0.3);
-  border-top-right-radius: 30px;
-  width: 70px;
-  height: 50px;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  color: white;
+  border: 3px solid #3e363f;
+  border-radius: 5px;
+  padding: 5px 10px 5px 10px;
+  background-color: transparent;
+  color: #3e363f;
   margin-left: 100px;
   font-size: 25px;
   font-family: "Roboto", sans-serif;
+  font-weight: 600;
   transition: 0.2s ease-in-out;
   &:hover {
     cursor: pointer;
@@ -342,16 +343,18 @@ const AdminName = styled.div`
 `;
 
 const BarberContainer = styled.div`
-  position: absolute;
-  right: 0;
   transform: translateX(150%);
   width: 100px;
+  position: absolute;
+  right: 10vw;
+  top: 6vh;
 `;
 
 const BarberCard = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
   text-align: center;
+  position: relative;
   margin: 5px 0 0 0;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -364,6 +367,31 @@ const BarberCard = styled.div`
   &:first-of-type {
     margin: 0;
   }
+`;
+
+const TimeOff = styled.button`
+  margin: 0 2vw 0 2vw;
+  min-width: 12vw;
+  width: fit-content;
+  padding: 10px 5px 10px 5px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition: 0.2s ease-in-out;
+  background-color: #035e3f;
+  color: whitesmoke;
+  font-size: 20px;
+  &:hover {
+    cursor: pointer;
+    background-color: #e5e2e2;
+    border: #035e3f solid 2px;
+    color: #035e3f;
+  }
+`;
+
+const AvailButtons = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
 `;
 
 export default TimeSelect;

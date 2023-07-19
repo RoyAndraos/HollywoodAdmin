@@ -15,6 +15,7 @@ const data = [
     picture:
       "https://lh3.googleusercontent.com/a/AGNmyxZ42A67uSF3cQwZmkh3Ja5Nnjxonx7Q5HL2FYI9=s96-c",
     email: "roy_andraos@live.fr",
+    timeOff: [],
     availability: [
       { slot: "Mon-9:00am", available: true, booked: false },
       { slot: "Mon-9:15am", available: true, booked: false },

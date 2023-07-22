@@ -28,11 +28,9 @@ const CalendarSchedule = () => {
 
   const eventContent = (arg) => {
     const { event } = arg;
-    console.log(event._def.extendedProps.service);
     return (
       <StyledTitle props={event._def.title}>
-        <span>{event.title.split("")[0]}.</span>
-        {"  "}
+        <span style={{ marginRight: "10px" }}>{event.title}</span>
         <OtherInfo>{event._def.extendedProps.service}</OtherInfo>
       </StyledTitle>
     );
@@ -46,7 +44,7 @@ const CalendarSchedule = () => {
 }
 .fc{
   font-family: 'Brandon Grotesque regular', sans-serif;
-  min-height: 76vh;
+  height: 80vh ;
   font-weight:600;
   overflow:hidden;
 }
@@ -121,6 +119,7 @@ const CalendarSchedule = () => {
 .fc-timegrid-event-harness {
   margin-left:5%;
 }
+
   `;
 
   return (
@@ -131,7 +130,7 @@ const CalendarSchedule = () => {
         headerToolbar={{
           start: "today prev,next",
           center: "title",
-          end: "dayGridMonth,timeGridWeek,timeGridDay",
+          end: "dayGridMonth,timeGridDay",
         }}
         slotMinTime="09:00:00"
         slotMaxTime="21:00:00"
@@ -145,7 +144,8 @@ const CalendarSchedule = () => {
 
 const Wrapper = styled.div`
   margin-top: 50px;
-  margin-right: 50px;
+  margin: 50px;
+  height: 65vh;
 `;
 
 const StyledTitle = styled.div`

@@ -250,6 +250,11 @@ const fadeIn = keyframes`
   }
 `;
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -257,14 +262,7 @@ const StyledForm = styled.form`
   height: 76vh;
   font-family: "Roboto", sans-serif;
 `;
-const Wrapper = styled.div`
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  left: 50%;
-  transform: translateX(-50%);
-  top: -10px;
-`;
+
 const CustomDatePicker = styled(DatePicker)`
   position: relative;
   left: 50%;

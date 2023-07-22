@@ -26,14 +26,14 @@ const SlotSelector = ({
     if (Object.keys(selectedBarberForm).length === 0) {
       return;
     } else {
-      if (selectedBarberForm.time_off[0].length !== 0) {
-        console.log(selectedBarberForm.time_off[0].startDate);
-        const startDate = moment(selectedBarberForm.time_off[0].startDate);
-        const endDate = moment(selectedBarberForm.time_off[0].endDate);
-        const timeOff = moment(selectedDate).isBetween(startDate, endDate);
-        console.log(startDate, endDate);
-        console.log(timeOff);
-      }
+      //if (selectedBarberForm.time_off.length !== 0) {
+      //  console.log(selectedBarberForm.time_off[0].startDate);
+      //  const startDate = moment(selectedBarberForm.time_off[0].startDate);
+      //  const endDate = moment(selectedBarberForm.time_off[0].endDate);
+      //  const timeOff = moment(selectedDate).isBetween(startDate, endDate);
+      //  console.log(startDate, endDate);
+      //  console.log(timeOff);
+      //}
       const originalAvailableSlots = selectedBarberForm.availability
         .filter((slot) =>
           slot.slot.includes(handleFormatDateForSlots(selectedDate))

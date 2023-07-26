@@ -9,6 +9,7 @@ import AvailabilityComponent from "./components/availability/AvailabilityCompone
 import Check from "./components/login/Check";
 import NotGrant from "./components/login/NotGrant";
 import TakeTimeOff from "./components/availability/TakeTimeOff";
+import SeeImages from "./components/websiteTools/SeeImages";
 const App = () => {
   const location = useLocation();
   return (
@@ -33,6 +34,7 @@ const App = () => {
             element={<TakeTimeOff />}
           />
           <Route path="/dashboard/schedule" element={<Schedule />} />
+          <Route path="/websiteTools/seeImages" element={<SeeImages />} />
         </Routes>
       </RequireAuth>
     </div>

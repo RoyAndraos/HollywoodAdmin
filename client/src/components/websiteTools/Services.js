@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { ServicesContext } from "../contexts/ServicesContext";
+import Upload from "./Upload";
 const Services = () => {
   const { services } = useContext(ServicesContext);
   return (
@@ -22,6 +23,7 @@ const Services = () => {
           );
         })}
       </ul>
+      <Upload />
     </div>
   );
 };

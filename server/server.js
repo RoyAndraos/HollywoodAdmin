@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const { cloudinary } = require("./utils/cloudinary");
 const { MongoClient, ObjectId } = require("mongodb");
 
 const options = {
@@ -8,6 +8,30 @@ const options = {
 };
 const MONGO_URI = process.env.MONGO_URI;
 const WHITE_LIST = process.env.WHITE_LIST;
+
+const getImages = async (req, res) => {
+  const { resources } = await cloudinary.search
+    .expression("folder:HollywoodAssets")
+    .sort_by("public_id", "desc")
+    .max_results(30)
+    .execute();
+  const publicIds = resources.map((file) => file.public_id);
+  res.send(publicIds);
+};
+
+const uploadImage = async (req, res) => {
+  try {
+    const fileStr = req.body.data;
+    await cloudinary.uploader.upload(fileStr, {
+      upload_preset: "HollywoodAssets",
+      folder: "HollywoodAssets",
+    });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
 
 const adminCheck = async (req, res) => {
   const userInfo = req.body;
@@ -119,4 +143,6 @@ module.exports = {
   updateAvailability,
   addReservation,
   addTimeOff,
+  uploadImage,
+  getImages,
 };

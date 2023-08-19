@@ -8,7 +8,7 @@ const TakeTimeOff = () => {
   const { barberId } = useParams();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
-  const { userInfo, setUserInfo } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
   useEffect(() => {
     if (startDate !== null && endDate !== null) {
       if (endDate < startDate) {

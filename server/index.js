@@ -11,7 +11,8 @@ const {
   addReservation,
   addTimeOff,
   uploadImage,
-  getImages,
+  getSlideshowImages,
+  deleteImage,
 } = require("./server");
 
 // Create the express app
@@ -37,12 +38,13 @@ app.use("/", express.static(__dirname + "/"));
 
 // Define the routes
 app.get("/getUserInfo", getUserInfo);
-app.get("/getImages", getImages);
+app.get("/getSlideshowImages", getSlideshowImages);
 app.post("/upload", uploadImage);
 app.post("/addReservation", addReservation);
 app.post("/checkIfAdmin", adminCheck);
 app.patch("/updateAvailability", updateAvailability);
 app.patch("/addTimeOff", addTimeOff);
+app.delete("/images/:_id", deleteImage);
 
 // Start the server
 app.listen(PORT, () => console.info(`Listening on port ${PORT}`));

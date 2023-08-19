@@ -259,7 +259,6 @@ const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 76vh;
   font-family: "Roboto", sans-serif;
 `;
 
@@ -342,8 +341,6 @@ const StyledInput = styled.input`
 `;
 
 const Book = styled.button`
-  position: relative;
-  top: 10px;
   border-radius: 10px;
   border: 2px solid transparent;
   width: 15vw;
@@ -354,6 +351,7 @@ const Book = styled.button`
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   font-size: 20px;
+  margin-bottom: 30px;
 
   &:hover {
     background-color: whitesmoke;

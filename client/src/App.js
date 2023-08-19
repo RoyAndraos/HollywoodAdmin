@@ -3,13 +3,13 @@ import RequireAuth from "./components/login/RequireAuth";
 import { Routes, Route, useLocation } from "react-router-dom";
 import NavBar from "./components/Navbar";
 import BusinessData from "./components/BusinessData";
-import Services from "./components/websiteTools/Services";
+import WebsiteTools from "./components/websiteTools/WebsiteTools";
 import Schedule from "./components/schedule/Schedule";
 import AvailabilityComponent from "./components/availability/AvailabilityComponent";
 import Check from "./components/login/Check";
 import NotGrant from "./components/login/NotGrant";
 import TakeTimeOff from "./components/availability/TakeTimeOff";
-import SeeImages from "./components/websiteTools/SeeImages";
+
 const App = () => {
   const location = useLocation();
   return (
@@ -24,7 +24,7 @@ const App = () => {
         <Routes>
           <Route path="/dashboard/check" element={<Check />} />
           <Route path="/dashboard/data" element={<BusinessData />} />
-          <Route path="/dashboard/services" element={<Services />} />
+          <Route path="/dashboard/websiteTools" element={<WebsiteTools />} />
           <Route
             path="/dashboard/availability"
             element={<AvailabilityComponent />}
@@ -34,7 +34,6 @@ const App = () => {
             element={<TakeTimeOff />}
           />
           <Route path="/dashboard/schedule" element={<Schedule />} />
-          <Route path="/websiteTools/seeImages" element={<SeeImages />} />
         </Routes>
       </RequireAuth>
     </div>

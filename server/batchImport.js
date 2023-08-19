@@ -354,7 +354,7 @@ const batchImport = async (data) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const result = await db.collection("admin").insertMany(data);
+    const result = await db.collection("services").insertMany(data);
     if (result.acknowledged) {
       console.log("Success");
     } else {
@@ -367,4 +367,4 @@ const batchImport = async (data) => {
   client.close();
 };
 
-batchImport(data);
+batchImport(services);

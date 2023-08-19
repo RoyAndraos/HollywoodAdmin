@@ -6,6 +6,8 @@ import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/contexts/UserContext";
 import { ReservationProvider } from "./components/contexts/ReservationContext";
 import { ServicesProvider } from "./components/contexts/ServicesContext";
+import { TextProvider } from "./components/contexts/TextContext";
+import { ImageProvider } from "./components/contexts/ImageContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -17,13 +19,17 @@ root.render(
       }}
     >
       <UserProvider>
-        <ReservationProvider>
-          <ServicesProvider>
-            <BrowserRouter>
-              <App>{Children}</App>
-            </BrowserRouter>
-          </ServicesProvider>
-        </ReservationProvider>
+        <ImageProvider>
+          <TextProvider>
+            <ReservationProvider>
+              <ServicesProvider>
+                <BrowserRouter>
+                  <App>{Children}</App>
+                </BrowserRouter>
+              </ServicesProvider>
+            </ReservationProvider>
+          </TextProvider>
+        </ImageProvider>
       </UserProvider>
     </Auth0Provider>
   </React.StrictMode>

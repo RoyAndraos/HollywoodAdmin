@@ -8,10 +8,13 @@ import {
 import { useContext } from "react";
 import { ReservationContext } from "../.././contexts/ReservationContext";
 import { styled } from "styled-components";
-import MyDayEvent from "./MyDayEvent";
+// import "react-big-calendar/lib/sass/styles.scss"; // Import main styles
+// import "react-big-calendar/lib/addons/dragAndDrop/styles.scss"; // If using DnD
+import "../rsvpComponents/style.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
+
 const NewCalendar = ({ setCurrentView }) => {
   const { reservations } = useContext(ReservationContext);
   const events = reservations.map((reservation) => {
@@ -23,11 +26,11 @@ const NewCalendar = ({ setCurrentView }) => {
     const endTime = getEndTime(constructedDate, reservation.service.duration);
     return {
       title: reservation.barber,
+      service: reservation.service.name,
       start: new Date(constructedDate),
       end: new Date(endTime),
     };
   });
-
   const views = {
     month: true,
     day: true,
@@ -38,6 +41,7 @@ const NewCalendar = ({ setCurrentView }) => {
 
   const maxTime = new Date();
   maxTime.setHours(21, 0, 0);
+
   return (
     <Wrapper>
       <StyledCalendar
@@ -46,11 +50,6 @@ const NewCalendar = ({ setCurrentView }) => {
         views={views}
         startAccessor="start"
         endAccessor="end"
-        components={{
-          day: {
-            event: MyDayEvent,
-          },
-        }}
         min={minTime}
         max={maxTime}
         onView={(view) => setCurrentView(view)}
@@ -64,6 +63,7 @@ const Wrapper = styled.div`
 `;
 const StyledCalendar = styled(Calendar)`
   margin: 20px;
+  height: 95%;
 `;
 
 export default NewCalendar;

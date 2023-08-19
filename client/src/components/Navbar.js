@@ -8,7 +8,7 @@ const NavBar = () => {
     <Wrapper>
       <StyledNavLink to="/dashboard/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/dashboard/availability">Availability</StyledNavLink>
-      <StyledNavLink to="/dashboard/services">Website Tools</StyledNavLink>
+      <StyledNavLink to="/dashboard/websiteTools">Website Tools</StyledNavLink>
       <StyledNavLink to="/dashboard/data">Business Data</StyledNavLink>
       <LogoutButton />
     </Wrapper>
@@ -21,6 +21,7 @@ const Wrapper = styled.div`
   font-size: 20px;
   font-weight: 600;
   background-color: #035e3f;
+  box-shadow: 0 0 10px black;
 `;
 
 const StyledNavLink = styled(NavLink)`

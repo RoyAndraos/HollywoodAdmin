@@ -1,0 +1,167 @@
+/* Day number button */
+.rbc-button-link {
+    font-size: 3rem;
+    width: 100%;
+    height: 100%;
+    color: rgba(0,0,0,0.2)
+}
+.rbc-button-link:hover {
+    cursor: pointer;
+    background-color: rgba(0,0,0,0.1);
+    transition: 0.2s ease-in-out;
+
+}
+/* Day Number Row */
+.rbc-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+/* Day cell */
+.rbc-date-cell{
+    width: 100%;
+    height: calc(73vh/5);
+    border: 1px solid #ddd;
+}
+.rbc-month-row{
+    max-height: calc(74.5vh/5);
+}
+/* calendar container */
+.rbc-calendar{
+    font-family: sans-serif;
+}
+/* off range date cell */
+.rbc-off-range{
+    background-color: rgba(0,0,0,0.3);
+}
+
+/* HEADER */
+/* header (day names and so) */
+.rbc-month-header{
+    display: none;
+}
+/* header day cell */
+.rbc-header{
+    font-size: 1.2rem;
+    border: 1px solid rgba(0,0,0,0.3);
+    width: calc(98%/7);
+    text-align: center;
+    background-color: rgba(3,94,63,0.8);
+    padding: 3px 0 3px 0;
+    color: whitesmoke;
+}
+/* TOOLBAR */
+.rbc-toolbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 20px 0 20px;
+}
+
+.rbc-btn-group:last-of-type button {
+    border: black 1px solid;
+    border-radius: 5px;
+    margin: 0 5px 0 5px;
+    font-size: 1rem;
+    padding: 2px 4px 2px 4px;
+    width: 80px;
+  }
+.rbc-btn-group:first-of-type button {
+    border: black 1px solid;
+    letter-spacing: 3px;
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 4px 4px 4px 4px;
+    width: 80px;
+  }
+.rbc-btn-group:first-of-type button {
+    border: black 1px solid;
+    letter-spacing: 3px;
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 4px 4px 4px 4px;
+    width: 80px;
+  }
+.rbc-btn-group:last-of-type button:hover{
+    background-color: rgba(0,0,0,0.2);
+    transition: 0.2s ease-in-out;
+    color: black;
+    border: black 1px solid;
+    cursor: pointer;
+  }
+  
+  .rbc-btn-group:first-of-type button:hover{
+    transition: 0.2s ease-in-out;
+    background-color: rgba(3,94,63,0.8);
+    color: whitesmoke;
+    border: black 1px solid;
+    cursor: pointer;
+  }
+.rbc-active{
+    background-color: rgba(3,94,63,0.8);
+    color: whitesmoke;
+    border: black 1px solid;
+}
+.rbc-now{
+    background-color: #035e3f;
+    color: whitesmoke;
+}
+/* EVENTS */
+.rbc-event{
+}
+/* DAYVIEW */
+/* times */
+.rbc-time-content{
+    margin-top: 30px;
+    color: black;
+    height: 65vh;
+    position: relative;
+}
+
+.rbc-timeslot-group{
+    border: 1px solid rgba(0,0,0,0.3);
+    border-bottom: none;
+    width: 100%;
+    height: calc(65vh/12);
+}
+.rbc-timeslot-group:last-child{
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+.rbc-time-header-content{
+    height: 0;
+    width: 0;
+}
+.rbc-row-content{
+height: 0;
+}
+.rbc-day-slot{
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: transparent;
+} 
+
+.rbc-row{
+    height: 0;
+}
+/* AGENDA */
+.rbc-agenda-view{
+    width: 100%;
+    border: #035e3f 1px solid;
+    height: 70vh;
+    margin-top:20px;
+}
+.rbc-agenda-table{
+    width: 100%;
+    text-align: center;
+
+}
+.rbc-agenda-date-cell{
+    border: #035e3f 1px solid;
+}
+.rbc-agenda-time-cell{
+    border: #035e3f 1px solid;
+}
+.rbc-agenda-event-cell{
+    border: #035e3f 1px solid;
+}

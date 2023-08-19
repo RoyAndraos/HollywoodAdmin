@@ -4,11 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
+import { ImageContext } from "../contexts/ImageContext";
+import { TextContext } from "../contexts/TextContext";
 const Check = () => {
   const { user } = useAuth0();
   const { setUserInfo } = useContext(UserContext);
   const { setReservations } = useContext(ReservationContext);
   const { setServices } = useContext(ServicesContext);
+  const { setImages } = useContext(ImageContext);
+  const { setText } = useContext(TextContext);
   const navigate = useNavigate();
   useEffect(() => {
     fetch("/checkIfAdmin", {
@@ -28,6 +32,8 @@ const Check = () => {
                 setUserInfo(result.userInfo);
                 setReservations(result.reservations);
                 setServices(result.services);
+                setImages(result.images);
+                setText(result.text);
               })
               .then(() => navigate("/dashboard/schedule"));
             break;
@@ -38,7 +44,15 @@ const Check = () => {
             navigate("/404");
         }
       });
-  }, [user, setReservations, setServices, setUserInfo, navigate]);
+  }, [
+    user,
+    setReservations,
+    setServices,
+    setUserInfo,
+    navigate,
+    setImages,
+    setText,
+  ]);
   return <div>Check</div>;
 };
 

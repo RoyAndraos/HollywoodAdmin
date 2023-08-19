@@ -1,7 +1,6 @@
 require("dotenv").config();
-const { cloudinary } = require("./utils/cloudinary");
 const { MongoClient, ObjectId } = require("mongodb");
-
+const { v4: uuid } = require("uuid");
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -9,27 +8,25 @@ const options = {
 const MONGO_URI = process.env.MONGO_URI;
 const WHITE_LIST = process.env.WHITE_LIST;
 
-const getImages = async (req, res) => {
-  const { resources } = await cloudinary.search
-    .expression("folder:HollywoodAssets")
-    .sort_by("public_id", "desc")
-    .max_results(30)
-    .execute();
-  const publicIds = resources.map((file) => file.public_id);
-  res.send(publicIds);
-};
-
 const uploadImage = async (req, res) => {
+  const _id = uuid();
+  const client = new MongoClient(MONGO_URI, options);
+  const fileSrc = req.body.src;
+  const filename = req.body.filename;
+  const imageInfo = {
+    _id: _id,
+    filename: filename,
+    src: fileSrc,
+  };
   try {
-    const fileStr = req.body.data;
-    await cloudinary.uploader.upload(fileStr, {
-      upload_preset: "HollywoodAssets",
-      folder: "HollywoodAssets",
-    });
-    res.status(200).json({ status: 200, message: "success" });
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db.collection("Images").insertOne(imageInfo);
+    res.status(202).json({ status: 200, imageInfo: imageInfo });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
   }
 };
 
@@ -57,11 +54,15 @@ const getUserInfo = async (req, res) => {
     const userInfo = await db.collection("admin").find().toArray();
     const reservations = await db.collection("reservations").find().toArray();
     const services = await db.collection("services").find().toArray();
+    const images = await db.collection("Images").find().toArray();
+    const text = await db.collection("Text").find().toArray();
     res.status(200).json({
       status: 200,
       userInfo: userInfo,
       reservations: reservations,
       services: services,
+      images: images,
+      text: text,
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -137,6 +138,24 @@ const addTimeOff = async (req, res) => {
   }
 };
 
+const deleteImage = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const query = { _id: req.params._id };
+    await db.collection("Images").deleteOne(query);
+    res.status(200).json({ status: 200, data: query });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
+const getSlideshowImages = async (req, res) => {
+  res.status(200).json({ status: 200, message: "success" });
+};
 module.exports = {
   adminCheck,
   getUserInfo,
@@ -144,5 +163,6 @@ module.exports = {
   addReservation,
   addTimeOff,
   uploadImage,
-  getImages,
+  deleteImage,
+  getSlideshowImages,
 };

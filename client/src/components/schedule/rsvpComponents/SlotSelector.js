@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
 import { filterSlotBeforeFor2Duration } from "../../helpers";
-import moment from "moment";
+// import moment from "moment";
 const SlotSelector = ({
   selectedSlot,
   selectedBarberForm,

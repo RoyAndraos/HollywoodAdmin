@@ -23,7 +23,7 @@ const Schedule = () => {
   );
 };
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin: 20px 20px 30px 20px;

@@ -492,6 +492,8 @@ export const filterSlotBeforeFor2Duration = (slot) => {
     }
   }
 };
+
+
 const timeToPercent = [
   { time: "9:00am", percent: 0 },
   { time: "9:15am", percent: 2.075 },
@@ -552,6 +554,34 @@ export const convertRsvpTimeToTopProp = (startTime, endTime) => {
 
   return { top, height };
 };
+
+export const getEndTimeEditRsvp = (lastSlot)=>{
+  let lastSlotMinute = parseInt(lastSlot.split(":")[1]);
+  let lastSlotHour = parseInt(lastSlot.split(":")[0]); 
+  const prefix = lastSlot.slice( -2);
+  if(lastSlotMinute === 45 && lastSlotHour !== 12){
+    const newHour = parseInt(lastSlot.split(":")[0]) + 1;
+    if(newHour.toString().length === 2){
+    return newHour.toString() + ":00" + prefix;
+  } else{
+    return "0" + newHour.toString() + ":00" + prefix;
+  }
+  } else if(lastSlotHour === 12 && lastSlotMinute === 45){
+    lastSlotHour = 1;
+    if(lastSlotHour.toString().length === 2){
+    return lastSlotHour.toString() + ":00pm";
+  } else{
+    return "0" + lastSlotHour.toString() + ":00pm";
+  }
+  } else{
+    const newMinute = lastSlotMinute + 15;
+    if(newMinute.toString().length === 2){
+    return lastSlotHour.toString() + ":" + newMinute.toString() + prefix;
+  } else{
+    return "0"+lastSlotHour.toString() + ":" + newMinute.toString() + prefix;
+  }
+  }
+}
 
 // 8.3% is 1 hour
 // 2.075% is 15 minutes

@@ -12,10 +12,11 @@ import { styled } from "styled-components";
 // import "react-big-calendar/lib/addons/dragAndDrop/styles.scss"; // If using DnD
 import "../rsvpComponents/style.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
+import { useNavigate } from "react-router-dom";
 const localizer = momentLocalizer(moment);
 
 const NewCalendar = ({ setCurrentView }) => {
+  const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
   const events = reservations.map((reservation) => {
     let time = reservation.slot[0].split("-")[1];
@@ -27,6 +28,8 @@ const NewCalendar = ({ setCurrentView }) => {
     return {
       title: reservation.barber,
       service: reservation.service.name,
+      _id: reservation._id,
+      date: reservation.date,
       start: new Date(constructedDate),
       end: new Date(endTime),
     };
@@ -42,6 +45,19 @@ const NewCalendar = ({ setCurrentView }) => {
   const maxTime = new Date();
   maxTime.setHours(21, 0, 0);
 
+  const handleEventClick = (event) => {
+    console.log("Event clicked:", event);
+    navigate(`/dashboard/schedule/${event._id}`);
+  };
+
+  const CustomEventComponent = ({ event }) => {
+    return (
+      <div onClick={() => handleEventClick(event)}>
+        {event.service} {event.title}
+      </div>
+    );
+  };
+
   return (
     <Wrapper>
       <StyledCalendar
@@ -52,6 +68,9 @@ const NewCalendar = ({ setCurrentView }) => {
         endAccessor="end"
         min={minTime}
         max={maxTime}
+        components={{
+          event: CustomEventComponent, // Use your custom event component
+        }}
         onView={(view) => setCurrentView(view)}
       />
     </Wrapper>

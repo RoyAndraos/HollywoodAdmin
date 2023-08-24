@@ -9,7 +9,7 @@ import AvailabilityComponent from "./components/availability/AvailabilityCompone
 import Check from "./components/login/Check";
 import NotGrant from "./components/login/NotGrant";
 import TakeTimeOff from "./components/availability/TakeTimeOff";
-import EditRsvp from "./components/schedule/rsvpComponents/EditRsvp";
+import EditRsvp from "./components/schedule/rsvpComponents/editRsvpFolder/EditRsvp";
 
 const App = () => {
   const location = useLocation();

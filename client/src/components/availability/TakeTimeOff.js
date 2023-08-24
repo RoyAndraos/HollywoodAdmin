@@ -4,11 +4,22 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
 import { UserContext } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 const TakeTimeOff = () => {
   const { barberId } = useParams();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, setUserInfo } = useContext(UserContext);
+  const navigate = useNavigate();
+  const barber = userInfo.filter((user) => {
+    return user._id === barberId;
+  });
+  const formatDateString = (dateString) => {
+    const date = new Date(dateString);
+    const options = { weekday: "short", day: "numeric", month: "short" };
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  };
   useEffect(() => {
     if (startDate !== null && endDate !== null) {
       if (endDate < startDate) {
@@ -18,26 +29,66 @@ const TakeTimeOff = () => {
         setEndDate(newEndDate);
       }
     }
-  }, [startDate, endDate]);
+    console.log(startDate, endDate);
+  }, [startDate, endDate, userInfo]);
   const handleDateChange = (date) => {
     if (startDate === null) {
-      setStartDate(date);
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      setStartDate(startOfDay);
     } else if (startDate !== null && endDate === null) {
-      setEndDate(date);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      setEndDate(endOfDay);
     } else if (startDate !== null && endDate !== null) {
       if (endDate < startDate) {
         const newEndDate = startDate;
         const newStartDate = endDate;
-        setStartDate(newStartDate);
-        setEndDate(newEndDate);
+        const startOfDay = new Date(newStartDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(newEndDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        setStartDate(startOfDay);
+        setEndDate(endOfDay);
       } else {
-        setStartDate(date);
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 1);
+        setStartDate(startOfDay);
         setEndDate(null);
       }
     } else {
-      setStartDate(date);
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      setStartDate(startOfDay);
       setEndDate(null);
     }
+  };
+  const handleDeleteTimeOff = (timeOff) => {
+    fetch("/deleteTimeOff", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        _id: barberId,
+        startDate: timeOff.startDate,
+        endDate: timeOff.endDate,
+      }),
+    });
+
+    const updatedUserList = userInfo.map((user) => {
+      if (user._id === barberId) {
+        const updatedTimeOffList = user.time_off.filter((to) => {
+          return (
+            to.startDate !== timeOff.startDate || to.endDate !== timeOff.endDate
+          );
+        });
+        return { ...user, time_off: updatedTimeOffList };
+      }
+      return user;
+    });
+
+    setUserInfo(updatedUserList);
   };
 
   const handleSubmitTimeOff = (date1, date2) => {
@@ -52,26 +103,36 @@ const TakeTimeOff = () => {
         endDate: date2,
       }),
     });
-    const userToBeUpdated = userInfo.filter((user) => {
-      return user._id === barberId;
+    const updatedUserList = userInfo.map((user) => {
+      if (user._id === barberId) {
+        return {
+          ...user,
+          time_off: [
+            ...user.time_off,
+            {
+              startDate: date1,
+              endDate: date2,
+            },
+          ],
+        };
+      }
+      return user;
     });
-    const userIndex = userInfo.findIndex((user) => {
-      return user._id === barberId;
-    });
-    console.log(userToBeUpdated);
-    userToBeUpdated[0].time_off.push({
-      startDate: date1.toDateString(),
-      endDate: date2.toDateString(),
-    });
-    userInfo[userIndex] = userToBeUpdated[0];
-    console.log(userInfo);
-  };
 
+    setUserInfo(updatedUserList);
+  };
+  const handleExit = (e) => {
+    e.preventDefault();
+    navigate("/dashboard/availability");
+  };
   return (
     <Wrapper>
+      <BackButton onClick={(e) => handleExit(e)}>
+        <FaArrowLeft />
+      </BackButton>
       <CalendarLabelContainer>
         <DatePicker
-          selected={startDate}
+          selected={new Date(startDate.setHours(0, 0, 0, 0))}
           onChange={handleDateChange}
           minDate={new Date()}
           key={barberId}
@@ -95,6 +156,17 @@ const TakeTimeOff = () => {
         >
           Submit
         </Submit>
+      </ButtonWrapper>
+      <ButtonWrapper>
+        {barber[0].time_off.map((timeOff) => {
+          return (
+            <TimeOffContainer key={timeOff.startDate}>
+              {formatDateString(timeOff.startDate)} -{" "}
+              {formatDateString(timeOff.endDate)}
+              <Delete onClick={() => handleDeleteTimeOff(timeOff)}>X</Delete>
+            </TimeOffContainer>
+          );
+        })}
       </ButtonWrapper>
     </Wrapper>
   );
@@ -138,7 +210,7 @@ const Wrapper = styled.div`
 const CalendarContainer = styled.div`
   transform: scale(1.4);
   border-radius: 10px;
-  left: 10vw;
+  left: 5vw;
   top: -15vh;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
     rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
@@ -175,7 +247,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
   width: 30%;
   height: 40%;
   padding: 5vh 0 5vh 0;
@@ -198,4 +270,43 @@ const SelectedEndDate = styled.div`
   padding: 5px 10px 5px 10px;
   border-radius: 5px;
 `;
+
+const BackButton = styled.button`
+  position: absolute;
+  font-size: 3rem;
+  border: none;
+  background-color: transparent;
+  color: #035e3f;
+  opacity: 0.6;
+  transition: 0.3s ease-in-out;
+  top: 5vh;
+  left: 5vw;
+  &:hover {
+    cursor: pointer;
+    opacity: 1;
+  }
+`;
+const TimeOffContainer = styled.div`
+  width: 70%;
+  border: 2px solid #035e3f;
+  border-radius: 10px;
+  padding: 10px;
+  position: relative;
+`;
+const Delete = styled.button`
+  background-color: #ad0606;
+  border: none;
+  border-radius: 10px;
+  color: whitesmoke;
+  position: absolute;
+  padding: 5px 8px 5px 8px;
+  top: 5px;
+  right: 5px;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+`;
+
 export default TakeTimeOff;

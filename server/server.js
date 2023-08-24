@@ -91,6 +91,7 @@ const updateAvailability = async (req, res) => {
 const addReservation = async (req, res) => {
   const client = new MongoClient(MONGO_URI, options);
   const { reservation } = req.body;
+  const _id = uuid();
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -102,8 +103,9 @@ const addReservation = async (req, res) => {
       service: reservation.service,
       date: reservation.date,
       slot: reservation.slot,
+      _id: _id,
     });
-    res.status(200).json({ status: 200, message: "success" });
+    res.status(200).json({ status: 200, message: "success", data: _id });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {
@@ -153,6 +155,32 @@ const deleteImage = async (req, res) => {
   }
 };
 
+const deleteTimeOff = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const { _id, startDate, endDate } = req.body;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const query = {
+      _id: new ObjectId(`${_id}`),
+    };
+    const newValues = {
+      $pull: {
+        time_off: {
+          startDate: startDate,
+          endDate: endDate,
+        },
+      },
+    };
+    await db.collection("admin").updateOne(query, newValues);
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 const getSlideshowImages = async (req, res) => {
   res.status(200).json({ status: 200, message: "success" });
 };
@@ -165,4 +193,5 @@ module.exports = {
   uploadImage,
   deleteImage,
   getSlideshowImages,
+  deleteTimeOff,
 };

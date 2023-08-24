@@ -13,6 +13,7 @@ const {
   uploadImage,
   getSlideshowImages,
   deleteImage,
+  deleteTimeOff,
 } = require("./server");
 
 // Create the express app
@@ -45,6 +46,6 @@ app.post("/checkIfAdmin", adminCheck);
 app.patch("/updateAvailability", updateAvailability);
 app.patch("/addTimeOff", addTimeOff);
 app.delete("/images/:_id", deleteImage);
-
+app.delete("/deleteTimeOff", deleteTimeOff);
 // Start the server
 app.listen(PORT, () => console.info(`Listening on port ${PORT}`));

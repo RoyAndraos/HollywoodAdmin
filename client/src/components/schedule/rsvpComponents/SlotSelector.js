@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
 import { filterSlotBeforeFor2Duration } from "../../helpers";
-// import moment from "moment";
+import moment from "moment";
 const SlotSelector = ({
   selectedSlot,
   selectedBarberForm,
@@ -18,22 +18,22 @@ const SlotSelector = ({
 }) => {
   const { reservations } = useContext(ReservationContext);
   const [availableSlots, setAvailableSlots] = useState([]);
+  const [barberIsOff, setBarberIsOff] = useState(false);
   const formatDate = (date) => {
     const options = { month: "short", weekday: "short", day: "numeric" };
     return date.toLocaleDateString(undefined, options);
   };
   useEffect(() => {
+    console.log(barberIsOff);
     if (Object.keys(selectedBarberForm).length === 0) {
       return;
     } else {
-      //if (selectedBarberForm.time_off.length !== 0) {
-      //  console.log(selectedBarberForm.time_off[0].startDate);
-      //  const startDate = moment(selectedBarberForm.time_off[0].startDate);
-      //  const endDate = moment(selectedBarberForm.time_off[0].endDate);
-      //  const timeOff = moment(selectedDate).isBetween(startDate, endDate);
-      //  console.log(startDate, endDate);
-      //  console.log(timeOff);
-      //}
+      if (selectedBarberForm.time_off.length !== 0) {
+        const startDate = moment(selectedBarberForm.time_off[0].startDate)._i;
+        const endDate = moment(selectedBarberForm.time_off[0].endDate)._i;
+        const timeOff = moment(selectedDate).isBetween(startDate, endDate);
+        setBarberIsOff(timeOff);
+      }
       const originalAvailableSlots = selectedBarberForm.availability
         .filter((slot) =>
           slot.slot.includes(handleFormatDateForSlots(selectedDate))
@@ -82,7 +82,14 @@ const SlotSelector = ({
         );
       }
     }
-  }, [selectedBarberForm, reservations, selectedDate, selectedService]);
+  }, [
+    selectedBarberForm,
+    reservations,
+    selectedDate,
+    selectedService,
+    barberIsOff,
+  ]);
+
   const handleFormatDateForSlots = (date) => {
     const options = { weekday: "short" };
     return date.toLocaleDateString(undefined, options);
@@ -95,7 +102,7 @@ const SlotSelector = ({
           <SlotContainer>
             {selectedService !== "" &&
             Object.keys(selectedBarberForm).length !== 0 ? (
-              availableSlots.length !== 0 ? (
+              availableSlots.length !== 0 && !barberIsOff ? (
                 availableSlots.map((slot) => {
                   return (
                     <Slot

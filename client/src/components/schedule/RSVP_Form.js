@@ -65,7 +65,6 @@ const AddReservation = () => {
       };
     }
 
-    setReservations([...reservations, reservation]);
     fetch("/addReservation", {
       method: "POST",
       headers: {
@@ -74,7 +73,12 @@ const AddReservation = () => {
       body: JSON.stringify({
         reservation: reservation,
       }),
-    });
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        reservation._id = data.data;
+        setReservations([...reservations, reservation]);
+      });
 
     setSelectedSlot("");
     setBarber({});

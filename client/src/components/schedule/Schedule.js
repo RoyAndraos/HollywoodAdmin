@@ -16,7 +16,7 @@ const Schedule = () => {
           currentView={currentView}
         />
       </Wrapper>
-      <Wrapper key={"rsvp"}>
+      <Wrapper key={"rsvp"} style={{ height: "fit-content" }}>
         <AddReservation />
       </Wrapper>
     </div>

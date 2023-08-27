@@ -181,9 +181,51 @@ const deleteTimeOff = async (req, res) => {
   }
 };
 
+const updateReservation = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const reservation = req.body;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const query = { _id: reservation._id };
+    const newValues = {
+      $set: {
+        _id: reservation._id,
+        name: reservation.name,
+        email: reservation.email,
+        number: reservation.number,
+        barber: reservation.barber,
+        service: reservation.service,
+        date: reservation.date,
+        slot: reservation.slot,
+      },
+    };
+    await db.collection("reservations").updateOne(query, newValues);
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+const deleteReservation = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const _id = req.params._id;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db.collection("reservations").deleteOne({ _id: _id });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
 const getSlideshowImages = async (req, res) => {
   res.status(200).json({ status: 200, message: "success" });
 };
+
 module.exports = {
   adminCheck,
   getUserInfo,
@@ -194,4 +236,6 @@ module.exports = {
   deleteImage,
   getSlideshowImages,
   deleteTimeOff,
+  updateReservation,
+  deleteReservation,
 };

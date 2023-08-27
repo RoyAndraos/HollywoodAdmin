@@ -24,7 +24,6 @@ const SlotSelector = ({
     return date.toLocaleDateString(undefined, options);
   };
   useEffect(() => {
-    console.log(barberIsOff);
     if (Object.keys(selectedBarberForm).length === 0) {
       return;
     } else {
@@ -96,7 +95,7 @@ const SlotSelector = ({
   };
   return (
     <LabelInputWrapper>
-      <StyledLabel>Time Slot:</StyledLabel>
+      <StyledLabel>Time Slot</StyledLabel>
       <SlotContainer>
         {selectedSlot.length === 0 ? (
           <SlotContainer>
@@ -141,7 +140,9 @@ const SlotSelector = ({
     </LabelInputWrapper>
   );
 };
-
+const SlotAvail = styled.div`
+  width: 10vw;
+`;
 const SelectedSlot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
@@ -150,7 +151,7 @@ const SelectedSlot = styled.div`
   transition: 0.3s ease-in-out;
   padding: 5px 0 5px 0;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  width: 20vw;
+  width: 30vw;
   &:hover {
     cursor: pointer;
     background-color: #ccc;
@@ -159,18 +160,18 @@ const SelectedSlot = styled.div`
 const SlotContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 20vw;
+  width: 30vw;
   justify-content: space-evenly;
   line-height: 30px;
 `;
 
-const Slot = styled.div`
+export const Slot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
   text-align: center;
   margin: 5px 5px 0 0;
   transition: 0.3s ease-in-out;
-  width: 5vw;
+  width: 6vw;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   &:hover {
     cursor: pointer;

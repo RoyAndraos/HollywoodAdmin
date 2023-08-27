@@ -10,12 +10,13 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
   const { services } = useContext(ServicesContext);
   return (
     <LabelInputWrapper>
-      <StyledLabel>Service:</StyledLabel>
+      <StyledLabel>Service</StyledLabel>
       {selectedService === "" ? (
         <div>
           {services.map((service) => {
             return (
               <BarberSlot
+                style={{ width: "30vw", padding: "15px 0 15px 0;" }}
                 key={service._id}
                 onClick={() => {
                   setSelectedService(service);
@@ -28,7 +29,16 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
         </div>
       ) : (
         <SelectedSlotContainer>
-          <BarberSlot onClick={() => setSelectedService("")}>
+          <BarberSlot
+            style={{
+              width: "30vw",
+              height: "3vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onClick={() => setSelectedService("")}
+          >
             {selectedService.name}
           </BarberSlot>
         </SelectedSlotContainer>

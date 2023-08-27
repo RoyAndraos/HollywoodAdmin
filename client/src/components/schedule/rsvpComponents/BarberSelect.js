@@ -7,12 +7,13 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
   const { userInfo } = useContext(UserContext);
   return (
     <LabelInputWrapper>
-      <StyledLabel>Barber:</StyledLabel>
+      <StyledLabel>Barber</StyledLabel>
       <div>
         {Object.keys(selectedBarberForm).length === 0 ? (
           userInfo.map((barber) => {
             return (
               <BarberSlot
+                style={{ width: "30vw" }}
                 key={barber.given_name}
                 onClick={() => {
                   setBarber(barber);
@@ -23,7 +24,7 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
             );
           })
         ) : (
-          <BarberSlot onClick={() => setBarber({})}>
+          <BarberSlot style={{ width: "30vw" }} onClick={() => setBarber({})}>
             {selectedBarberForm.given_name}
           </BarberSlot>
         )}

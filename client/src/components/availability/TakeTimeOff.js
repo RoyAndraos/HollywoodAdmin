@@ -158,15 +158,19 @@ const TakeTimeOff = () => {
         </Submit>
       </ButtonWrapper>
       <ButtonWrapper>
-        {barber[0].time_off.map((timeOff) => {
-          return (
-            <TimeOffContainer key={timeOff.startDate}>
-              {formatDateString(timeOff.startDate)} -{" "}
-              {formatDateString(timeOff.endDate)}
-              <Delete onClick={() => handleDeleteTimeOff(timeOff)}>X</Delete>
-            </TimeOffContainer>
-          );
-        })}
+        {barber[0].time_off.length !== 0 ? (
+          barber[0].time_off.map((timeOff) => {
+            return (
+              <TimeOffContainer key={timeOff.startDate}>
+                {formatDateString(timeOff.startDate)} -{" "}
+                {formatDateString(timeOff.endDate)}
+                <Delete onClick={() => handleDeleteTimeOff(timeOff)}>X</Delete>
+              </TimeOffContainer>
+            );
+          })
+        ) : (
+          <div>No time off scheduled</div>
+        )}
       </ButtonWrapper>
     </Wrapper>
   );
@@ -210,7 +214,7 @@ const Wrapper = styled.div`
 const CalendarContainer = styled.div`
   transform: scale(1.4);
   border-radius: 10px;
-  left: 5vw;
+  left: 10vw;
   top: -15vh;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
     rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
@@ -249,7 +253,7 @@ const ButtonWrapper = styled.div`
   align-items: center;
   justify-content: space-evenly;
   width: 30%;
-  height: 40%;
+  height: 70%;
   padding: 5vh 0 5vh 0;
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,

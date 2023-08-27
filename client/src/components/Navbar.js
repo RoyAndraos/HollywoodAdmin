@@ -15,6 +15,8 @@ const NavBar = () => {
   );
 };
 const Wrapper = styled.div`
+  font-family: "Roboto", sans-serif;
+  letter-spacing: 2px;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;

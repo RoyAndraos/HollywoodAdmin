@@ -1,14 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
 import styled from "styled-components";
-const BarberFormEdit = ({
-  barberEdit,
-  setBarberEdit,
-  reservation,
-  handleChange,
-}) => {
+const BarberFormEdit = ({ reservation, handleChange }) => {
   const { userInfo } = useContext(UserContext);
+  const [barberEdit, setBarberEdit] = useState(false);
   return (
     <LabelInfoWrapper>
       <StyledLabel>Barber: </StyledLabel>

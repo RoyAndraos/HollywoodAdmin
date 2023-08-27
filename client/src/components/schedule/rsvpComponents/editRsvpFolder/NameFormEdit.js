@@ -1,12 +1,8 @@
-import React from "react";
+import { useState } from "react";
 import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
 import styled from "styled-components";
-const NameFormEdit = ({
-  handleChange,
-  reservation,
-  setClientNameEdit,
-  clientNameEdit,
-}) => {
+const NameFormEdit = ({ handleChange, reservation }) => {
+  const [clientNameEdit, setClientNameEdit] = useState(false);
   return (
     <LabelInfoWrapper>
       <StyledLabel>Client Name: </StyledLabel>

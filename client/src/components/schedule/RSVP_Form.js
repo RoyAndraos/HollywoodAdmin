@@ -169,7 +169,7 @@ const AddReservation = () => {
         }}
       >
         <LabelInputWrapper>
-          <StyledLabel>Date:</StyledLabel>
+          <StyledLabel>Date</StyledLabel>
           <CustomDatePicker
             selected={selectedDate}
             onChange={handleDateChange}
@@ -193,7 +193,7 @@ const AddReservation = () => {
           setSelectedSlot={setSelectedSlot}
         />
         <LabelInputWrapper>
-          <StyledLabel>Client Name:</StyledLabel>
+          <StyledLabel>Client Name</StyledLabel>
           <SelectedSlotContainer>
             <StyledInput
               type="text"
@@ -208,7 +208,7 @@ const AddReservation = () => {
           {nameError !== "" && <ErrorMessage>{nameError}</ErrorMessage>}
         </LabelInputWrapper>
         <LabelInputWrapper>
-          <StyledLabel>Client Email:</StyledLabel>
+          <StyledLabel>Client Email</StyledLabel>
           <SelectedSlotContainer>
             <StyledInput
               type="text"
@@ -222,7 +222,7 @@ const AddReservation = () => {
           {emailError !== "" && <ErrorMessage>{emailError}</ErrorMessage>}
         </LabelInputWrapper>
         <LabelInputWrapper>
-          <StyledLabel>Client Number:</StyledLabel>
+          <StyledLabel>Client Number</StyledLabel>
           <SelectedSlotContainer>
             <StyledInput
               type="text"
@@ -256,12 +256,15 @@ const fadeIn = keyframes`
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
 `;
 
 const StyledForm = styled.form`
   display: flex;
+  border: 1px solid #ccc;
+  width: 100%;
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   font-family: "Roboto", sans-serif;
 `;
@@ -271,7 +274,7 @@ const CustomDatePicker = styled(DatePicker)`
   left: 50%;
   transform: translateX(-50%);
   border: 1px solid #ccc;
-  width: 20vw;
+  width: 30vw;
   padding: 5px 0 5px 0;
   font-size: 16px;
   caret-color: transparent;
@@ -310,7 +313,6 @@ export const StyledLabel = styled.label`
   padding-bottom: 5px;
   border-radius: -5px;
   width: 100%;
-  text-align: center;
   border-bottom: 3px solid #035e3f;
   color: #035e3f;
 `;
@@ -334,7 +336,7 @@ const StyledInput = styled.input`
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   font-size: 15px;
-  width: 20vw;
+  width: 30vw;
   padding: 10px 0 10px 0;
   &:hover {
     background-color: #ccc;

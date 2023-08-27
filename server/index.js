@@ -14,6 +14,8 @@ const {
   getSlideshowImages,
   deleteImage,
   deleteTimeOff,
+  updateReservation,
+  deleteReservation,
 } = require("./server");
 
 // Create the express app
@@ -45,7 +47,9 @@ app.post("/addReservation", addReservation);
 app.post("/checkIfAdmin", adminCheck);
 app.patch("/updateAvailability", updateAvailability);
 app.patch("/addTimeOff", addTimeOff);
+app.patch("/updateReservation", updateReservation);
 app.delete("/images/:_id", deleteImage);
 app.delete("/deleteTimeOff", deleteTimeOff);
+app.delete("/deleteReservation/:_id", deleteReservation);
 // Start the server
 app.listen(PORT, () => console.info(`Listening on port ${PORT}`));

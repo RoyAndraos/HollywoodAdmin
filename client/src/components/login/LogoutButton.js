@@ -27,7 +27,7 @@ const StyledLogout = styled.button`
   transition: all 0.3s ease-in-out;
   background-color: transparent;
   border: none;
-  font-family: "Brandon Grotesque black", serif;
+  font-family: sans-serif;
   font-size: 20px;
   font-weight: 600;
   &:hover {

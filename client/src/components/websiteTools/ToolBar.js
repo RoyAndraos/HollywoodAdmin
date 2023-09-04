@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 const ToolBar = ({ selectedOption, setSelectedOption }) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
-    <Wrapper>
+    <Wrapper isscrolled={isScrolled}>
       <StyledNavButton
         key={"barberProfiles"}
         onClick={() => setSelectedOption("barberProfiles")}
@@ -29,14 +46,16 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
 };
 
 const Wrapper = styled.div`
-  height: 90vh;
+  height: ${(props) =>
+    props.isscrolled.toString() === "true" ? "100vh" : "90vh"};
   width: 20%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   position: fixed;
-  top: 9vh;
+  top: ${(props) => (props.isscrolled.toString() === "true" ? "0" : "9vh")};
+  transition: 0.3s ease-in-out;
 `;
 const StyledNavButton = styled.button`
   background-color: ${(props) =>

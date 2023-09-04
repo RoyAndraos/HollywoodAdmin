@@ -16,7 +16,7 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
           {services.map((service) => {
             return (
               <BarberSlot
-                style={{ width: "30vw", padding: "15px 0 15px 0;" }}
+                style={{ width: "30vw", padding: "15px 0 15px 0" }}
                 key={service._id}
                 onClick={() => {
                   setSelectedService(service);

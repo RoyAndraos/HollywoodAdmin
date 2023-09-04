@@ -104,8 +104,6 @@
     color: whitesmoke;
 }
 /* EVENTS */
-.rbc-event{
-}
 /* DAYVIEW */
 /* times */
 .rbc-time-content{
@@ -151,16 +149,26 @@ height: 0;
 .rbc-agenda-table{
     width: 100%;
     text-align: center;
-
 }
+
+element.style {
+    width: 102.25px;
+}
+.rbc-agenda-view table.rbc-agenda-table thead > tr > th {
+   width: 33% !important;
+   padding: 10px 0 10px 0 !important;
+   text-align: center !important;
+   font-size: 1.1rem !important;
+  }
+
 .rbc-agenda-date-cell{
-    border: #035e3f 1px solid;
+    width: 33% !important;
 }
 .rbc-agenda-time-cell{
-    border: #035e3f 1px solid;
+    width: 33% !important;
 }
 .rbc-agenda-event-cell{
-    border: #035e3f 1px solid;
+    width: 33% !important;
 }
 .rbc-time-slot{
     border: #035e3f 1px solid;

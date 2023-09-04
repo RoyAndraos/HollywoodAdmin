@@ -140,9 +140,6 @@ const SlotSelector = ({
     </LabelInputWrapper>
   );
 };
-const SlotAvail = styled.div`
-  width: 10vw;
-`;
 const SelectedSlot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;

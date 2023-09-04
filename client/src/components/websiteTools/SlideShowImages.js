@@ -5,30 +5,43 @@ import ConfirmDelete from "./ConfirmDelete";
 import ImageInput from "./SlideshowInput";
 const SlideShowImages = () => {
   const { images } = useContext(ImageContext);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showDeleteConfirmations, setShowDeleteConfirmations] = useState(
+    images.map(() => false)
+  );
   const [selectedImageToDelete, setSelectedImageToDelete] = useState("");
-  const handleDeletePress = (image) => {
-    setConfirmDelete(!confirmDelete);
+
+  const handleDeletePress = (image, index) => {
+    const newShowDeleteConfirmations = [...showDeleteConfirmations];
+    newShowDeleteConfirmations[index] = true;
+    setShowDeleteConfirmations(newShowDeleteConfirmations);
     setSelectedImageToDelete(image);
   };
   return (
-    <Container>
-      <h1>Slideshow Images</h1>
+    <Container key={"slideshow"}>
+      <Title>Slideshow Images</Title>
       <PreviewWrapper key={"slideshow"}>
-        <label>Preview</label>
         {images !== [] &&
-          images.map((image) => {
+          images.map((image, index) => {
             if (image.filename === "slideShow") {
-              console.log(image._id);
               return (
                 <ImageWrapper key={image._id}>
                   <StyledImage src={image.src} alt={image._id} />
-                  <DeleteButton onClick={() => handleDeletePress(image._id)}>
+                  <DeleteButton
+                    key={image._id}
+                    onClick={() => handleDeletePress(image._id, index)}
+                  >
                     Delete
                   </DeleteButton>
-                  {confirmDelete && (
+                  {showDeleteConfirmations[index] && (
                     <ConfirmDelete
-                      setConfirmDelete={setConfirmDelete}
+                      key={image._id}
+                      setConfirmDelete={(value) => {
+                        const newShowDeleteConfirmations = [
+                          ...showDeleteConfirmations,
+                        ];
+                        newShowDeleteConfirmations[index] = value;
+                        setShowDeleteConfirmations(newShowDeleteConfirmations);
+                      }}
                       selectedImageToDelete={selectedImageToDelete}
                     />
                   )}
@@ -39,31 +52,64 @@ const SlideShowImages = () => {
             }
           })}
       </PreviewWrapper>
-      <div>
-        <label>Add Image</label>
+      <InputWrapper>
+        <Title
+          key={"add image"}
+          style={{
+            borderBottom: "none",
+            textDecoration: "underline",
+            fontStyle: "normal",
+          }}
+        >
+          Add Image
+        </Title>
         <ImageInput filename={"slideShow"} key={"slideshowInput"} />
-      </div>
+      </InputWrapper>
     </Container>
   );
 };
+
+export const Title = styled.h1`
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  color: #011c13;
+  font-style: italic;
+  letter-spacing: 0.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #011c13;
+`;
 const Container = styled.div`
   width: 100%;
-  height: 80vh;
+  height: fit-content;
+  padding-bottom: 2rem;
   margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  border: 2px solid black;
+  border-radius: 0.5rem;
 `;
 const PreviewWrapper = styled.div`
-  height: 20vh;
+  height: 45%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 const StyledImage = styled.img`
   width: 100%;
 `;
 const ImageWrapper = styled.div`
   position: relative;
-  width: 250px;
+  width: 220px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 0 1rem 0 1rem;
 `;
 const DeleteButton = styled.button`
   position: absolute;
@@ -75,5 +121,20 @@ const DeleteButton = styled.button`
   color: white;
   font-size: 0.8rem;
   border-radius: 0.5rem;
+  transition: 0.3s ease-in-out;
+  &:hover {
+    cursor: pointer;
+    background-color: #a41f1f;
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+const InputWrapper = styled.div`
+  width: 100%;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 export default SlideShowImages;

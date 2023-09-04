@@ -23,14 +23,14 @@ const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
       <Question>Are you sure?</Question>
       <ButtonWrapper>
         <Button key={"no"} name="no" onClick={() => setConfirmDelete(false)}>
-          Nope!
+          No
         </Button>
         <Button
           key={"yes"}
           name="yes"
           onClick={() => handleDeleteImage(selectedImageToDelete)}
         >
-          Yes, delete.
+          Yes
         </Button>
       </ButtonWrapper>
     </Wrapper>
@@ -49,7 +49,7 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 const Question = styled.p`
-  font-size: 2rem;
+  font-size: 1.2rem;
   background-color: #f0f0f0;
   padding: 5px 10px 5px 10px;
   border-radius: 0.5rem;
@@ -66,10 +66,9 @@ const Button = styled.button`
   border: none;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
   background-color: ${(props) =>
-    props.name === "yes" ? "limegreen" : "#c02a2a"};
+    props.name === "yes" ? "#035e3f" : "#c02a2a"};
   font-weight: bold;
   color: white;
-  text-shadow: 7px 7px 7px black;
   transition: all 0.1s ease-in-out;
   &:hover {
     cursor: pointer;

@@ -24,15 +24,14 @@ const WebsiteTools = () => {
   );
 };
 const Wrapper = styled.div`
-  width: 100vw;
+  width: 95vw;
   position: relative;
 `;
 
 const RestWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width: 80%;
+  position: absolute;
+  right: -2%;
 `;
 
 export default WebsiteTools;

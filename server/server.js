@@ -1,6 +1,7 @@
 require("dotenv").config();
 const { MongoClient, ObjectId } = require("mongodb");
 const { v4: uuid } = require("uuid");
+const { initialAvailability } = require("./helpers");
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -21,9 +22,64 @@ const uploadImage = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    await db.collection("Images").insertOne(imageInfo);
-    res.status(202).json({ status: 200, imageInfo: imageInfo });
+    if (filename === "slideShow") {
+      await db.collection("Images").insertOne(imageInfo);
+      res.status(202).json({ status: 200, imageInfo: imageInfo });
+    } else if (filename === "about") {
+      await db.collection("Images").updateOne(
+        {
+          filename: "about",
+        },
+        {
+          $set: {
+            src: fileSrc,
+          },
+        }
+      );
+      res.status(202).json({ status: 200, imageInfo: imageInfo });
+    } else if (filename === "menu") {
+      await db.collection("Images").updateOne(
+        {
+          filename: "menu",
+        },
+        {
+          $set: {
+            src: fileSrc,
+          },
+        }
+      );
+      res.status(202).json({ status: 200, imageInfo: imageInfo });
+    } else {
+      await db.collection("admin").updateOne(
+        {
+          _id: new ObjectId(`${filename}`),
+        },
+        {
+          $set: {
+            picture: fileSrc,
+          },
+        }
+      );
+      res.status(202).json({ status: 200, imageInfo: imageInfo });
+    }
   } catch (err) {
+    console.error("Error updating image:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
+const deleteBarberProfile = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const { barberId } = req.body;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db.collection("admin").deleteOne({ _id: barberId });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    console.error("Error deleting barber profile:", err);
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     client.close();
@@ -222,8 +278,61 @@ const deleteReservation = async (req, res) => {
     client.close();
   }
 };
+
 const getSlideshowImages = async (req, res) => {
   res.status(200).json({ status: 200, message: "success" });
+};
+
+const updateBarberProfile = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const { barberId, barberInfo } = req.body;
+  console.log(req.body);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const query = { _id: new ObjectId(`${barberId}`) };
+    const newValues = {
+      $set: {
+        name: barberInfo.name,
+        availability: barberInfo.availability,
+        picture: barberInfo.picture,
+        bio: barberInfo.bio,
+      },
+    };
+    await db.collection("admin").updateOne(query, newValues);
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    console.error("Error updating barber profile:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
+const addBarber = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const barberInfo = req.body.barberInfo;
+  console.log(req.body);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const newBarber = await db.collection("admin").insertOne({
+      _id: new ObjectId(),
+      given_name: barberInfo.given_name,
+      family_name: barberInfo.family_name,
+      email: barberInfo.email,
+      picture: "",
+      description: barberInfo.description,
+      time_off: [],
+      availability: initialAvailability,
+    });
+    res.status(200).json({ status: 200, message: "success", data: newBarber });
+  } catch (err) {
+    console.error("Error adding barber:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
 };
 
 module.exports = {
@@ -238,4 +347,7 @@ module.exports = {
   deleteTimeOff,
   updateReservation,
   deleteReservation,
+  deleteBarberProfile,
+  updateBarberProfile,
+  addBarber,
 };

@@ -24,6 +24,8 @@ const Wrapper = styled.div`
   font-weight: 600;
   background-color: #035e3f;
   box-shadow: 0 0 10px black;
+  border-top-right-radius: 10px;
+  width: 99%;
 `;
 
 const StyledNavLink = styled(NavLink)`

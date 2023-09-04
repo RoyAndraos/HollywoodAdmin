@@ -1,24 +1,57 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { styled } from "styled-components";
 import ImageInput from "./SlideshowInput";
-
+import { Title } from "./SlideShowImages";
+import { ImageContext } from "../contexts/ImageContext";
 const AboutImage = () => {
-  return (
-    <Wrapper>
-      <h1>About Image</h1>
-      <PreviewWrapper key={"about"}>
-        <label>Preview</label>
-        {/* <img src={images["about"].src} alt={images["about"].name} /> */}
-      </PreviewWrapper>
-      <label>Replace About Image</label>
-      <ImageInput fileName={"about"} />
-    </Wrapper>
-  );
+  const { images } = useContext(ImageContext);
+  const [aboutImage, setAboutImage] = useState([]);
+  useEffect(() => {
+    const updatedAboutImage = images.filter(
+      (image) => image.filename === "about"
+    );
+    setAboutImage(updatedAboutImage);
+  }, [images]);
+
+  if (aboutImage.length === 0) return <p>loading...</p>;
+  else
+    return (
+      <Wrapper>
+        <Title>About Image</Title>
+        <PreviewWrapper key={"about"}>
+          {aboutImage.length !== 0 && (
+            <img src={aboutImage[0].src} alt={"about"} />
+          )}
+        </PreviewWrapper>
+        <Title
+          style={{
+            borderBottom: "none",
+            textDecoration: "underline",
+            fontStyle: "normal",
+          }}
+        >
+          Replace About Image
+        </Title>
+        <ImageInput filename={"about"} />
+      </Wrapper>
+    );
 };
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
-  border: 1px solid black;
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  padding-bottom: 2rem;
+  border: 2px solid black;
+  border-radius: 0.5rem;
 `;
-const PreviewWrapper = styled.div``;
+export const PreviewWrapper = styled.div`
+  width: 100%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+`;
 
 export default AboutImage;

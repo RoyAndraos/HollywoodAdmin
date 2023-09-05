@@ -13,7 +13,7 @@ const EditProfileForm = ({
     if (barber.given_name === "") {
       setText("Add");
     }
-  }, []);
+  }, [barber.given_name]);
   return (
     <EditProfileWrapper>
       <InputField props={barber.given_name === ""}>

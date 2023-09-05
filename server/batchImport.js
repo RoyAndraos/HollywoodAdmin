@@ -349,12 +349,19 @@ const services = [
     duration: "1",
   },
 ];
+const doc = [
+  {
+    _id: "about",
+    content:
+      "Step through our doors and discover the magic of timeless style, impeccable service, and an unforgettable grooming experience. We can't wait to welcome you into our chair! Your satisfaction is our top priority, and we look forward to exceeding your expectations every time you visit.",
+  },
+];
 const batchImport = async (data) => {
   const client = new MongoClient(MONGO_URI, options);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const result = await db.collection("services").insertMany(data);
+    const result = await db.collection("web_text").insertMany(data);
     if (result.acknowledged) {
       console.log("Success");
     } else {
@@ -367,4 +374,4 @@ const batchImport = async (data) => {
   client.close();
 };
 
-batchImport(services);
+batchImport(doc);

@@ -19,6 +19,7 @@ const {
   deleteBarberProfile,
   updateBarberProfile,
   addBarber,
+  updateText,
 } = require("./server");
 
 // Create the express app
@@ -53,6 +54,7 @@ app.patch("/updateAvailability", updateAvailability);
 app.patch("/addTimeOff", addTimeOff);
 app.patch("/updateReservation", updateReservation);
 app.patch("/updateBarberProfile", updateBarberProfile);
+app.patch("/updateText", updateText);
 app.delete("/images/:_id", deleteImage);
 app.delete("/deleteTimeOff", deleteTimeOff);
 app.delete("/deleteReservation/:_id", deleteReservation);

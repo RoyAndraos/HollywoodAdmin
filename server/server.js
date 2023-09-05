@@ -111,7 +111,7 @@ const getUserInfo = async (req, res) => {
     const reservations = await db.collection("reservations").find().toArray();
     const services = await db.collection("services").find().toArray();
     const images = await db.collection("Images").find().toArray();
-    const text = await db.collection("Text").find().toArray();
+    const text = await db.collection("web_text").find().toArray();
     res.status(200).json({
       status: 200,
       userInfo: userInfo,
@@ -335,6 +335,25 @@ const addBarber = async (req, res) => {
   }
 };
 
+const updateText = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const { textId, text } = req.body;
+  console.log(req.body);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db
+      .collection("web_text")
+      .updateOne({ _id: textId }, { $set: { content: text } });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    console.error("Error updating text:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 module.exports = {
   adminCheck,
   getUserInfo,
@@ -350,4 +369,5 @@ module.exports = {
   deleteBarberProfile,
   updateBarberProfile,
   addBarber,
+  updateText,
 };

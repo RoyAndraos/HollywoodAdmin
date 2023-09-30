@@ -25,14 +25,17 @@ const SlotSelector = ({
   };
   useEffect(() => {
     if (Object.keys(selectedBarberForm).length === 0) {
+      //if no barber is selected
       return;
     } else {
+      //check if barber is off
       if (selectedBarberForm.time_off.length !== 0) {
         const startDate = moment(selectedBarberForm.time_off[0].startDate)._i;
         const endDate = moment(selectedBarberForm.time_off[0].endDate)._i;
         const timeOff = moment(selectedDate).isBetween(startDate, endDate);
         setBarberIsOff(timeOff);
       }
+      // if barber is not off, filter available slots of the selected day
       const originalAvailableSlots = selectedBarberForm.availability
         .filter((slot) =>
           slot.slot.includes(handleFormatDateForSlots(selectedDate))
@@ -44,12 +47,13 @@ const SlotSelector = ({
             return "";
           }
         });
+      //get reserved slots of the selected day
       const todayReservations = reservations.filter((reservation) => {
         const today =
           formatDate(new Date(reservation.date)) === formatDate(selectedDate);
         return selectedBarberForm.given_name === reservation.barber && today;
       });
-
+      //filter reserved slots for the selected day for the selected barber out
       const filteredSlots = originalAvailableSlots.filter((slot) => {
         return !todayReservations.some((reservation) => {
           if (reservation.slot.length === 1) {
@@ -59,7 +63,7 @@ const SlotSelector = ({
           }
         });
       });
-
+      // if the service needs 2 slots, check if the slot after is available
       if (selectedService.duration === "2") {
         const removedBeforeSlotsFor2Duration = todayReservations.map(
           (reservation) => {

@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { getDailyHours } from "../helpers";
 import { UserContext } from "../contexts/UserContext";
 import { initialAvailability } from "../helpers";
+import { NotificationContext } from "../contexts/NotficationContext";
 const TimeSelect = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
+  const { setNotification } = useContext(NotificationContext);
   const [selectedAdminInfo, setSelectedAdminInfo] = useState(userInfo[0]);
   const [showBarbers, setShowBarbers] = useState(false);
   const [selectedCells, setSelectedCells] = useState(initialAvailability);
@@ -40,8 +42,14 @@ const TimeSelect = () => {
         _id: selectedAdminInfo._id,
         availability: selectedCells,
       }),
-    });
-    navigate("/dashboard/schedule");
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === 200) {
+          setNotification("Availability updated successfully");
+        }
+        navigate("/dashboard/schedule");
+      });
   };
   const resetSchedule = () => {
     setSelectedCells(initialAvailability);

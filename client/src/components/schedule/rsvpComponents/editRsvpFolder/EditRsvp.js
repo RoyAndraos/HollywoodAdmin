@@ -8,14 +8,11 @@ import BarberFormEdit from "./BarberFormEdit";
 import NameFormEdit from "./NameFormEdit";
 import ServiceFormEdit from "./ServiceFormEdit";
 import TimeSlotEdit from "./TimeSlotEdit";
-import Save_Delete from "./Save_Delete";
+import SaveDelete from "./SaveDelete";
 import NumberFormEdit from "./NumberFormEdit";
 import EmailFormEdit from "./EmailFormEdit";
-import { BiCopy } from "react-icons/bi";
 const EditRsvp = () => {
   const { reservations } = useContext(ReservationContext);
-  const [clientEmailEdit, setClientEmailEdit] = useState(false);
-
   const params = useParams()._id;
   const navigate = useNavigate();
   const thisReservation = reservations.filter(
@@ -43,9 +40,6 @@ const EditRsvp = () => {
         <IdWrapper>
           <StyledLabel>Reservation id</StyledLabel>
           <Id>{thisReservation[0]._id}</Id>
-          {/* <CopyButton>
-            <BiCopy />
-          </CopyButton> */}
         </IdWrapper>
         <NameFormEdit
           reservation={thisReservation[0]}
@@ -72,7 +66,7 @@ const EditRsvp = () => {
           handleChange={handleChange}
           reservation={thisReservation[0]}
         />
-        <Save_Delete formData={formData} />
+        <SaveDelete formData={formData} initialFormData={thisReservation[0]} />
       </SmallWrapper>
     </Wrapper>
   );
@@ -159,16 +153,5 @@ const IdWrapper = styled.div`
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #035e3f;
-`;
-const CopyButton = styled.button`
-  background-color: transparent;
-  border: none;
-  font-size: 1.6rem;
-  color: #035e3f;
-  transition: 0.3s ease-in-out;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.8;
-  }
 `;
 export default EditRsvp;

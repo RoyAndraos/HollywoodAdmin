@@ -1,7 +1,10 @@
 import React, { useContext } from "react";
 import { ImageContext } from "../contexts/ImageContext.js";
+import { NotificationContext } from "../contexts/NotficationContext.js";
 import { styled } from "styled-components";
+
 const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
+  const { setNotification } = useContext(NotificationContext);
   const { images, setImages } = useContext(ImageContext);
   const handleDeleteImage = (image) => {
     fetch(`/images/${image}`, {
@@ -11,12 +14,18 @@ const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
       },
     })
       .then((res) => {
-        setImages(
-          images.filter((image) => image._id !== selectedImageToDelete)
-        );
-        setConfirmDelete(false);
+        res.json();
       })
-      .catch((err) => console.log(err));
+      .then((result) => {
+        if (result.status === 200) {
+          setImages(
+            images.filter((image) => image._id !== selectedImageToDelete)
+          );
+          setConfirmDelete(false);
+          setNotification("Image deleted successfully");
+        }
+      })
+      .catch(() => setNotification("Something went wrong"));
   };
   return (
     <Wrapper>

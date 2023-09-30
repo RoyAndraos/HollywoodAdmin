@@ -54,6 +54,7 @@ const Wrapper = styled.div`
   justify-content: space-around;
   align-items: center;
   position: fixed;
+  border: none;
   top: ${(props) => (props.isscrolled.toString() === "true" ? "0" : "9vh")};
   transition: 0.3s ease-in-out;
 `;

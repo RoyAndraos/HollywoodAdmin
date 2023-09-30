@@ -2,9 +2,10 @@ import React, { useContext, useState } from "react";
 import { UserContext } from ".././contexts/UserContext";
 import styled from "styled-components";
 import EditProfileForm from "./EditProfileForm";
-
+import { NotificationContext } from "../contexts/NotficationContext";
 const BarberProfiles = () => {
   const { userInfo, setUserInfo } = useContext(UserContext);
+  const { setNotification } = useContext(NotificationContext);
   const [editModes, setEditModes] = useState({});
   const [barberInfo, setBarberInfo] = useState({});
   const [newBarber, setNewBarber] = useState({});
@@ -31,7 +32,12 @@ const BarberProfiles = () => {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
+        if (result.status === 200) {
+          setNotification("Barber profile updated successfully");
+        }
+      })
+      .catch(() => {
+        setNotification("Something went wrong");
       });
     // Update barberInfo in userInfo
     const updatedUserInfo = userInfo.map((barber) => {
@@ -58,7 +64,12 @@ const BarberProfiles = () => {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
+        if (result.status === 200) {
+          setNotification("Barber profile deleted successfully");
+        }
+      })
+      .catch(() => {
+        setNotification("Something went wrong");
       });
     // Update userInfo to remove deleted barber
     const updatedUserInfo = userInfo.filter((barber) => {
@@ -81,6 +92,10 @@ const BarberProfiles = () => {
       .then((result) => {
         newBarber._id = result.data.insertedId;
         setUserInfo((prevInfo) => [...prevInfo, newBarber]);
+        setNotification("Barber profile added successfully");
+      })
+      .catch(() => {
+        setNotification("Something went wrong");
       });
   };
   return (
@@ -146,6 +161,7 @@ const BarberProfiles = () => {
             given_name: "",
             picture: "",
           }}
+          newBarber={newBarber}
           key={"add"}
         />
       </BarberWrapper>

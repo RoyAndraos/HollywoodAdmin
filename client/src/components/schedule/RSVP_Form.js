@@ -6,8 +6,11 @@ import styled, { keyframes } from "styled-components";
 import { ReservationContext } from "../contexts/ReservationContext";
 import ServiceSelector from "./rsvpComponents/ServiceSelector";
 import SlotSelector from "./rsvpComponents/SlotSelector";
+import { NotificationContext } from "../contexts/NotficationContext";
+
 const AddReservation = () => {
   const { reservations, setReservations } = useContext(ReservationContext);
+  const { setNotification } = useContext(NotificationContext);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedBarberForm, setBarber] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -78,7 +81,11 @@ const AddReservation = () => {
       .then((data) => {
         reservation._id = data.data;
         setReservations([...reservations, reservation]);
-      });
+        if (data.status === 200) {
+          setNotification("Reservation added successfully");
+        }
+      })
+      .catch(() => setNotification("Something went wrong"));
 
     setSelectedSlot("");
     setBarber({});
@@ -226,7 +233,7 @@ const AddReservation = () => {
           <SelectedSlotContainer>
             <StyledInput
               type="text"
-              placeholder="(514) 430-4287 (Optional)"
+              placeholder="5144304287 (Optional)"
               name="number"
               onChange={(e) => {
                 handleChange(e, e.target.name);

@@ -1,16 +1,16 @@
 import { styled } from "styled-components";
 import NewCalendar from "./rsvpComponents/NewCalendar";
 import AddReservation from "../schedule/RSVP_Form";
-import { useState } from "react";
+// import { useState } from "react";
 
 const Schedule = () => {
-  const [currentView, setCurrentView] = useState("month"); // Add state for the current view
+  // const [currentView, setCurrentView] = useState("month"); // Add state for the current view
   return (
     <div>
       <Wrapper key={"calendar"}>
         <NewCalendar
-          setCurrentView={setCurrentView}
-          currentView={currentView}
+        // setCurrentView={setCurrentView}
+        // currentView={currentView}
         />
       </Wrapper>
       <Wrapper key={"rsvp"} style={{ height: "fit-content" }}>

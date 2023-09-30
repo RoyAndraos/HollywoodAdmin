@@ -2,13 +2,20 @@ import { useContext, useState } from "react";
 import { TextContext } from "../contexts/TextContext";
 import styled from "styled-components";
 import { Title } from "./SlideShowImages";
+import { NotificationContext } from "../contexts/NotficationContext";
 const SlideShowText = () => {
   const { text, setText } = useContext(TextContext);
+  const { setNotification } = useContext(NotificationContext);
   const initialSlideShowtext = text.filter(
     (text) => text._id === "slideshow"
   )[0].content;
+  const initialFrenchSlideShowtext = text.filter(
+    (text) => text._id === "slideshow"
+  )[0].french;
   const [slideShowText, setSlideShowText] = useState(initialSlideShowtext);
-
+  const [frenchSlideShowText, setFrenchSlideShowText] = useState(
+    initialFrenchSlideShowtext
+  );
   const handleSubmit = (e) => {
     e.preventDefault();
     fetch("/updateText", {
@@ -22,17 +29,25 @@ const SlideShowText = () => {
       }),
     })
       .then((res) => res.json())
-      .then(() => {
-        setText((prevText) => {
-          const updatedText = prevText.map((item) => {
-            if (item._id === "slideshow") {
-              return { ...item, content: slideShowText };
-            }
-            return item;
+      .then((result) => {
+        if (result.status === 200) {
+          setText((prevText) => {
+            const updatedText = prevText.map((item) => {
+              if (item._id === "slideshow") {
+                return {
+                  ...item,
+                  content: slideShowText,
+                  french: frenchSlideShowText,
+                };
+              }
+              return item;
+            });
+            return updatedText;
           });
-          return updatedText;
-        });
-      });
+          setNotification("Slideshow text updated successfully");
+        }
+      })
+      .catch(() => setNotification("Something went wrong"));
   };
 
   const handleChange = (e) => {
@@ -43,26 +58,56 @@ const SlideShowText = () => {
       return newText;
     });
   };
-
+  const handleChangeFrench = (e) => {
+    const { name, value } = e.target;
+    setFrenchSlideShowText((prevText) => {
+      const newText = [...prevText];
+      newText[name] = value;
+      return newText;
+    });
+  };
   return (
     <Wrapper>
       <Title>Slideshow Text</Title>
-      {slideShowText.map((elem, index) => (
-        <form key={index}>
-          <StyledInput
-            value={elem}
-            name={index}
-            onChange={(e) => handleChange(e)}
-            placeholder={elem}
-          />
-        </form>
-      ))}
+      <BothLangWrapper>
+        <FormWrapper key={"en"}>
+          <Language>English</Language>
+          {slideShowText.map((elem, index) => (
+            <StyledForm key={index + "english"}>
+              <StyledInput
+                key={"english" + index}
+                value={elem}
+                name={index}
+                onChange={(e) => handleChange(e)}
+                placeholder={elem}
+              />
+            </StyledForm>
+          ))}
+        </FormWrapper>
+        <FormWrapper key={"fr"}>
+          <Language>French</Language>
+          {frenchSlideShowText.map((elem, index) => (
+            <StyledForm key={index + "french"}>
+              <StyledInput
+                key={"french" + index}
+                value={elem}
+                name={index}
+                onChange={(e) => handleChangeFrench(e)}
+                placeholder={elem}
+              />
+            </StyledForm>
+          ))}
+        </FormWrapper>
+      </BothLangWrapper>
       <SaveButton
         onClick={(e) => handleSubmit(e)}
         disabled={
           initialSlideShowtext[0] === slideShowText[0] &&
           initialSlideShowtext[1] === slideShowText[1] &&
-          initialSlideShowtext[2] === slideShowText[2]
+          initialSlideShowtext[2] === slideShowText[2] &&
+          initialFrenchSlideShowtext[0] === frenchSlideShowText[0] &&
+          initialFrenchSlideShowtext[1] === frenchSlideShowText[1] &&
+          initialFrenchSlideShowtext[2] === frenchSlideShowText[2]
         }
       >
         Save
@@ -89,6 +134,27 @@ const StyledInput = styled.input`
   border: 2px solid #035e3f;
   outline: none;
   margin-bottom: 1vh;
+`;
+export const Language = styled.p`
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  text-align: center;
+`;
+const BothLangWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 70%;
+`;
+
+const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
 `;
 
 export const SaveButton = styled.button`

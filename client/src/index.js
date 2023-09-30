@@ -8,6 +8,7 @@ import { ReservationProvider } from "./components/contexts/ReservationContext";
 import { ServicesProvider } from "./components/contexts/ServicesContext";
 import { TextProvider } from "./components/contexts/TextContext";
 import { ImageProvider } from "./components/contexts/ImageContext";
+import { NotificationProvider } from "./components/contexts/NotficationContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -23,9 +24,11 @@ root.render(
           <TextProvider>
             <ReservationProvider>
               <ServicesProvider>
-                <BrowserRouter>
-                  <App>{Children}</App>
-                </BrowserRouter>
+                <NotificationProvider>
+                  <BrowserRouter>
+                    <App>{Children}</App>
+                  </BrowserRouter>
+                </NotificationProvider>
               </ServicesProvider>
             </ReservationProvider>
           </TextProvider>

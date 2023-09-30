@@ -7,6 +7,7 @@ const EditProfileForm = ({
   handleSave,
   handleToggleEditMode,
   barber,
+  newBarber,
 }) => {
   const [text, setText] = useState("Edit");
   useEffect(() => {
@@ -54,7 +55,16 @@ const EditProfileForm = ({
 
       {barber.given_name === "" ? (
         <ButtonWrapper key={"add"}>
-          <SaveButton onClick={() => handleSave()}>Add</SaveButton>
+          <SaveButton
+            onClick={() => handleSave()}
+            disabled={
+              newBarber.given_name === "" ||
+              newBarber.family_name === "" ||
+              newBarber.email === ""
+            }
+          >
+            Add
+          </SaveButton>
         </ButtonWrapper>
       ) : (
         <ButtonWrapper key={"saveCancel" + barber._id}>
@@ -111,6 +121,11 @@ const SaveButton = styled.button`
   }
   &:active {
     transform: scale(0.98);
+  }
+  &:disabled {
+    background-color: #011c13;
+    color: whitesmoke;
+    cursor: default;
   }
 `;
 const InputField = styled.div`

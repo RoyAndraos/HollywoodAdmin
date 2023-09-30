@@ -14,8 +14,7 @@ import "../rsvpComponents/style.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useNavigate } from "react-router-dom";
 const localizer = momentLocalizer(moment);
-
-const NewCalendar = ({ setCurrentView }) => {
+const NewCalendar = () => {
   const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
   const events = reservations.map((reservation) => {
@@ -29,9 +28,8 @@ const NewCalendar = ({ setCurrentView }) => {
       title: reservation.barber,
       service: reservation.service.name,
       _id: reservation._id,
-      date: reservation.date,
-      start: new Date(constructedDate),
-      end: new Date(endTime),
+      start: constructedDate,
+      end: endTime,
     };
   });
   const views = {
@@ -46,7 +44,6 @@ const NewCalendar = ({ setCurrentView }) => {
   maxTime.setHours(21, 0, 0);
 
   const handleEventClick = (event) => {
-    console.log("Event clicked:", event);
     navigate(`/dashboard/schedule/${event._id}`);
   };
 
@@ -71,7 +68,6 @@ const NewCalendar = ({ setCurrentView }) => {
         components={{
           event: CustomEventComponent, // Use your custom event component
         }}
-        onView={(view) => setCurrentView(view)}
       />
     </Wrapper>
   );

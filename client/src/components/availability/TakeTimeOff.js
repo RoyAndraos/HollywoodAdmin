@@ -6,11 +6,13 @@ import styled from "styled-components";
 import { UserContext } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import { NotificationContext } from "../contexts/NotficationContext";
 const TakeTimeOff = () => {
   const { barberId } = useParams();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const { userInfo, setUserInfo } = useContext(UserContext);
+  const { setNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
   const barber = userInfo.filter((user) => {
     return user._id === barberId;
@@ -29,7 +31,6 @@ const TakeTimeOff = () => {
         setEndDate(newEndDate);
       }
     }
-    console.log(startDate, endDate);
   }, [startDate, endDate, userInfo]);
   const handleDateChange = (date) => {
     if (startDate === null) {
@@ -74,7 +75,16 @@ const TakeTimeOff = () => {
         startDate: timeOff.startDate,
         endDate: timeOff.endDate,
       }),
-    });
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === 200) {
+          setNotification("Time off deleted successfully");
+        }
+      })
+      .catch(() => {
+        setNotification("Something went wrong");
+      });
 
     const updatedUserList = userInfo.map((user) => {
       if (user._id === barberId) {
@@ -102,7 +112,16 @@ const TakeTimeOff = () => {
         startDate: date1,
         endDate: date2,
       }),
-    });
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === 200) {
+          setNotification("Time off added successfully");
+        }
+      })
+      .catch(() => {
+        setNotification("Something went wrong");
+      });
     const updatedUserList = userInfo.map((user) => {
       if (user._id === barberId) {
         return {

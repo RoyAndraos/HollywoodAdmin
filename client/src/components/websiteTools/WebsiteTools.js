@@ -31,6 +31,7 @@ const Wrapper = styled.div`
 const RestWrapper = styled.div`
   width: 80%;
   position: absolute;
+
   right: -2%;
 `;
 

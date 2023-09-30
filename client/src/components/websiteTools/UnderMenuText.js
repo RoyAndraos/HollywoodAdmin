@@ -1,14 +1,20 @@
 import { useContext, useState } from "react";
 import { TextContext } from "../contexts/TextContext";
 import { Title } from "./SlideShowImages";
-import { Wrapper, SaveButton } from "./SlideShowText";
+import { Wrapper, SaveButton, Language } from "./SlideShowText";
 import styled from "styled-components";
+import { NotificationContext } from "../contexts/NotficationContext";
 const UnderMenuText = () => {
   const { text, setText } = useContext(TextContext);
+  const { setNotification } = useContext(NotificationContext);
   const initialUnderMenuText = text.filter(
     (text) => text._id === "underMenu"
   )[0].content;
   const [underMenuText, setUnderMenuText] = useState(initialUnderMenuText);
+  const initialFrenchMenuText = text.filter(
+    (text) => text._id === "underMenu"
+  )[0].french;
+  const [frenchMenuText, setFrenchMenuText] = useState(initialFrenchMenuText);
   const handleSubmit = (e) => {
     e.preventDefault();
     fetch("/updateText", {
@@ -22,29 +28,46 @@ const UnderMenuText = () => {
       }),
     })
       .then((res) => res.json())
-      .then(() => {
-        setText((prevText) => {
-          const updatedText = prevText.map((item) => {
-            if (item._id === "underMenu") {
-              return { ...item, content: underMenuText };
-            }
-            return item;
+      .then((result) => {
+        if (result.status === 200) {
+          setText((prevText) => {
+            const updatedText = prevText.map((item) => {
+              if (item._id === "underMenu") {
+                return {
+                  ...item,
+                  content: underMenuText,
+                  french: frenchMenuText,
+                };
+              }
+              return item;
+            });
+            return updatedText;
           });
-          return updatedText;
-        });
-      });
+          setNotification("Under menu text updated successfully");
+        }
+      })
+      .catch(() => setNotification("Something went wrong"));
   };
 
   return (
     <Wrapper>
       <Title>Under Menu Text</Title>
+      <Language>English</Language>
       <StyledInput
         defaultValue={underMenuText}
         onChange={(e) => setUnderMenuText(e.target.value)}
       ></StyledInput>
+      <Language>French</Language>
+      <StyledInput
+        defaultValue={frenchMenuText}
+        onChange={(e) => setFrenchMenuText(e.target.value)}
+      ></StyledInput>
       <SaveButton
         onClick={(e) => handleSubmit(e)}
-        disabled={underMenuText === initialUnderMenuText}
+        disabled={
+          frenchMenuText === initialFrenchMenuText &&
+          underMenuText === initialUnderMenuText
+        }
       >
         Save
       </SaveButton>

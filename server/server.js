@@ -161,6 +161,19 @@ const addReservation = async (req, res) => {
       slot: reservation.slot,
       _id: _id,
     });
+    if (reservation.clientEmail !== "") {
+      await sendEmail(
+        reservation.clientEmail,
+        reservation.barber,
+        reservation.clientName.split(" ")[0],
+        reservation.clientName.split(" ")[1],
+        reservation.date,
+        reservation.slot[0].split("-")[1],
+        reservation.service.name,
+        reservation.service.price
+      );
+    }
+
     res.status(200).json({ status: 200, message: "success", data: _id });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -352,6 +365,41 @@ const updateText = async (req, res) => {
   } finally {
     client.close();
   }
+};
+
+const sendEmail = async (
+  email,
+  fname,
+  userFName,
+  userLName,
+  date,
+  time,
+  service,
+  price
+) => {
+  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  let apiInstance = new brevo.TransactionalEmailsApi();
+  let sendSmtpEmail = new brevo.SendSmtpEmail();
+
+  sendSmtpEmail.subject = "Your reservation at Hollywood Barbershop";
+  sendSmtpEmail.htmlContent = htmlContent(
+    userFName,
+    formattedDate,
+    time,
+    service,
+    price
+  );
+  sendSmtpEmail.sender = {
+    name: fname,
+    email: "roy_andraos@live.fr",
+  };
+
+  sendSmtpEmail.to = [{ email: email, name: `${userFName + " " + userLName}` }];
+  await apiInstance.sendTransacEmail(sendSmtpEmail);
 };
 
 module.exports = {

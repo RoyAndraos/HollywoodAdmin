@@ -2,8 +2,10 @@ import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import { ImageContext } from "../contexts/ImageContext";
+import { NotificationContext } from "../contexts/NotficationContext";
 const ImageInput = ({ filename, height, initialImage }) => {
   const { images, setImages } = useContext(ImageContext);
+  const { setNotification } = useContext(NotificationContext);
   const [previewSource, setPreviewSource] = useState("");
   const [imageHeight, setImageHeight] = useState("");
   useEffect(() => {
@@ -13,7 +15,7 @@ const ImageInput = ({ filename, height, initialImage }) => {
     if (initialImage) {
       setPreviewSource(initialImage);
     }
-  }, []);
+  }, [height, initialImage]);
   const previewFile = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -47,9 +49,10 @@ const ImageInput = ({ filename, height, initialImage }) => {
             );
             setImages([...removedAbout, result.imageInfo]);
           }
+          setNotification("Image uploaded successfully");
         });
     } catch (err) {
-      console.log(err);
+      setNotification("Something went wrong");
     }
   };
   return (

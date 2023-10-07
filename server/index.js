@@ -20,6 +20,7 @@ const {
   updateBarberProfile,
   addBarber,
   updateText,
+  getSearchResults,
 } = require("./server");
 
 // Create the express app
@@ -46,6 +47,7 @@ app.use("/", express.static(__dirname + "/"));
 // Define the routes
 app.get("/getUserInfo", getUserInfo);
 app.get("/getSlideshowImages", getSlideshowImages);
+app.get("/search/:searchTerm", getSearchResults);
 app.post("/addReservation", addReservation);
 app.post("/checkIfAdmin", adminCheck);
 app.post("/addBarber", addBarber);

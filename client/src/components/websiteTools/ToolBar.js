@@ -41,6 +41,13 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
       >
         Images
       </StyledNavButton>
+      <StyledNavButton
+        key={"Clients"}
+        onClick={() => setSelectedOption("clients")}
+        isselected={selectedOption === "clients" ? "true" : "false"}
+      >
+        Clients
+      </StyledNavButton>
     </Wrapper>
   );
 };

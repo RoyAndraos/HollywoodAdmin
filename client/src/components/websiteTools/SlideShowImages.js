@@ -72,13 +72,13 @@ const SlideShowImages = () => {
 export const Title = styled.h1`
   font-size: 2rem;
   margin-bottom: 1rem;
+  width: 100%;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
-  color: #011c13;
-  font-style: italic;
+  color: #035e3f;
   letter-spacing: 0.2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #011c13;
+  border-bottom: 2px solid #035e3f;
 `;
 const Container = styled.div`
   width: 100%;

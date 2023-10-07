@@ -96,8 +96,9 @@ export const LabelInfoWrapper = styled.div`
 `;
 
 export const EditButton = styled.button`
-  height: 40px;
+  height: 35px;
   background-color: #035e3f;
+  width: 100px;
   background-color: ${(props) => {
     return props.props === true ? " #ad0606" : "#035e3f";
   }};

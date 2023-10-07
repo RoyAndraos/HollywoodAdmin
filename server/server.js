@@ -9,6 +9,12 @@ const options = {
 const MONGO_URI = process.env.MONGO_URI;
 const WHITE_LIST = process.env.WHITE_LIST;
 
+const brevo = require("@getbrevo/brevo");
+const { htmlContent } = require("./templates/Welcome");
+let defaultClient = brevo.ApiClient.instance;
+let apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.EMAIL_API_KEY;
+
 const uploadImage = async (req, res) => {
   const _id = uuid();
   const client = new MongoClient(MONGO_URI, options);
@@ -148,19 +154,17 @@ const addReservation = async (req, res) => {
   const client = new MongoClient(MONGO_URI, options);
   const { reservation } = req.body;
   const _id = uuid();
+  const client_id = uuid();
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    await db.collection("reservations").insertOne({
-      name: reservation.clientName,
-      email: reservation.clientEmail,
-      number: reservation.clientNumber,
-      barber: reservation.barber,
-      service: reservation.service,
-      date: reservation.date,
-      slot: reservation.slot,
-      _id: _id,
-    });
+
+    reservation._id = _id;
+
+    //add reservation to db
+    await db.collection("reservations").insertOne(reservation);
+
+    //send email to client
     if (reservation.clientEmail !== "") {
       await sendEmail(
         reservation.clientEmail,
@@ -174,6 +178,29 @@ const addReservation = async (req, res) => {
       );
     }
 
+    //check if client exists
+    const isClient = await db
+      .collection("Clients")
+      .findOne({ email: reservation.clientEmail });
+
+    //if client does not exist, create client
+    if (!isClient) {
+      await db.collection("Clients").insertOne({
+        _id: client_id,
+        email: reservation.clientEmail,
+        fname: reservation.clientName.split(" ")[0],
+        lname: reservation.clientName.split(" ")[1],
+        number: reservation.clientNumber,
+        note: "",
+        reservations: [_id],
+      });
+
+      //if client exists, add reservation to client
+    } else {
+      await db
+        .collection("Clients")
+        .updateOne({ _id: isClient._id }, { $push: { reservations: _id } });
+    }
     res.status(200).json({ status: 200, message: "success", data: _id });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -299,7 +326,6 @@ const getSlideshowImages = async (req, res) => {
 const updateBarberProfile = async (req, res) => {
   const client = new MongoClient(MONGO_URI, options);
   const { barberId, barberInfo } = req.body;
-  console.log(req.body);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -384,7 +410,6 @@ const sendEmail = async (
   });
   let apiInstance = new brevo.TransactionalEmailsApi();
   let sendSmtpEmail = new brevo.SendSmtpEmail();
-
   sendSmtpEmail.subject = "Your reservation at Hollywood Barbershop";
   sendSmtpEmail.htmlContent = htmlContent(
     userFName,
@@ -397,9 +422,35 @@ const sendEmail = async (
     name: fname,
     email: "roy_andraos@live.fr",
   };
-
   sendSmtpEmail.to = [{ email: email, name: `${userFName + " " + userLName}` }];
   await apiInstance.sendTransacEmail(sendSmtpEmail);
+};
+
+const getSearchResults = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const searchTerm = req.params.searchTerm;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const searchResults = await db
+      .collection("Clients")
+      .find({
+        $or: [
+          { fname: { $regex: searchTerm, $options: "i" } },
+          { lname: { $regex: searchTerm, $options: "i" } },
+          { email: { $regex: searchTerm, $options: "i" } },
+          { number: { $regex: searchTerm, $options: "i" } },
+          { note: { $regex: searchTerm, $options: "i" } },
+          { reservations: { $regex: searchTerm, $options: "i" } },
+        ],
+      })
+      .toArray();
+    res.status(200).json({ status: 200, data: searchResults });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
 };
 
 module.exports = {
@@ -418,4 +469,5 @@ module.exports = {
   updateBarberProfile,
   addBarber,
   updateText,
+  getSearchResults,
 };

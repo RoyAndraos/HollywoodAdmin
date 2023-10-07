@@ -11,10 +11,10 @@ const NumberFormEdit = ({ reservation, handleChange }) => {
           autoFocus
           onChange={(e) => handleChange("number", e.target.value)}
         ></StyledInput>
-      ) : reservation.number === "" ? (
+      ) : reservation.clientNumber === "" ? (
         <span>Not Provided</span>
       ) : (
-        <span>{reservation.number}</span>
+        <span>{reservation.clientNumber}</span>
       )}
       <EditButton
         props={clientNumberEdit}

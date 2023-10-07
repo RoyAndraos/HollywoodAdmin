@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-
 import Upload from "./Upload";
 import BarberProfiles from "./BarberProfiles";
 import ToolBar from "./ToolBar";
 import styled from "styled-components";
 import WebsiteText from "./WebsiteText";
+import Clients from "./Clients";
 const WebsiteTools = () => {
   const [selectedOption, setSelectedOption] = useState("barberProfiles");
   return (
@@ -18,6 +18,7 @@ const WebsiteTools = () => {
           {selectedOption === "websiteText" && <WebsiteText />}
           {selectedOption === "images" && <Upload />}
           {selectedOption === "barberProfiles" && <BarberProfiles />}
+          {selectedOption === "clients" && <Clients />}
         </RestWrapper>
       </div>
     </Wrapper>

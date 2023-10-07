@@ -1,7 +1,7 @@
 /* Day number button */
 .rbc-button-link {
     font-size: 3rem;
-    width: 100%;
+    width: 101.8%;
     height: 100%;
     color: rgba(0,0,0,0.2)
 }
@@ -9,23 +9,28 @@
     cursor: pointer;
     background-color: rgba(0,0,0,0.1);
     transition: 0.2s ease-in-out;
-
 }
 /* Day Number Row */
-.rbc-row {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+
+.rbc-toolbar-label{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgba(0,0,0,0.9);
+    background-color: #035e3f;
+    border-radius: 10px;
+    margin: 0 40px 0 40px;
+    color: whitesmoke;
 }
 /* Day cell */
 .rbc-date-cell{
     width: 100%;
-    height: calc(73vh/5);
-    border: 1px solid #ddd;
+    height: calc(78vh/5);
+    border: 1px solid rgba(0, 0, 0, 0.5);
 }
-.rbc-month-row{
-    max-height: calc(74.5vh/5);
+.rbc-month-view{
+    height: 100%;
 }
+
 /* calendar container */
 .rbc-calendar{
     font-family: sans-serif;
@@ -39,11 +44,14 @@
 /* header (day names and so) */
 /* header day cell */
 .rbc-header{
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     border: 1px solid rgba(0,0,0,0.3);
     width: calc(98%/7);
-    text-align: center;
-    background-color: rgba(3,94,63,0.8);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #035e3f;
     padding: 3px 0 3px 0;
     color: whitesmoke;
 }
@@ -56,54 +64,112 @@
 }
 
 .rbc-btn-group:last-of-type button {
-    border: black 1px solid;
     border-radius: 5px;
-    margin: 0 5px 0 5px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     padding: 2px 4px 2px 4px;
-    width: 80px;
+    width: 100px;
   }
-.rbc-btn-group:first-of-type button {
-    border: black 1px solid;
-    letter-spacing: 3px;
-    border-radius: 5px;
-    font-size: 1rem;
-    padding: 4px 4px 4px 4px;
-    width: 80px;
-  }
-.rbc-btn-group:first-of-type button {
-    border: black 1px solid;
-    letter-spacing: 3px;
-    border-radius: 5px;
-    font-size: 1rem;
-    padding: 4px 4px 4px 4px;
-    width: 80px;
-  }
-.rbc-btn-group:last-of-type button:hover{
+  .rbc-btn-group:last-of-type button:hover{
     background-color: rgba(0,0,0,0.2);
     transition: 0.2s ease-in-out;
-    color: black;
-    border: black 1px solid;
+    color: whitesmoke;
+    background-color: #035e3f;
     cursor: pointer;
   }
-  
+.rbc-btn-group:first-of-type button {
+    padding: 2px 4px 2px 4px !important;
+    font-size: 1.2rem !important;
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 4px 4px 4px 4px;
+    width: 80px;
+  }
+  .rbc-btn-group:first-of-type button:first-child {
+    font-size: 1.2rem;
+    border-radius: 5px;
+    background-color: #011c13;
+    border: 0.5px solid rgba(0,0,0,0.3);
+    color: whitesmoke;
+    font-size: 1rem;
+    padding: 4px 4px 4px 4px;
+    width: 80px;
+  }
   .rbc-btn-group:first-of-type button:hover{
     transition: 0.2s ease-in-out;
     background-color: rgba(3,94,63,0.8);
     color: whitesmoke;
-    border: black 1px solid;
     cursor: pointer;
   }
+
+  
+
 .rbc-active{
     background-color: rgba(3,94,63,0.8);
     color: whitesmoke;
     border: black 1px solid;
 }
 .rbc-now{
-    background-color: #035e3f;
+    background-color: #011c13;
     color: whitesmoke;
+    transition: 0.2s ease-in-out;
 }
+.rbc-label,rbc-now{
+    background-color: transparent;
+    color: whitesmoke;
+    transition: 0.2s ease-in-out;
+    display: flex  !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 1.2rem !important;
+}
+
 /* EVENTS */
+
+.rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event {
+    display: none !important;
+    width: 98% !important;
+    left: 1%;
+    position: relative;
+    background-color: #035e3f !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    opacity: 0.3;
+    transition: 0.2s ease-in-out;
+  }
+  .rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event:hover{
+    opacity: 1 !important;
+  }
+.rbc-month-row{
+    height: 2% !important;
+}
+.rbc-row rbc-month-header{
+    height: 3%  !important;
+}
+.rbc-row:first-of-type{
+    height: 5%;
+}
+.rbc-show-more{
+    color: green !important;
+    opacity: 0.6 !important;
+}
+.rbc-show-more:hover{
+    color: green !important;
+    opacity: 1 !important;
+    background-color: transparent;
+}
+.event-content-div{
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;   
+    align-items: center !important;
+}
+.rbc-event-content{    
+    color: whitesmoke !important;
+    width: calc(100% - 5px) !important;
+}
+
 /* DAYVIEW */
 /* times */
 .rbc-time-content{
@@ -122,23 +188,27 @@
 .rbc-timeslot-group:last-child{
     border-bottom: 1px solid rgba(0,0,0,0.3);
 }
-.rbc-time-header-content{
-    height: 0;
-    width: 0;
-}
 .rbc-row-content{
-height: 0;
+height: 20px !important;
 }
+
+
 .rbc-day-slot{
   position: absolute;
   top: 0;
   width: 100%;
   background-color: transparent;
 } 
-
-.rbc-row{
-    height: 0;
+.rbc-day-slot .rbc-events-container .rbc-event{
+    background-color: #035e3f !important;
+    width: 50% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    border:none;
+    transform: scaleX(0.95);
 }
+
 /* AGENDA */
 .rbc-agenda-view{
     width: 100%;
@@ -150,19 +220,18 @@ height: 0;
     width: 100%;
     text-align: center;
 }
-
-element.style {
-    width: 102.25px;
-}
 .rbc-agenda-view table.rbc-agenda-table thead > tr > th {
    width: 33% !important;
    padding: 10px 0 10px 0 !important;
    text-align: center !important;
    font-size: 1.1rem !important;
   }
-
+  .rbc-agenda-view table.rbc-agenda-table thead > tr{
+    display: flex !important;
+  }
 .rbc-agenda-date-cell{
     width: 33% !important;
+    border: 1px solid rgba(0,0,0,0.3) !important;
 }
 .rbc-agenda-time-cell{
     width: 33% !important;
@@ -172,6 +241,9 @@ element.style {
 }
 .rbc-time-slot{
     border: #035e3f 1px solid;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-end !important;
 }
 .rbc-time-gutter{
     background-color: #035e3f;

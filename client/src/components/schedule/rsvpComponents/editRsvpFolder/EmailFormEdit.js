@@ -9,7 +9,7 @@ const EmailFormEdit = ({ reservation, handleChange }) => {
       {clientEmailEdit ? (
         <StyledInput
           autoFocus
-          placeholder={reservation.email}
+          placeholder={reservation.clientEmail}
           onChange={(e) => handleChange("email", e.target.value)}
         ></StyledInput>
       ) : reservation.email === "" ? (

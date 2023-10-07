@@ -112,6 +112,7 @@ const SlideShowText = () => {
       >
         Save
       </SaveButton>
+      <Line />
     </Wrapper>
   );
 };
@@ -123,11 +124,12 @@ export const Wrapper = styled.div`
   justify-content: space-evenly;
   align-items: center;
   min-height: 30vh;
-  border: 2px solid rgba(0, 0, 0, 0.8);
   margin-top: 2rem;
-  border-radius: 0.5rem;
 `;
-
+export const Line = styled.div`
+  width: 60%;
+  border-bottom: 2px solid #035e3f;
+`;
 const StyledInput = styled.input`
   padding: 1vh;
   border-radius: 10px;
@@ -140,12 +142,14 @@ export const Language = styled.p`
   font-family: "Roboto", sans-serif;
   font-weight: 600;
   text-align: center;
+  color: #035e3f;
 `;
 const BothLangWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   width: 70%;
+  padding-bottom: 2rem;
 `;
 
 const FormWrapper = styled.div`
@@ -155,6 +159,7 @@ const FormWrapper = styled.div`
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  border-bottom
 `;
 
 export const SaveButton = styled.button`
@@ -166,8 +171,8 @@ export const SaveButton = styled.button`
   border: 2px solid transparent;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem 0.5rem 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
   width: 10rem;
   height: 3rem;
   transition: 0.2s ease-in-out;

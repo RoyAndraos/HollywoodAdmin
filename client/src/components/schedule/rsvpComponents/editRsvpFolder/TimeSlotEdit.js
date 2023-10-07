@@ -13,7 +13,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
   const [timeEdit, setTimeEdit] = useState("Edit");
   const [barberIsOff, setBarberIsOff] = useState(false);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const { reservations, setReservations } = useContext(ReservationContext);
+  const { reservations } = useContext(ReservationContext);
   const { userInfo } = useContext(UserContext);
   const selectedService = reservation.service;
   const formatDate = (date) => {
@@ -163,8 +163,9 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
 };
 
 const EditButton = styled.button`
-  height: 40px;
+  height: 35px;
   background-color: #035e3f;
+  width: 100px;
   background-color: ${(props) => {
     return props.props === "Cancel" ? " #ad0606" : "#035e3f";
   }};
@@ -191,17 +192,20 @@ const SlotSelector = styled.div`
   position: absolute;
   top: 0;
   width: 100%;
-  border: 3px solid #035e3f;
+  height: 100%;
   background-color: #fff;
   display: grid;
   grid-template-columns: 32% 32% 32%;
   align-items: center;
   justify-content: space-evenly;
-  height: 100%;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 `;
 const Slot = styled.div`
   text-align: center;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px solid #ccc;
   margin: 0 20px 0 20px;
   padding: 5px 0 5px 0;

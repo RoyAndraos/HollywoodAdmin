@@ -67,7 +67,6 @@ const AddReservation = () => {
         clientNumber: clientNumber,
       };
     }
-
     fetch("/addReservation", {
       method: "POST",
       headers: {
@@ -86,7 +85,6 @@ const AddReservation = () => {
         }
       })
       .catch(() => setNotification("Something went wrong"));
-
     setSelectedSlot("");
     setBarber({});
     setClientName("");
@@ -170,6 +168,7 @@ const AddReservation = () => {
 
   return (
     <Wrapper>
+      <Title>Make a reservation</Title>
       <StyledForm
         onSubmit={(e) => {
           handleSubmit(e);
@@ -263,12 +262,21 @@ const fadeIn = keyframes`
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  font-size: 1.2rem;
 `;
-
+const Title = styled.h1`
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  color: whitesmoke;
+  background-color: #035e3f;
+  margin-top: 0;
+  border-radius: 20px;
+  padding: 20px 0 20px 0;
+`;
 const StyledForm = styled.form`
   display: flex;
-  border: 1px solid #ccc;
   width: 100%;
   flex-direction: column;
   justify-content: space-around;
@@ -283,10 +291,10 @@ const CustomDatePicker = styled(DatePicker)`
   border: 1px solid #ccc;
   width: 30vw;
   padding: 5px 0 5px 0;
-  font-size: 16px;
   caret-color: transparent;
   text-align: center;
   transition: 0.3s ease-in-out;
+  font-size: 1.2rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   &:hover {
     cursor: pointer;
@@ -322,6 +330,7 @@ export const StyledLabel = styled.label`
   width: 100%;
   border-bottom: 3px solid #035e3f;
   color: #035e3f;
+  margin: 20px 0 10px 0;
 `;
 
 export const LabelInputWrapper = styled.div`
@@ -332,6 +341,7 @@ export const LabelInputWrapper = styled.div`
   align-items: center;
   position: relative;
   background-color: transparent;
+  font-size: 1.2rem;
   width: 30vw;
 `;
 
@@ -342,7 +352,7 @@ const StyledInput = styled.input`
   margin: 5px 0 0 0;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  font-size: 15px;
+  font-size: 1.2rem;
   width: 30vw;
   padding: 10px 0 10px 0;
   &:hover {

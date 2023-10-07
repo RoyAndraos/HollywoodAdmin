@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { TextContext } from "../contexts/TextContext";
 import { Title } from "./SlideShowImages";
-import { Wrapper, SaveButton, Language } from "./SlideShowText";
+import { Wrapper, SaveButton, Language, Line } from "./SlideShowText";
 import styled from "styled-components";
 import { NotificationContext } from "../contexts/NotficationContext";
 const UnderMenuText = () => {
@@ -71,6 +71,7 @@ const UnderMenuText = () => {
       >
         Save
       </SaveButton>
+      <Line />
     </Wrapper>
   );
 };

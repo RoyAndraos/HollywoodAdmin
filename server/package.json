@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@getbrevo/brevo": "^1.0.1",
     "bson-objectid": "^2.0.4",
     "cloudinary": "^1.38.0",
     "cors": "^2.8.5",

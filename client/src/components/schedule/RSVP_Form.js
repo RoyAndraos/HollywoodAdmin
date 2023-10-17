@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import BarberSelect from "./rsvpComponents/BarberSelect";
 import "react-datepicker/dist/react-datepicker.css";
@@ -174,78 +174,85 @@ const AddReservation = () => {
           handleSubmit(e);
         }}
       >
-        <LabelInputWrapper>
-          <StyledLabel>Date</StyledLabel>
-          <CustomDatePicker
-            selected={selectedDate}
-            onChange={handleDateChange}
-            minDate={new Date()}
-            calendarContainer={CalendarContainer}
+        <div>
+          <LabelInputWrapper>
+            <StyledLabel>Date</StyledLabel>
+            <CustomDatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              minDate={new Date()}
+              calendarContainer={CalendarContainer}
+            />
+          </LabelInputWrapper>
+          <BarberSelect
+            selectedBarberForm={selectedBarberForm}
+            setBarber={setBarber}
           />
-        </LabelInputWrapper>
-        <BarberSelect
-          selectedBarberForm={selectedBarberForm}
-          setBarber={setBarber}
-        />
-        <ServiceSelector
-          selectedService={selectedService}
-          setSelectedService={setSelectedService}
-        />
-        <SlotSelector
-          selectedSlot={selectedSlot}
-          selectedBarberForm={selectedBarberForm}
-          selectedService={selectedService}
-          selectedDate={selectedDate}
-          setSelectedSlot={setSelectedSlot}
-        />
-        <LabelInputWrapper>
-          <StyledLabel>Client Name</StyledLabel>
-          <SelectedSlotContainer>
-            <StyledInput
-              type="text"
-              placeholder="Name"
-              name="name"
-              required
-              onChange={(e) => {
-                handleChange(e, e.target.name);
-              }}
-            ></StyledInput>
-          </SelectedSlotContainer>
-          {nameError !== "" && <ErrorMessage>{nameError}</ErrorMessage>}
-        </LabelInputWrapper>
-        <LabelInputWrapper>
-          <StyledLabel>Client Email</StyledLabel>
-          <SelectedSlotContainer>
-            <StyledInput
-              type="text"
-              placeholder="email@example.com (Optional)"
-              name="email"
-              onChange={(e) => {
-                handleChange(e, e.target.name);
-              }}
-            ></StyledInput>
-          </SelectedSlotContainer>
-          {emailError !== "" && <ErrorMessage>{emailError}</ErrorMessage>}
-        </LabelInputWrapper>
-        <LabelInputWrapper>
-          <StyledLabel>Client Number</StyledLabel>
-          <SelectedSlotContainer>
-            <StyledInput
-              type="text"
-              placeholder="5144304287 (Optional)"
-              name="number"
-              onChange={(e) => {
-                handleChange(e, e.target.name);
-              }}
-            ></StyledInput>
-          </SelectedSlotContainer>
-          {numberError !== "" && <ErrorMessage>{numberError}</ErrorMessage>}
-        </LabelInputWrapper>
-        <LabelInputWrapper>
-          <Book type="submit" disabled={error}>
-            Book
-          </Book>
-        </LabelInputWrapper>
+        </div>
+        <div>
+          <ServiceSelector
+            selectedService={selectedService}
+            setSelectedService={setSelectedService}
+          />
+          <SlotSelector
+            selectedSlot={selectedSlot}
+            selectedBarberForm={selectedBarberForm}
+            selectedService={selectedService}
+            selectedDate={selectedDate}
+            setSelectedSlot={setSelectedSlot}
+          />
+        </div>
+        <div>
+          <LabelInputWrapper>
+            <StyledLabel>Client Name</StyledLabel>
+            <SelectedSlotContainer>
+              <StyledInput
+                type="text"
+                placeholder="Name"
+                name="name"
+                required
+                defaultValue={clientName}
+                onChange={(e) => {
+                  handleChange(e, e.target.name);
+                }}
+              ></StyledInput>
+            </SelectedSlotContainer>
+            {nameError !== "" && <ErrorMessage>{nameError}</ErrorMessage>}
+          </LabelInputWrapper>
+          <LabelInputWrapper>
+            <StyledLabel>Client Email</StyledLabel>
+            <SelectedSlotContainer>
+              <StyledInput
+                type="text"
+                placeholder="email@example.com (Optional)"
+                name="email"
+                defaultValue={clientEmail}
+                onChange={(e) => {
+                  handleChange(e, e.target.name);
+                }}
+              ></StyledInput>
+            </SelectedSlotContainer>
+            {emailError !== "" && <ErrorMessage>{emailError}</ErrorMessage>}
+          </LabelInputWrapper>
+          <LabelInputWrapper>
+            <StyledLabel>Client Number</StyledLabel>
+            <SelectedSlotContainer>
+              <StyledInput
+                type="text"
+                placeholder="5144304287 (Optional)"
+                name="number"
+                defaultValue={clientNumber}
+                onChange={(e) => {
+                  handleChange(e, e.target.name);
+                }}
+              ></StyledInput>
+            </SelectedSlotContainer>
+            {numberError !== "" && <ErrorMessage>{numberError}</ErrorMessage>}
+          </LabelInputWrapper>
+        </div>
+        <Book type="submit" disabled={error}>
+          Book
+        </Book>
       </StyledForm>
     </Wrapper>
   );
@@ -263,8 +270,10 @@ const fadeIn = keyframes`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   font-size: 1.2rem;
+  height: 100vh;
+  background-color: #011c13;
+  border-radius: 20px;
 `;
 const Title = styled.h1`
   text-align: center;
@@ -277,16 +286,19 @@ const Title = styled.h1`
 `;
 const StyledForm = styled.form`
   display: flex;
-  width: 100%;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+  width: 99%;
+  position: relative;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: flex-start;
   font-family: "Roboto", sans-serif;
+  height: 100%;
 `;
 
 const CustomDatePicker = styled(DatePicker)`
   position: relative;
   left: 50%;
+  top: 4px;
   transform: translateX(-50%);
   border: 1px solid #ccc;
   width: 30vw;
@@ -296,6 +308,7 @@ const CustomDatePicker = styled(DatePicker)`
   transition: 0.3s ease-in-out;
   font-size: 1.2rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: 10px 0 10px 0;
   &:hover {
     cursor: pointer;
     background-color: #ccc;
@@ -328,8 +341,8 @@ export const StyledLabel = styled.label`
   padding-bottom: 5px;
   border-radius: -5px;
   width: 100%;
-  border-bottom: 3px solid #035e3f;
-  color: #035e3f;
+  border-bottom: 1px solid #035e3f;
+  color: #049f6a;
   margin: 20px 0 10px 0;
 `;
 
@@ -366,7 +379,9 @@ const StyledInput = styled.input`
 const Book = styled.button`
   border-radius: 10px;
   border: 2px solid transparent;
+  position: absolute;
   width: 15vw;
+  bottom: 0;
   background-color: #035e3f;
   color: white;
   padding: 10px 20px 10px 20px;

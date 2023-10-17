@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { ImageContext } from "../contexts/ImageContext.js";
-import { NotificationContext } from "../contexts/NotficationContext.js";
+import { ImageContext } from "../../contexts/ImageContext.js";
+import { NotificationContext } from "../../contexts/NotficationContext.js";
 import { styled } from "styled-components";
 
 const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
@@ -59,10 +59,10 @@ const Wrapper = styled.div`
 `;
 const Question = styled.p`
   font-size: 1.2rem;
-  background-color: #f0f0f0;
+  background-color: black;
+  color: whitesmoke;
   padding: 5px 10px 5px 10px;
   border-radius: 0.5rem;
-  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
   &:hover {
     cursor: default;
   }
@@ -73,7 +73,6 @@ const Button = styled.button`
   padding: 10px 0 10px 0;
   border-radius: 0.5rem;
   border: none;
-  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
   background-color: ${(props) =>
     props.name === "yes" ? "#035e3f" : "#c02a2a"};
   font-weight: bold;

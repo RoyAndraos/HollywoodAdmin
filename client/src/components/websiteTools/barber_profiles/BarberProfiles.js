@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import { UserContext } from ".././contexts/UserContext";
+import { UserContext } from "../../contexts/UserContext";
 import styled from "styled-components";
 import EditProfileForm from "./EditProfileForm";
-import { NotificationContext } from "../contexts/NotficationContext";
+import { NotificationContext } from "../../contexts/NotficationContext";
 const BarberProfiles = () => {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);

@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { TextContext } from "../contexts/TextContext";
-import { Title } from "./SlideShowImages";
+import { TextContext } from "../../contexts/TextContext";
+import { Title } from "../website_images/SlideShowImages";
 import { Wrapper, SaveButton, Language, Line } from "./SlideShowText";
 import { StyledInput } from "./UnderMenuText";
-import { NotificationContext } from "../contexts/NotficationContext";
+import { NotificationContext } from "../../contexts/NotficationContext";
 const AboutText = () => {
   const { text, setText } = useContext(TextContext);
   const { setNotification } = useContext(NotificationContext);

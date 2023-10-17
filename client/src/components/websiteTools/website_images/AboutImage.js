@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { styled } from "styled-components";
 import ImageInput from "./SlideshowInput";
 import { Title } from "./SlideShowImages";
-import { ImageContext } from "../contexts/ImageContext";
+import { ImageContext } from "../../contexts/ImageContext";
 const AboutImage = () => {
   const { images } = useContext(ImageContext);
   const [aboutImage, setAboutImage] = useState([]);
@@ -28,6 +28,7 @@ const AboutImage = () => {
             borderBottom: "none",
             textDecoration: "underline",
             fontStyle: "normal",
+            textAlign: "center",
           }}
         >
           Replace About Image
@@ -44,7 +45,6 @@ export const Wrapper = styled.div`
   align-items: center;
   height: fit-content;
   padding-bottom: 2rem;
-  border: 2px solid black;
   border-radius: 0.5rem;
 `;
 export const PreviewWrapper = styled.div`

@@ -7,7 +7,7 @@ const BarberFormEdit = ({ reservation, handleChange }) => {
   const [barberEdit, setBarberEdit] = useState(false);
   return (
     <LabelInfoWrapper>
-      <StyledLabel>Barber: </StyledLabel>
+      <StyledLabel>Barber </StyledLabel>
       {barberEdit ? (
         <Select
           open

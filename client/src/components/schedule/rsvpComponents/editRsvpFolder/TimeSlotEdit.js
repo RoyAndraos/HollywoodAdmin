@@ -115,7 +115,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
 
   return (
     <LabelInfoWrapper>
-      <StyledLabel>Time: </StyledLabel>
+      <StyledLabel>Time </StyledLabel>
       {timeEdit === "Edit" &&
         (formData.slot.length === 1 ? (
           <span>{startTime + " - " + getEndTimeEditRsvp(startTime)}</span>

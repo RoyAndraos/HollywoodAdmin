@@ -5,7 +5,7 @@ const NameFormEdit = ({ handleChange, reservation }) => {
   const [clientNameEdit, setClientNameEdit] = useState(false);
   return (
     <LabelInfoWrapper>
-      <StyledLabel>Client Name: </StyledLabel>
+      <StyledLabel>Client Name </StyledLabel>
       {clientNameEdit ? (
         <NameInput
           placeholder={reservation.clientName}

@@ -8,7 +8,7 @@ const ServiceFormEdit = ({ reservation, handleChange }) => {
   const [serviceEdit, setServiceEdit] = useState(false);
   return (
     <LabelInfoWrapper>
-      <StyledLabel>Service: </StyledLabel>
+      <StyledLabel>Service </StyledLabel>
 
       {serviceEdit ? (
         <Select

@@ -1,8 +1,4 @@
-import {
-  StyledLabel,
-  LabelInputWrapper,
-  SelectedSlotContainer,
-} from "../RSVP_Form";
+import { StyledLabel, LabelInputWrapper } from "../RSVP_Form";
 import { BarberSlot } from "./BarberSelect";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import { useContext } from "react";
@@ -16,7 +12,6 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
           {services.map((service) => {
             return (
               <BarberSlot
-                style={{ width: "30vw", padding: "15px 0 15px 0" }}
                 key={service._id}
                 onClick={() => {
                   setSelectedService(service);
@@ -28,20 +23,12 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
           })}
         </div>
       ) : (
-        <SelectedSlotContainer>
-          <BarberSlot
-            style={{
-              width: "30vw",
-              height: "3vh",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onClick={() => setSelectedService("")}
-          >
-            {selectedService.name}
-          </BarberSlot>
-        </SelectedSlotContainer>
+        <BarberSlot
+          key={selectedService.name}
+          onClick={() => setSelectedService("")}
+        >
+          {selectedService.name}
+        </BarberSlot>
       )}
     </LabelInputWrapper>
   );

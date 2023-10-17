@@ -36,10 +36,10 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
 export const BarberSlot = styled.div`
   border: 1px solid #ccc;
   background-color: #fff;
-  padding: 5px 0 5px 0;
+  padding: 10px 0 10px 0;
   text-align: center;
   margin: 10px 5px 0 0;
-  width: 20vw;
+  width: 30vw;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   &:hover {

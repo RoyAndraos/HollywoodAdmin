@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 import NewCalendar from "./rsvpComponents/NewCalendar";
 import AddReservation from "../schedule/RSVP_Form";
-import { useState } from "react";
 
 const Schedule = () => {
   return (

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { ImageContext } from "../contexts/ImageContext";
+import { ImageContext } from "../../contexts/ImageContext";
 import { styled } from "styled-components";
 import ConfirmDelete from "./ConfirmDelete";
 import ImageInput from "./SlideshowInput";
@@ -30,7 +30,7 @@ const SlideShowImages = () => {
                     key={image._id}
                     onClick={() => handleDeletePress(image._id, index)}
                   >
-                    Delete
+                    X
                   </DeleteButton>
                   {showDeleteConfirmations[index] && (
                     <ConfirmDelete
@@ -59,6 +59,7 @@ const SlideShowImages = () => {
             borderBottom: "none",
             textDecoration: "underline",
             fontStyle: "normal",
+            textAlign: "center",
           }}
         >
           Add Image
@@ -89,8 +90,6 @@ const Container = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
-  border: 2px solid black;
-  border-radius: 0.5rem;
 `;
 const PreviewWrapper = styled.div`
   height: 45%;
@@ -116,11 +115,12 @@ const DeleteButton = styled.button`
   top: 10px;
   right: 10px;
   background-color: #c02a2a;
-  border: 2px solid black;
-  padding: 2px 15px;
+  border: 2px solid whitesmoke;
+  padding: 2px 5px;
   color: white;
   font-size: 0.8rem;
-  border-radius: 0.5rem;
+  border-radius: 50%;
+  text-align: center;
   transition: 0.3s ease-in-out;
   &:hover {
     cursor: pointer;

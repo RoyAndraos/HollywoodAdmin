@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ImageInput from "./SlideshowInput";
+import ImageInput from "../website_images/SlideshowInput";
 import { ButtonWrapper, CancelButton } from "./BarberProfiles";
 const EditProfileForm = ({
   handleChange,

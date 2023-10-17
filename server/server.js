@@ -15,6 +15,21 @@ let defaultClient = brevo.ApiClient.instance;
 let apiKey = defaultClient.authentications["api-key"];
 apiKey.apiKey = process.env.EMAIL_API_KEY;
 
+const getClients = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const clients = await db.collection("Clients").find().toArray();
+    res.status(200).json({ status: 200, data: clients });
+  } catch (err) {
+    console.error("Error getting clients:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 const uploadImage = async (req, res) => {
   const _id = uuid();
   const client = new MongoClient(MONGO_URI, options);
@@ -432,21 +447,48 @@ const getSearchResults = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const searchResults = await db
-      .collection("Clients")
-      .find({
-        $or: [
-          { fname: { $regex: searchTerm, $options: "i" } },
-          { lname: { $regex: searchTerm, $options: "i" } },
-          { email: { $regex: searchTerm, $options: "i" } },
-          { number: { $regex: searchTerm, $options: "i" } },
-          { note: { $regex: searchTerm, $options: "i" } },
-          { reservations: { $regex: searchTerm, $options: "i" } },
-        ],
-      })
-      .toArray();
-    res.status(200).json({ status: 200, data: searchResults });
+    if (searchTerm === "all") {
+      const clients = await db.collection("Clients").find().toArray();
+      res.status(200).json({ status: 200, data: clients });
+      return;
+    } else {
+      const searchResults = await db
+        .collection("Clients")
+        .find({
+          $or: [
+            { fname: { $regex: searchTerm, $options: "i" } },
+            { lname: { $regex: searchTerm, $options: "i" } },
+            { email: { $regex: searchTerm, $options: "i" } },
+            { number: { $regex: searchTerm, $options: "i" } },
+            { note: { $regex: searchTerm, $options: "i" } },
+            { reservations: { $regex: searchTerm, $options: "i" } },
+          ],
+        })
+        .toArray();
+      res.status(200).json({ status: 200, data: searchResults });
+    }
   } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
+const updateClient = async (req, res) => {
+  const client = new MongoClient(MONGO_URI, options);
+  const _id = req.body[1];
+  const field = Object.keys(req.body[0])[0];
+  const value = Object.values(req.body[0])[0];
+  console.log(_id, field, value);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const query = { _id: _id };
+    const newValues = { $set: { [field]: value } };
+    await db.collection("Clients").updateOne(query, newValues);
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    console.error("Error updating client:", err);
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     client.close();
@@ -470,4 +512,6 @@ module.exports = {
   addBarber,
   updateText,
   getSearchResults,
+  getClients,
+  updateClient,
 };

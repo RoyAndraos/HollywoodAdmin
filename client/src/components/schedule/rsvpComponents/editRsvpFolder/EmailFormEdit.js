@@ -5,7 +5,7 @@ const EmailFormEdit = ({ reservation, handleChange }) => {
   const [clientEmailEdit, setClientEmailEdit] = useState(false);
   return (
     <LabelInfoWrapper>
-      <StyledLabel>Email: </StyledLabel>
+      <StyledLabel>Email </StyledLabel>
       {clientEmailEdit ? (
         <StyledInput
           autoFocus

@@ -21,6 +21,8 @@ const {
   addBarber,
   updateText,
   getSearchResults,
+  getClients,
+  updateClient,
 } = require("./server");
 
 // Create the express app
@@ -48,9 +50,11 @@ app.use("/", express.static(__dirname + "/"));
 app.get("/getUserInfo", getUserInfo);
 app.get("/getSlideshowImages", getSlideshowImages);
 app.get("/search/:searchTerm", getSearchResults);
+app.get("/clients", getClients);
 app.post("/addReservation", addReservation);
 app.post("/checkIfAdmin", adminCheck);
 app.post("/addBarber", addBarber);
+app.patch("/updateClient", updateClient);
 app.patch("/upload", uploadImage);
 app.patch("/updateAvailability", updateAvailability);
 app.patch("/addTimeOff", addTimeOff);

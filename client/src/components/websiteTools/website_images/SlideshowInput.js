@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
-import { ImageContext } from "../contexts/ImageContext";
-import { NotificationContext } from "../contexts/NotficationContext";
+import { ImageContext } from "../../contexts/ImageContext";
+import { NotificationContext } from "../../contexts/NotficationContext";
 const ImageInput = ({ filename, height, initialImage }) => {
   const { images, setImages } = useContext(ImageContext);
   const { setNotification } = useContext(NotificationContext);

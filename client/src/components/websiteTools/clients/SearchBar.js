@@ -5,7 +5,11 @@ const SearchBar = ({ setSearchTerm, handleSearchClick }) => {
     <Wrapper>
       <StyledInput
         onChange={(e) => {
-          setSearchTerm(e.target.value);
+          if (e.target.value === "") {
+            setSearchTerm("all");
+          } else {
+            setSearchTerm(e.target.value);
+          }
         }}
       ></StyledInput>
       <SearchButton

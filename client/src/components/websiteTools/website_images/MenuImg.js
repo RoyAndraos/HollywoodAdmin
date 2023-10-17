@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { ImageContext } from "../contexts/ImageContext";
+import { ImageContext } from "../../contexts/ImageContext";
 import ImageInput from "./SlideshowInput";
 import { Title } from "./SlideShowImages";
 import { Wrapper, PreviewWrapper } from "./AboutImage";
@@ -27,6 +27,7 @@ const MenuImg = () => {
           borderBottom: "none",
           textDecoration: "underline",
           fontStyle: "normal",
+          textAlign: "center",
         }}
       >
         Replace Menu Image

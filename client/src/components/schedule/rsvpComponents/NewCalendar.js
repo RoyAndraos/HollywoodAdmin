@@ -77,6 +77,7 @@ const NewCalendar = () => {
     dayViewElements.forEach((element) => {
       if (element.innerHTML.includes("Ralf")) {
         element.style.left = "50%";
+        element.style.backgroundColor = "red !important";
       }
     });
     const monthViewElements = document.querySelectorAll(

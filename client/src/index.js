@@ -9,6 +9,7 @@ import { ServicesProvider } from "./components/contexts/ServicesContext";
 import { TextProvider } from "./components/contexts/TextContext";
 import { ImageProvider } from "./components/contexts/ImageContext";
 import { NotificationProvider } from "./components/contexts/NotficationContext";
+import { NotificationLogsProvider } from "./components/contexts/NotificationLogsContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -25,9 +26,11 @@ root.render(
             <ReservationProvider>
               <ServicesProvider>
                 <NotificationProvider>
-                  <BrowserRouter>
-                    <App>{Children}</App>
-                  </BrowserRouter>
+                  <NotificationLogsProvider>
+                    <BrowserRouter>
+                      <App>{Children}</App>
+                    </BrowserRouter>
+                  </NotificationLogsProvider>
                 </NotificationProvider>
               </ServicesProvider>
             </ReservationProvider>

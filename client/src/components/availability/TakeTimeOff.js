@@ -1,27 +1,45 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import "./datepick.css";
 import styled from "styled-components";
 import { UserContext } from "../contexts/UserContext";
-import { useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
 import { NotificationContext } from "../contexts/NotficationContext";
+import { BarberContainer, AdminName } from "./TimeSelect";
+import { useNavigate } from "react-router-dom";
 const TakeTimeOff = () => {
+  // useState/useContext: start date of time off, end date of time off, user info to see who's selected, notification
   const { barberId } = useParams();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
-  const navigate = useNavigate();
+  const [showBarbers, setShowBarbers] = useState(false);
+  //get the selected barber
   const barber = userInfo.filter((user) => {
     return user._id === barberId;
   });
+
+  const navigate = useNavigate();
+  //popper element is the calendar that pops up when you click on the datepicker
+  //in this case, its always popped up and the input box is hidden (check styled components below)
+  //theres inline styling imported with the react-datepicker module
+  //so we have to override it with this useEffect (after the component mounts)
+  const popper = document.getElementsByClassName("react-datepicker-popper");
+  useEffect(() => {
+    if (popper.length !== 0) {
+      popper[0].style.position = "relative";
+    }
+  }, [popper]);
+
+  //format date string to look like "Mon Jan 1"
   const formatDateString = (dateString) => {
     const date = new Date(dateString);
     const options = { weekday: "short", day: "numeric", month: "short" };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
+
+  //if the start date is after the end date, swap them
   useEffect(() => {
     if (startDate !== null && endDate !== null) {
       if (endDate < startDate) {
@@ -32,6 +50,8 @@ const TakeTimeOff = () => {
       }
     }
   }, [startDate, endDate, userInfo]);
+
+  //function: when the datepicker is changed, set the start date to the selected date
   const handleDateChange = (date) => {
     if (startDate === null) {
       const startOfDay = new Date(date);
@@ -64,6 +84,7 @@ const TakeTimeOff = () => {
       setEndDate(null);
     }
   };
+  //function: delete time off from the database and the context
   const handleDeleteTimeOff = (timeOff) => {
     fetch("/deleteTimeOff", {
       method: "DELETE",
@@ -101,6 +122,7 @@ const TakeTimeOff = () => {
     setUserInfo(updatedUserList);
   };
 
+  //function: submit time off to the database and the context
   const handleSubmitTimeOff = (date1, date2) => {
     fetch("/addTimeOff", {
       method: "PATCH",
@@ -140,57 +162,80 @@ const TakeTimeOff = () => {
 
     setUserInfo(updatedUserList);
   };
-  const handleExit = (e) => {
+
+  const selectBarber = (e, barber) => {
     e.preventDefault();
-    navigate("/dashboard/availability");
+    setShowBarbers(false);
+    navigate(`/dashboard/timeOff/${barber._id}`);
   };
+
+  if (!barber) return null;
   return (
     <Wrapper>
-      <BackButton onClick={(e) => handleExit(e)}>
-        <FaArrowLeft />
-      </BackButton>
-      <CalendarLabelContainer>
-        <DatePicker
-          selected={new Date(startDate.setHours(0, 0, 0, 0))}
-          onChange={handleDateChange}
-          minDate={new Date()}
-          key={barberId}
-          open={true}
-          customInput={<CustomInput />}
-          calendarContainer={CalendarContainer}
-        />
-      </CalendarLabelContainer>
-      <ButtonWrapper>
-        <StyledLabel>from:</StyledLabel>
-        <SelectedDate>{startDate.toDateString()}</SelectedDate>
-        <StyledLabel>to:</StyledLabel>
-        <SelectedEndDate>
-          {endDate ? endDate.toDateString() : startDate.toDateString()}
-        </SelectedEndDate>
-        <Submit
-          onClick={() => {
-            handleSubmitTimeOff(startDate, endDate);
-          }}
-          disabled={startDate === null || endDate === null}
-        >
-          Submit
-        </Submit>
-      </ButtonWrapper>
-      <ButtonWrapper>
-        {barber[0].time_off.length !== 0 ? (
-          barber[0].time_off.map((timeOff) => {
-            return (
-              <TimeOffContainer key={timeOff.startDate}>
-                {formatDateString(timeOff.startDate)} -{" "}
-                {formatDateString(timeOff.endDate)}
-                <Delete onClick={() => handleDeleteTimeOff(timeOff)}>X</Delete>
-              </TimeOffContainer>
-            );
-          })
-        ) : (
-          <div>No time off scheduled</div>
-        )}
-      </ButtonWrapper>
+      <BarberContainer>
+        <AdminName onClick={() => setShowBarbers(!showBarbers)}>
+          {showBarbers ? "X" : barber[0].given_name}
+        </AdminName>
+        {showBarbers ? (
+          <>
+            {userInfo.map((barber) => {
+              return (
+                <AdminName
+                  key={barber.given_name}
+                  onClick={(e) => selectBarber(e, barber)}
+                >
+                  {barber.given_name}
+                </AdminName>
+              );
+            })}
+          </>
+        ) : null}
+      </BarberContainer>
+      <ControlPannel>
+        <ButtonWrapper>
+          <DatePicker
+            selected={new Date(startDate.setHours(0, 0, 0, 0))}
+            onChange={handleDateChange}
+            minDate={new Date()}
+            key={barberId}
+            open={true}
+            customInput={<CustomInput />}
+          />
+        </ButtonWrapper>
+        <ButtonWrapper>
+          <StyledLabel>from:</StyledLabel>
+          <SelectedDate>{startDate.toDateString()}</SelectedDate>
+          <StyledLabel>to:</StyledLabel>
+          <SelectedEndDate>
+            {endDate ? endDate.toDateString() : startDate.toDateString()}
+          </SelectedEndDate>
+          <Submit
+            onClick={() => {
+              handleSubmitTimeOff(startDate, endDate);
+            }}
+            disabled={startDate === null || endDate === null}
+          >
+            Submit
+          </Submit>
+        </ButtonWrapper>
+        <ButtonWrapper>
+          {barber[0].time_off.length !== 0 ? (
+            barber[0].time_off.map((timeOff) => {
+              return (
+                <TimeOffContainer key={timeOff.startDate}>
+                  {formatDateString(timeOff.startDate)} -{" "}
+                  {formatDateString(timeOff.endDate)}
+                  <Delete onClick={() => handleDeleteTimeOff(timeOff)}>
+                    X
+                  </Delete>
+                </TimeOffContainer>
+              );
+            })
+          ) : (
+            <div style={{ fontSize: "1.2rem" }}>No time off scheduled</div>
+          )}
+        </ButtonWrapper>
+      </ControlPannel>
     </Wrapper>
   );
 };
@@ -203,42 +248,30 @@ const StyledLabel = styled.label`
   text-align: center;
 `;
 
-const CalendarLabelContainer = styled.div`
-  width: 30%;
-`;
-
 const CustomInput = styled.input`
   display: none;
 `;
-
-const Wrapper = styled.div`
-  position: relative;
+const ControlPannel = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  left: 2.5vw;
+  width: 100%;
+  height: 100%;
+`;
+const Wrapper = styled.div`
+  position: relative;
+  display: grid;
+  grid-template-rows: 10% 90%;
+  align-items: center;
+  left: 1vw;
   top: 1vh;
-  width: 95vw;
-  height: 80vh;
+  width: 98vw;
+  height: 86vh;
   background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 30px;
   z-index: 1;
-  border: 5px solid #035e3f;
   font-family: "Roboto", sans-serif;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 `;
 
-const CalendarContainer = styled.div`
-  transform: scale(1.4);
-  border-radius: 10px;
-  left: 10vw;
-  top: -15vh;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-`;
 const Submit = styled.button`
   margin-top: 2vh;
   background-color: transparent;
@@ -272,43 +305,23 @@ const ButtonWrapper = styled.div`
   align-items: center;
   justify-content: space-evenly;
   width: 30%;
-  height: 70%;
+  height: 60%;
   padding: 5vh 0 5vh 0;
   border-radius: 20px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  border: 2px solid #035e3f;
+  position: relative;
 `;
 const SelectedDate = styled.div`
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   padding: 5px 10px 5px 10px;
   border-radius: 5px;
+  border: 2px solid #035e3f;
 `;
 const SelectedEndDate = styled.div`
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   padding: 5px 10px 5px 10px;
   border-radius: 5px;
+  border: 2px solid #035e3f;
 `;
 
-const BackButton = styled.button`
-  position: absolute;
-  font-size: 3rem;
-  border: none;
-  background-color: transparent;
-  color: #035e3f;
-  opacity: 0.6;
-  transition: 0.3s ease-in-out;
-  top: 5vh;
-  left: 5vw;
-  &:hover {
-    cursor: pointer;
-    opacity: 1;
-  }
-`;
 const TimeOffContainer = styled.div`
   width: 70%;
   border: 2px solid #035e3f;

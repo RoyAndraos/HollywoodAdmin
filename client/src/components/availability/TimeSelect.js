@@ -1,30 +1,38 @@
 import React, { useState, useContext, useEffect } from "react";
 import { styled } from "styled-components";
-import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getDailyHours } from "../helpers";
 import { UserContext } from "../contexts/UserContext";
 import { initialAvailability } from "../helpers";
 import { NotificationContext } from "../contexts/NotficationContext";
 const TimeSelect = () => {
+  // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
   const [selectedAdminInfo, setSelectedAdminInfo] = useState(userInfo[0]);
   const [showBarbers, setShowBarbers] = useState(false);
   const [selectedCells, setSelectedCells] = useState(initialAvailability);
+
+  // useEffect: link the available cells to the selected barber's availability (set them) everytime the selected barber changes
   useEffect(() => {
     setSelectedCells(selectedAdminInfo.availability);
   }, [selectedAdminInfo]);
   const navigate = useNavigate();
+
+  // day names for the table
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  // daily hours for the table (from 9am to 8pm)
   const daily = getDailyHours();
 
+  // function: select/change barber
   const selectBarber = (e, barber) => {
     e.preventDefault();
     setSelectedAdminInfo(barber);
     setShowBarbers(!showBarbers);
   };
 
+  // function: save changes updates the availability of the selected barber in the database and the context
   const saveChanges = () => {
     setSelectedAdminInfo({ ...selectedAdminInfo, availability: selectedCells });
     const adminToBeUpdated = userInfo.findIndex(
@@ -51,9 +59,13 @@ const TimeSelect = () => {
         navigate("/dashboard/schedule");
       });
   };
+
+  // function: reset schedule resets the availability of the selected barber to the initial state (open all slots)
   const resetSchedule = () => {
     setSelectedCells(initialAvailability);
   };
+
+  // first row of the table (hours)
   const firstDaily = [
     "9am",
     "10am",
@@ -67,10 +79,8 @@ const TimeSelect = () => {
     "6pm",
     "7pm",
   ];
-  const handleExit = (e) => {
-    e.preventDefault();
-    navigate("/dashboard/schedule");
-  };
+
+  // function: handleCellClick toggles the availability of the selected cell
   const handleCellClick = (dayIndex, timeIndex) => {
     const cellKey = `${dayIndex}-${timeIndex}`;
     const updatedCells = selectedCells.map((cell) => {
@@ -86,6 +96,7 @@ const TimeSelect = () => {
     setSelectedCells(updatedCells);
   };
 
+  // function: handleRowClick selects/deselects all cells in the row by clicking on the weekday name
   const handleRowClick = (day) => {
     const rowCells = daily.map((_) => `${day}-${_}`);
     const areAllCellsSelected = rowCells.every((cellKey) =>
@@ -104,40 +115,43 @@ const TimeSelect = () => {
 
     setSelectedCells(updatedCells);
   };
-
   const handleNavToTimeOff = () => {
     navigate(`/dashboard/timeOff/${selectedAdminInfo._id}`);
   };
 
   return (
     <Wrapper>
-      <BackButton onClick={(e) => handleExit(e)}>
-        <FaArrowLeft />
-      </BackButton>
       <ControlPanel>
         <AvailButtons>
-          <Reset onClick={resetSchedule}>Reset</Reset>
-          <SaveChanges onClick={saveChanges}>Save Changes</SaveChanges>
-          <TimeOff onClick={handleNavToTimeOff}>Time Off</TimeOff>
+          <Reset key={"reset"} onClick={resetSchedule}>
+            Reset
+          </Reset>
+          <Reset key={"save"} onClick={saveChanges}>
+            Save Changes
+          </Reset>
+          <Reset key={"timeOff"} onClick={handleNavToTimeOff}>
+            Time Off
+          </Reset>
         </AvailButtons>
-        <AdminName onClick={() => setShowBarbers(!showBarbers)}>
-          {selectedAdminInfo.given_name}
-        </AdminName>
-
-        {showBarbers ? (
-          <BarberContainer>
-            {userInfo.map((barber) => {
-              return (
-                <BarberCard
-                  key={barber.given_name}
-                  onClick={(e) => selectBarber(e, barber)}
-                >
-                  {barber.given_name}
-                </BarberCard>
-              );
-            })}
-          </BarberContainer>
-        ) : null}
+        <BarberContainer>
+          <AdminName onClick={() => setShowBarbers(!showBarbers)}>
+            {showBarbers ? "X" : selectedAdminInfo.given_name}
+          </AdminName>
+          {showBarbers ? (
+            <>
+              {userInfo.map((barber) => {
+                return (
+                  <AdminName
+                    key={barber.given_name}
+                    onClick={(e) => selectBarber(e, barber)}
+                  >
+                    {barber.given_name}
+                  </AdminName>
+                );
+              })}
+            </>
+          ) : null}
+        </BarberContainer>
       </ControlPanel>
 
       <TableWrapper>
@@ -177,37 +191,12 @@ const TimeSelect = () => {
 };
 
 const Wrapper = styled.div`
-  width: 95vw;
+  width: 100vw;
   position: relative;
   display: flex;
   flex-direction: column;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.7);
   height: 90vh;
-  border-radius: 30px;
   z-index: 1;
-`;
-
-const BackButton = styled.button`
-  border-radius: 30px;
-  border: none;
-  text-align: center;
-  font-size: 40px;
-  color: black;
-  opacity: 0.5;
-  background-color: transparent;
-  width: 60px;
-  height: 40px;
-  transition: 0.2s ease-in-out;
-  position: absolute;
-  top: 2vh;
-  left: 1vw;
-  &:hover {
-    cursor: pointer;
-    transform: scale(1.1);
-  }
 `;
 
 const Table = styled.table`
@@ -239,16 +228,15 @@ const Table = styled.table`
 `;
 
 const TableWrapper = styled.div`
-  width: 85vw;
+  width: 100%;
   height: 80vh;
   overflow: auto;
   border-radius: 30px;
-  margin-left: 5%;
 `;
 
 const TH = styled.th`
   background-color: #035e3f;
-  border: 2px solid #3e363f;
+  border: 2px solid transparent;
   color: rgba(255, 255, 255, 0.9);
   transition: 0.2s ease-in-out;
   border-top-left-radius: 5px;
@@ -275,7 +263,6 @@ const FirstRow = styled.div`
 `;
 const FirstRowDay = styled.div`
   background-color: #035e3f;
-  /* border: 1px solid black; */
   width: 24%;
   display: flex;
   justify-content: center;
@@ -306,24 +293,7 @@ const Reset = styled.button`
     color: #035e3f;
   }
 `;
-const SaveChanges = styled.button`
-  margin-left: 2vw;
-  min-width: 12vw;
-  width: fit-content;
-  padding: 10px 5px 10px 5px;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  transition: 0.2s ease-in-out;
-  background-color: #035e3f;
-  color: whitesmoke;
-  font-size: 20px;
-  &:hover {
-    cursor: pointer;
-    background-color: #e5e2e2;
-    border: #035e3f solid 2px;
-    color: #035e3f;
-  }
-`;
+
 const ControlPanel = styled.div`
   display: flex;
   justify-content: space-between;
@@ -333,13 +303,12 @@ const ControlPanel = styled.div`
   z-index: 2;
 `;
 
-const AdminName = styled.div`
+export const AdminName = styled.div`
   border: 3px solid #3e363f;
   border-radius: 5px;
   padding: 5px 10px 5px 10px;
   background-color: transparent;
   color: #3e363f;
-  margin-left: 100px;
   font-size: 25px;
   font-family: "Roboto", sans-serif;
   font-weight: 600;
@@ -350,50 +319,11 @@ const AdminName = styled.div`
   }
 `;
 
-const BarberContainer = styled.div`
-  transform: translateX(150%);
-  width: 100px;
-  position: absolute;
-  right: 10vw;
-  top: 6vh;
-`;
-
-const BarberCard = styled.div`
-  border: 1px solid #ccc;
-  background-color: #fff;
-  text-align: center;
-  position: relative;
-  margin: 5px 0 0 0;
-  transition: 0.3s ease-in-out;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  font-size: 20px;
-  width: 200px;
-  &:hover {
-    cursor: pointer;
-    background-color: #ccc;
-  }
-  &:first-of-type {
-    margin: 0;
-  }
-`;
-
-const TimeOff = styled.button`
-  margin: 0 2vw 0 2vw;
-  min-width: 12vw;
-  width: fit-content;
-  padding: 10px 5px 10px 5px;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  transition: 0.2s ease-in-out;
-  background-color: #035e3f;
-  color: whitesmoke;
-  font-size: 20px;
-  &:hover {
-    cursor: pointer;
-    background-color: #e5e2e2;
-    border: #035e3f solid 2px;
-    color: #035e3f;
-  }
+export const BarberContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 20%;
 `;
 
 const AvailButtons = styled.div`

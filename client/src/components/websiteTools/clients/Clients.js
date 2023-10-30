@@ -11,7 +11,18 @@ const Clients = () => {
     fetch(`/search/${searchTerm}`)
       .then((res) => res.json())
       .then((data) => {
-        setSearchResults(data.data);
+        const newClientsArray = data.data.map((client) => ({
+          ...client,
+          edit: {
+            fname: false,
+            lname: false,
+            email: false,
+            number: false,
+            note: false,
+          },
+        }));
+        console.log(newClientsArray);
+        setSearchResults(newClientsArray);
       });
   };
 
@@ -22,7 +33,10 @@ const Clients = () => {
         setSearchTerm={setSearchTerm}
         handleSearchClick={handleSearchClick}
       />
-      <SearchResults searchResults={searchResults} />
+      <SearchResults
+        searchResults={searchResults}
+        setSearchResults={setSearchResults}
+      />
     </Wrapper>
   );
 };

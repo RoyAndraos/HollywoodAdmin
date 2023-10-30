@@ -6,6 +6,7 @@ import {
   ToggleEdit,
   SaveChanges,
 } from "./SearchResults";
+import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
 const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
   const initialNote = client.note;
@@ -22,10 +23,11 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
                 setEditedNote(e.target.value);
               }}
             />
-            <ToggleEdit
+            <Cancel
               key={`edit-note-${client._id}`}
               onClick={(e) => {
                 handleEditToggle(client._id, "note", e);
+                setEditedNote(initialNote);
               }}
             />
             {initialNote !== editedNote && client.edit.note && (
@@ -57,10 +59,11 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
               setEditedNote(e.target.value);
             }}
           />
-          <ToggleEdit
+          <Cancel
             key={`edit-note-${client._id}`}
             onClick={(e) => {
               handleEditToggle(client._id, "note", e);
+              setEditedNote(initialNote);
             }}
           />
           {initialNote !== editedNote && client.edit.note && (

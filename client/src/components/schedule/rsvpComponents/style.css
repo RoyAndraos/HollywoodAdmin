@@ -34,6 +34,7 @@
 /* calendar container */
 .rbc-calendar{
     font-family: sans-serif;
+    height: 85vh !important;
 }
 /* off range date cell */
 .rbc-off-range{
@@ -126,7 +127,6 @@
 /* EVENTS */
 
 .rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event {
-    display: none !important;
     width: 98% !important;
     left: 1%;
     position: relative;
@@ -140,12 +140,7 @@
   .rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event:hover{
     opacity: 1 !important;
   }
-.rbc-month-row{
-    height: 2% !important;
-}
-.rbc-row rbc-month-header{
-    height: 3%  !important;
-}
+
 .rbc-row:first-of-type{
     height: 5%;
 }
@@ -192,15 +187,15 @@
 height: 20px !important;
 }
 
-
 .rbc-day-slot{
   position: absolute;
   top: 0;
   width: 100%;
   background-color: transparent;
 } 
+
 .rbc-day-slot .rbc-events-container .rbc-event{
-    background-color: #035e3f !important;
+    background-color: #035e3f;
     width: 50% !important;
     display: flex !important;
     flex-direction: row !important;

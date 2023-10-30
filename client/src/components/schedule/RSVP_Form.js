@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import DatePicker from "react-datepicker";
 import BarberSelect from "./rsvpComponents/BarberSelect";
 import "react-datepicker/dist/react-datepicker.css";
@@ -23,6 +23,8 @@ const AddReservation = () => {
   const [selectedService, setSelectedService] = useState("");
   const [error, setError] = useState(true);
 
+  // when a service has a duration of 2 (meaning 2 slots), this function will select the next slot aka the slot that
+  //was clicked and the one that comes after it
   const selectNextSlot = (slot) => {
     const day = slot.split("-")[0];
     const timeToEdit = slot.split("-")[1].split(":")[1].slice(0, -2);
@@ -42,6 +44,8 @@ const AddReservation = () => {
       return `${day}-${hour}:${newTimeMinute}${AMPM}`;
     }
   };
+
+  //submit reservation
   const handleSubmit = (e) => {
     e.preventDefault();
     let reservation = {};
@@ -94,6 +98,7 @@ const AddReservation = () => {
     setError(true);
   };
 
+  //saves input data to state and checks for errors
   const handleChange = (e, name) => {
     e.preventDefault();
     switch (name) {
@@ -160,7 +165,7 @@ const AddReservation = () => {
         break;
     }
   };
-
+  //saves date to state
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setSelectedSlot("");
@@ -174,34 +179,6 @@ const AddReservation = () => {
           handleSubmit(e);
         }}
       >
-        <div>
-          <LabelInputWrapper>
-            <StyledLabel>Date</StyledLabel>
-            <CustomDatePicker
-              selected={selectedDate}
-              onChange={handleDateChange}
-              minDate={new Date()}
-              calendarContainer={CalendarContainer}
-            />
-          </LabelInputWrapper>
-          <BarberSelect
-            selectedBarberForm={selectedBarberForm}
-            setBarber={setBarber}
-          />
-        </div>
-        <div>
-          <ServiceSelector
-            selectedService={selectedService}
-            setSelectedService={setSelectedService}
-          />
-          <SlotSelector
-            selectedSlot={selectedSlot}
-            selectedBarberForm={selectedBarberForm}
-            selectedService={selectedService}
-            selectedDate={selectedDate}
-            setSelectedSlot={setSelectedSlot}
-          />
-        </div>
         <div>
           <LabelInputWrapper>
             <StyledLabel>Client Name</StyledLabel>
@@ -250,6 +227,35 @@ const AddReservation = () => {
             {numberError !== "" && <ErrorMessage>{numberError}</ErrorMessage>}
           </LabelInputWrapper>
         </div>
+        <div>
+          <LabelInputWrapper>
+            <StyledLabel>Date</StyledLabel>
+            <CustomDatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              minDate={new Date()}
+              calendarContainer={CalendarContainer}
+            />
+          </LabelInputWrapper>
+          <BarberSelect
+            selectedBarberForm={selectedBarberForm}
+            setBarber={setBarber}
+          />
+        </div>
+        <div>
+          <ServiceSelector
+            selectedService={selectedService}
+            setSelectedService={setSelectedService}
+          />
+          <SlotSelector
+            selectedSlot={selectedSlot}
+            selectedBarberForm={selectedBarberForm}
+            selectedService={selectedService}
+            selectedDate={selectedDate}
+            setSelectedSlot={setSelectedSlot}
+          />
+        </div>
+
         <Book type="submit" disabled={error}>
           Book
         </Book>
@@ -275,6 +281,7 @@ const Wrapper = styled.div`
   background-color: #011c13;
   border-radius: 20px;
 `;
+
 const Title = styled.h1`
   text-align: center;
   font-family: "Roboto", sans-serif;
@@ -284,6 +291,7 @@ const Title = styled.h1`
   border-radius: 20px;
   padding: 20px 0 20px 0;
 `;
+
 const StyledForm = styled.form`
   display: flex;
   width: 99%;
@@ -314,6 +322,7 @@ const CustomDatePicker = styled(DatePicker)`
     background-color: #ccc;
   }
 `;
+
 const CalendarContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -416,4 +425,5 @@ const ErrorMessage = styled.span`
   left: 0;
   bottom: -30%;
 `;
+
 export default AddReservation;

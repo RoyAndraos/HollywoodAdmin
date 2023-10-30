@@ -1,0 +1,11 @@
+.react-datepicker__tab-loop{
+    position: absolute;
+}
+.react-datepicker__triangle{
+    display: none;
+}
+.react-datepicker{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+    transform: translate(-121px, -134px);
+}

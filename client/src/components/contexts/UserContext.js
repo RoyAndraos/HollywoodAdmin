@@ -1,7 +1,7 @@
 import { createContext, useState } from "react";
 
 export const UserContext = createContext("");
-
+// handles the barber information
 export const UserProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState();
   return (

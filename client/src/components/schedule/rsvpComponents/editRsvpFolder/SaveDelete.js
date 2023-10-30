@@ -4,27 +4,30 @@ import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../../../contexts/NotficationContext";
 const SaveDelete = ({ formData, initialFormData }) => {
+  // useContext: notification, reservations
   const { setNotification } = useContext(NotificationContext);
+  const { reservations, setReservations } = useContext(ReservationContext);
+
+  // function: check if initial state has been changed
   const isEqual = (objA, objB) => {
     const keysA = Object.keys(objA);
     const keysB = Object.keys(objB);
-
     if (keysA.length !== keysB.length) {
       return false;
     }
-
     for (const key of keysA) {
       if (objA[key] !== objB[key]) {
         return false;
       }
     }
-
     return true;
   };
+  const isFormDataDifferent = !isEqual(formData, initialFormData);
 
   const params = useParams()._id;
   const navigate = useNavigate();
-  const { reservations, setReservations } = useContext(ReservationContext);
+
+  // function: delete reservation from database and context
   const handleDeleteReservation = (e) => {
     e.preventDefault();
     fetch(`/deleteReservation/${params}`, {
@@ -47,7 +50,8 @@ const SaveDelete = ({ formData, initialFormData }) => {
       })
       .catch(() => setNotification("Something went wrong"));
   };
-  const isFormDataDifferent = !isEqual(formData, initialFormData);
+
+  // function: save reservation to database and context
   const handleSaveReservationEdit = (e) => {
     e.preventDefault();
     fetch(`/updateReservation`, {

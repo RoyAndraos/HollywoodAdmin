@@ -6,6 +6,7 @@ import {
   ToggleEdit,
   SaveChanges,
 } from "./SearchResults";
+import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
 const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
   const initialNumber = client.number;
@@ -18,40 +19,15 @@ const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
             <StyledInput
               type="text"
               autoFocus
-              placeholder={"12345675890"}
               onChange={(e) => {
                 setEditedNumber(e.target.value);
               }}
             />
-            <ToggleEdit
+            <Cancel
               key={`edit-number-${client._id}`}
               onClick={(e) => {
                 handleEditToggle(client._id, "number", e);
-              }}
-            />
-            {initialNumber !== editedNumber && client.edit.number && (
-              <SaveChanges
-                onClick={(e) => {
-                  handleSaveChange(client._id, "number", editedNumber);
-                  handleEditToggle(client._id, "number", e);
-                }}
-              />
-            )}
-          </LabelInputEditWrapper>
-        ) : client.edit.number ? (
-          <LabelInputEditWrapper>
-            <StyledInput
-              type="text"
-              autoFocus
-              placeholder={"12345675890"}
-              onChange={(e) => {
-                setEditedNumber(e.target.value);
-              }}
-            />
-            <ToggleEdit
-              key={`edit-number-${client._id}`}
-              onClick={(e) => {
-                handleEditToggle(client._id, "number", e);
+                setEditedNumber(initialNumber);
               }}
             />
             {initialNumber !== editedNumber && client.edit.number && (
@@ -65,7 +41,7 @@ const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
           </LabelInputEditWrapper>
         ) : (
           <LabelInputEditWrapper>
-            <Info style={{ fontSize: "1rem" }}>No number</Info>
+            <Info>No number</Info>
             <ToggleEdit
               key={`edit-number-${client._id}`}
               onClick={(e) => {
@@ -74,10 +50,40 @@ const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
             />
           </LabelInputEditWrapper>
         )
+      ) : client.edit.number ? (
+        <LabelInputEditWrapper>
+          <StyledInput
+            autoFocus
+            placeholder={client.number}
+            onChange={(e) => {
+              setEditedNumber(e.target.value);
+            }}
+          />
+          <Cancel
+            key={`edit-number-${client._id}`}
+            onClick={(e) => {
+              handleEditToggle(client._id, "number", e);
+              setEditedNumber(initialNumber);
+            }}
+          />
+          {initialNumber !== editedNumber && client.edit.number && (
+            <SaveChanges
+              onClick={(e) => {
+                handleSaveChange(client._id, "number", editedNumber);
+                handleEditToggle(client._id, "number", e);
+              }}
+            />
+          )}
+        </LabelInputEditWrapper>
       ) : (
         <LabelInputEditWrapper>
           <Info>{client.number}</Info>
-          <ToggleEdit />
+          <ToggleEdit
+            key={`edit-number-${client._id}`}
+            onClick={(e) => {
+              handleEditToggle(client._id, "number", e);
+            }}
+          />
         </LabelInputEditWrapper>
       )}
     </Container>

@@ -10,17 +10,20 @@ import moment from "moment";
 import { ReservationContext } from "../../../contexts/ReservationContext";
 
 const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
+  // useState/useContext: timeEdit for inner text of button, barberIsOff, availableSlots, reservations, userInfo(selectedBarber)
   const [timeEdit, setTimeEdit] = useState("Edit");
   const [barberIsOff, setBarberIsOff] = useState(false);
   const [availableSlots, setAvailableSlots] = useState([]);
   const { reservations } = useContext(ReservationContext);
   const { userInfo } = useContext(UserContext);
   const selectedService = reservation.service;
+  // function: format date to "Mon Jan 1"
   const formatDate = (date) => {
     const dateObj = new Date(date);
     const options = { month: "short", weekday: "short", day: "numeric" };
     return dateObj.toLocaleDateString(undefined, options);
   };
+  // function: format date to "Mon"
   const handleFormatDateForSlots = (date) => {
     const dateObj = new Date(date);
     const options = { weekday: "short" };
@@ -30,16 +33,23 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
   const selectedBarberForm = userInfo.filter(
     (barber) => barber.given_name === reservation.barber
   )[0];
+
   useEffect(() => {
+    //if theres no selected barber
     if (Object.keys(selectedBarberForm).length === 0) {
       return;
     } else {
+      // if the selected barber is off on the selected date
       if (selectedBarberForm.time_off.length !== 0) {
         const startDate = moment(selectedBarberForm.time_off[0].startDate)._i;
         const endDate = moment(selectedBarberForm.time_off[0].endDate)._i;
+        //check if the selected date is between the start and end date of the time off
         const timeOff = moment(selectedDate).isBetween(startDate, endDate);
+        //set barberIsOff to true
         setBarberIsOff(timeOff);
       }
+      //if the selected barber is not off on the selected date
+      //filter the available slots to only show the ones that are open on the selected barber's availability
       const originalAvailableSlots = selectedBarberForm.availability
         .filter((slot) =>
           slot.slot.includes(handleFormatDateForSlots(selectedDate))
@@ -51,12 +61,14 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
             return "";
           }
         });
+
+      //check for the barber's reservations on the selected date
       const todayReservations = reservations.filter((reservation) => {
         const today =
           formatDate(new Date(reservation.date)) === formatDate(selectedDate);
         return selectedBarberForm.given_name === reservation.barber && today;
       });
-
+      // filter the reserved slots out of the available slots
       const filteredSlots = originalAvailableSlots.filter((slot) => {
         return !todayReservations.some((reservation) => {
           if (reservation.slot.length === 1) {
@@ -66,7 +78,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
           }
         });
       });
-
+      // if the selected service is 2 (2x15 minutes), filter out the slots that are before the first slot of the reservation
       if (selectedService.duration === "2") {
         const removedBeforeSlotsFor2Duration = todayReservations.map(
           (reservation) => {
@@ -95,6 +107,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
     selectedService,
     barberIsOff,
   ]);
+  // function: edit inner html of button
   const handleEditClick = () => {
     if (timeEdit === "Edit") {
       setTimeEdit("Show more");

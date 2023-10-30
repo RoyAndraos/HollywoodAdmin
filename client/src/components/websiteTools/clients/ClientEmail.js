@@ -6,6 +6,7 @@ import {
   ToggleEdit,
   SaveChanges,
 } from "./SearchResults";
+import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
 const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
   const initialEmail = client.email;
@@ -23,10 +24,11 @@ const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
                 setEditedEmail(e.target.value);
               }}
             />
-            <ToggleEdit
+            <Cancel
               key={`edit-email-${client._id}`}
               onClick={(e) => {
                 handleEditToggle(client._id, "email", e);
+                setEditedEmail(initialEmail);
               }}
             />
             {initialEmail !== editedEmail && client.edit.email && (
@@ -58,10 +60,11 @@ const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
               setEditedEmail(e.target.value);
             }}
           />
-          <ToggleEdit
+          <Cancel
             key={`edit-email-${client._id}`}
             onClick={(e) => {
               handleEditToggle(client._id, "email", e);
+              setEditedEmail(initialEmail);
             }}
           />
           {initialEmail !== editedEmail && client.edit.email && (

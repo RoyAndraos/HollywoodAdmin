@@ -19,9 +19,6 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: whitesmoke;
-  height: 87vh;
-  &:last-of-type {
-    border-radius: 20px;
-  }
+  height: 91.5vh;
 `;
 export default Schedule;

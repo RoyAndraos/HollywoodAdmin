@@ -114,17 +114,17 @@ const DeleteButton = styled.button`
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #c02a2a;
-  border: 2px solid whitesmoke;
+  background-color: rgba(192, 42, 42, 0.8);
+  border: 2px solid rgba(0, 0, 0, 0.5);
   padding: 2px 5px;
   color: white;
   font-size: 0.8rem;
   border-radius: 50%;
   text-align: center;
-  transition: 0.3s ease-in-out;
+  transition: 0.2s ease-in-out;
   &:hover {
     cursor: pointer;
-    background-color: #a41f1f;
+    background-color: rgba(192, 42, 42, 1);
   }
   &:active {
     transform: scale(0.98);

@@ -9,7 +9,7 @@ import ClientNote from "./ClientNote";
 import ClientReservation from "./ClientReservation";
 import ClientLastName from "./ClientLastName";
 
-const SearchResults = ({ searchResults }) => {
+const SearchResults = ({ searchResults, setSearchResults }) => {
   const [clients, setClients] = useState([]);
   //get all clients
   useEffect(() => {
@@ -76,22 +76,6 @@ const SearchResults = ({ searchResults }) => {
       });
     });
   };
-
-  // Function to handle the change of a specific client's field
-  const handleEditChange = (clientId, field, e) => {
-    e.preventDefault();
-    setClients((prevClients) => {
-      return prevClients.map((client) => {
-        if (client._id === clientId) {
-          return {
-            ...client,
-            [field]: e.target.value,
-          };
-        }
-        return client;
-      });
-    });
-  };
   if (!clients && searchResults.length === 0) return <div>Loading...</div>;
   if (searchResults.length === 0 && clients)
     return (
@@ -129,7 +113,7 @@ const SearchResults = ({ searchResults }) => {
                 handleSaveChange={handleSaveChange}
                 handleEditToggle={handleEditToggle}
               />
-              <StyledLabel>Reservations</StyledLabel>
+              <StyledLabel>Last Reservation</StyledLabel>
               <ClientReservation client={client} />
             </ClientWrapper>
           );
@@ -137,60 +121,66 @@ const SearchResults = ({ searchResults }) => {
       </Wrapper>
     );
   else {
-    return (
-      <Wrapper key={"search"}>
-        {searchResults.map((client) => {
-          return (
-            <ClientWrapper key={client._id}>
-              <StyledLabel>Name</StyledLabel>
-              <ClientName
-                client={client}
-                handleEditChange={handleEditChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Email</StyledLabel>
-              <ClientEmail
-                client={client}
-                handleEditChange={handleEditChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Number</StyledLabel>
-              <ClientNumber
-                client={client}
-                handleEditChange={handleEditChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Note</StyledLabel>
-              <ClientNote
-                client={client}
-                handleEditChange={handleEditChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Reservations</StyledLabel>
-              <ClientReservation client={client} />
-            </ClientWrapper>
-          );
-        })}
-      </Wrapper>
-    );
+    if (searchResults.length === 0) {
+      return <div>...loading</div>;
+    } else {
+      return (
+        <Wrapper key={"search"}>
+          {searchResults.map((client) => {
+            return (
+              <ClientWrapper key={client._id + "searchRes"}>
+                <StyledLabel>Name</StyledLabel>
+                <ClientName
+                  client={client}
+                  handleSaveChange={handleSaveChange}
+                  handleEditToggle={handleEditToggle}
+                />
+                <StyledLabel>Email</StyledLabel>
+                <ClientEmail
+                  client={client}
+                  handleSaveChange={handleSaveChange}
+                  handleEditToggle={handleEditToggle}
+                />
+                <StyledLabel>Number</StyledLabel>
+                <ClientNumber
+                  client={client}
+                  handleSaveChange={handleSaveChange}
+                  handleEditToggle={handleEditToggle}
+                />
+                <StyledLabel>Note</StyledLabel>
+                <ClientNote
+                  client={client}
+                  handleSaveChange={handleSaveChange}
+                  handleEditToggle={handleEditToggle}
+                />
+                <StyledLabel>Last Reservation</StyledLabel>
+                <ClientReservation client={client} />
+              </ClientWrapper>
+            );
+          })}
+        </Wrapper>
+      );
+    }
   }
 };
 
 const Wrapper = styled.div`
   display: flex;
-  margin-top: 4vh;
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-evenly;
   padding: 2vw;
   width: 100%;
+  flex-wrap: wrap;
+  height: 100%;
 `;
 const ClientWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 25%;
-  padding: 1vw 2vh 0 2vh;
+  margin: 2vh 0 2vh 0;
+  padding: 1vw 2vh 0.5vh 2vh;
   background-color: #f2f2f2;
   border: 1px solid black;
 `;
@@ -213,7 +203,7 @@ export const ToggleEdit = styled(AiOutlineEdit)`
 `;
 
 export const StyledLabel = styled.label`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   border-bottom: 1px solid #035e3f;
   color: #035e3f;
@@ -227,6 +217,8 @@ export const Info = styled.p`
   font-size: 1.2rem;
   font-weight: 400;
   margin-left: 5%;
+  width: 80%;
+  cursor: pointer;
 `;
 
 export const StyledInput = styled.input`
@@ -239,7 +231,7 @@ export const StyledInput = styled.input`
 export const SaveChanges = styled(BsCheckSquare)`
   background-color: #035e3f;
   color: whitesmoke;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   transition: 0.2s ease-in-out;

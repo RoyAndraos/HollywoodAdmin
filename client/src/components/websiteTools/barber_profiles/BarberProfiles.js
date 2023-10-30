@@ -3,6 +3,7 @@ import { UserContext } from "../../contexts/UserContext";
 import styled from "styled-components";
 import EditProfileForm from "./EditProfileForm";
 import { NotificationContext } from "../../contexts/NotficationContext";
+// import { initialAvailability } from "../../helpers";
 const BarberProfiles = () => {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
@@ -91,7 +92,7 @@ const BarberProfiles = () => {
       .then((res) => res.json())
       .then((result) => {
         newBarber._id = result.data.insertedId;
-        setUserInfo((prevInfo) => [...prevInfo, newBarber]);
+        setUserInfo((prevInfo) => [...prevInfo, result.data]);
         setNotification("Barber profile added successfully");
       })
       .catch(() => {

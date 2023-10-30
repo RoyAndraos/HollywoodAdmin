@@ -2,14 +2,14 @@ import React from "react";
 import { styled } from "styled-components";
 import { NavLink } from "react-router-dom";
 import LogoutButton from "./login/LogoutButton";
-
+import NotifLogs from "./NotifLogs";
 const NavBar = () => {
   return (
     <Wrapper>
       <StyledNavLink to="/dashboard/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/dashboard/availability">Availability</StyledNavLink>
-      <StyledNavLink to="/dashboard/websiteTools">Website Tools</StyledNavLink>
-      <StyledNavLink to="/dashboard/data">Business Data</StyledNavLink>
+      <StyledNavLink to="/dashboard/websiteTools">Tools</StyledNavLink>
+      <NotifLogs />
       <LogoutButton />
     </Wrapper>
   );
@@ -26,6 +26,7 @@ const Wrapper = styled.div`
   box-shadow: 0 0 10px black;
   border-top-right-radius: 10px;
   width: 100%;
+  z-index: 1000;
 `;
 
 const StyledNavLink = styled(NavLink)`

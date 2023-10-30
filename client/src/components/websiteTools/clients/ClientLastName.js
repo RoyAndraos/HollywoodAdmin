@@ -6,6 +6,7 @@ import {
   ToggleEdit,
   SaveChanges,
 } from "./SearchResults";
+import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
 const ClientLastName = ({ handleSaveChange, handleEditToggle, client }) => {
   const initialName = client.lname;
@@ -28,12 +29,23 @@ const ClientLastName = ({ handleSaveChange, handleEditToggle, client }) => {
         ) : (
           <Info>{client.lname}</Info>
         )}
-        <ToggleEdit
-          key={`edit-lname-${client._id}`}
-          onClick={(e) => {
-            handleEditToggle(client._id, "lname", e);
-          }}
-        />
+        {client.edit.lname ? (
+          <Cancel
+            key={`edit-lname-${client._id}`}
+            onClick={(e) => {
+              handleEditToggle(client._id, "lname", e);
+              setEditedName(initialName);
+            }}
+          />
+        ) : (
+          <ToggleEdit
+            key={`edit-lname-${client._id}`}
+            onClick={(e) => {
+              handleEditToggle(client._id, "lname", e);
+            }}
+          />
+        )}
+
         {initialName !== editedName && client.edit.lname && (
           <SaveChanges
             onClick={(e) => {

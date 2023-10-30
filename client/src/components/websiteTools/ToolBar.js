@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 const ToolBar = ({ selectedOption, setSelectedOption }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState("false");
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
-        setIsScrolled(true);
+        setIsScrolled("true");
       } else {
-        setIsScrolled(false);
+        setIsScrolled("false");
       }
     };
 
@@ -53,8 +53,7 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
 };
 
 const Wrapper = styled.div`
-  height: ${(props) =>
-    props.isscrolled.toString() === "true" ? "100vh" : "90vh"};
+  height: ${(props) => (props.isscrolled === "true" ? "100vh" : "90vh")};
   width: 20%;
   display: flex;
   flex-direction: column;
@@ -62,7 +61,7 @@ const Wrapper = styled.div`
   align-items: center;
   position: fixed;
   border: none;
-  top: ${(props) => (props.isscrolled.toString() === "true" ? "0" : "9vh")};
+  top: ${(props) => (props.isscrolled === "true" ? "0" : "9vh")};
   transition: 0.3s ease-in-out;
 `;
 const StyledNavButton = styled.button`

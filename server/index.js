@@ -1,9 +1,11 @@
-// Use strict mode and import necessary modules
 "use strict";
 const express = require("express");
 const morgan = require("morgan");
+const http = require("http");
+const socketIo = require("socket.io");
 const cors = require("cors"); // Import the cors package
 const PORT = 4000;
+
 const {
   adminCheck,
   getUserInfo,
@@ -11,7 +13,6 @@ const {
   addReservation,
   addTimeOff,
   uploadImage,
-  getSlideshowImages,
   deleteImage,
   deleteTimeOff,
   updateReservation,
@@ -23,6 +24,7 @@ const {
   getSearchResults,
   getClients,
   updateClient,
+  startChangeStream,
 } = require("./server");
 
 // Create the express app
@@ -47,8 +49,10 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use("/", express.static(__dirname + "/"));
 
 // Define the routes
+app.get("/", (req, res) => {
+  res.send("Welcome to my server");
+});
 app.get("/getUserInfo", getUserInfo);
-app.get("/getSlideshowImages", getSlideshowImages);
 app.get("/search/:searchTerm", getSearchResults);
 app.get("/clients", getClients);
 app.post("/addReservation", addReservation);
@@ -65,5 +69,22 @@ app.delete("/images/:_id", deleteImage);
 app.delete("/deleteTimeOff", deleteTimeOff);
 app.delete("/deleteReservation/:_id", deleteReservation);
 app.delete("/deleteBarberProfile", deleteBarberProfile);
-// Start the server
-app.listen(PORT, () => console.info(`Listening on port ${PORT}`));
+
+const server = http.createServer(app); // Create an HTTP server
+
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // This is the URL of the React app
+  },
+});
+
+// Socket.IO logic for real-time communication
+io.on("connection", (socket) => {
+  socket.on("disconnect", () => {});
+});
+
+server.listen(PORT, () => {
+  console.info(`Listening on port ${PORT}`);
+});
+
+startChangeStream(io); // Pass the io instance to the function

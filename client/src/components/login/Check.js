@@ -7,6 +7,7 @@ import { ServicesContext } from "../contexts/ServicesContext";
 import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 const Check = () => {
+  // this is where all the data is wet in context from the database
   const { user } = useAuth0();
   const { setUserInfo } = useContext(UserContext);
   const { setReservations } = useContext(ReservationContext);
@@ -14,6 +15,7 @@ const Check = () => {
   const { setImages } = useContext(ImageContext);
   const { setText } = useContext(TextContext);
   const navigate = useNavigate();
+  // fetches the data from the database
   useEffect(() => {
     fetch("/checkIfAdmin", {
       method: "POST",

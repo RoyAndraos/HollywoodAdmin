@@ -5,7 +5,6 @@ import NavBar from "./components/Navbar";
 import BusinessData from "./components/BusinessData";
 import WebsiteTools from "./components/websiteTools/WebsiteTools";
 import Schedule from "./components/schedule/Schedule";
-import AvailabilityComponent from "./components/availability/AvailabilityComponent";
 import Check from "./components/login/Check";
 import NotGrant from "./components/login/NotGrant";
 import TakeTimeOff from "./components/availability/TakeTimeOff";
@@ -14,9 +13,12 @@ import { NotificationContext } from "./components/contexts/NotficationContext";
 import { useContext } from "react";
 import styled from "styled-components";
 import { useEffect } from "react";
+import TimeSelect from "./components/availability/TimeSelect";
+
 const App = () => {
   const { notification, setNotification } = useContext(NotificationContext);
   const location = useLocation();
+
   useEffect(() => {
     if (notification !== "") {
       setTimeout(() => {
@@ -38,10 +40,7 @@ const App = () => {
           <Route path="/dashboard/check" element={<Check />} />
           <Route path="/dashboard/data" element={<BusinessData />} />
           <Route path="/dashboard/websiteTools" element={<WebsiteTools />} />
-          <Route
-            path="/dashboard/availability"
-            element={<AvailabilityComponent />}
-          />
+          <Route path="/dashboard/availability" element={<TimeSelect />} />
           <Route
             path="/dashboard/timeOff/:barberId"
             element={<TakeTimeOff />}

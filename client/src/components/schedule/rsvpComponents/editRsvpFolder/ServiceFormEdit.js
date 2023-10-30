@@ -9,7 +9,6 @@ const ServiceFormEdit = ({ reservation, handleChange }) => {
   return (
     <LabelInfoWrapper>
       <StyledLabel>Service </StyledLabel>
-
       {serviceEdit ? (
         <Select
           id="service"

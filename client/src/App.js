@@ -1,12 +1,13 @@
-import Homepage from "./components/login/Homepage";
-import RequireAuth from "./components/login/RequireAuth";
-import { Routes, Route, useLocation } from "react-router-dom";
+// import Homepage from "./components/login/Homepage";
+// // import RequireAuth from "./components/login/RequireAuth";
+// import Check from "./components/login/Check";
+// import BusinessData from "./components/BusinessData";
+// import NotGrant from "./components/login/NotGrant";
+
+import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/Navbar";
-import BusinessData from "./components/BusinessData";
 import WebsiteTools from "./components/websiteTools/WebsiteTools";
 import Schedule from "./components/schedule/Schedule";
-import Check from "./components/login/Check";
-import NotGrant from "./components/login/NotGrant";
 import TakeTimeOff from "./components/availability/TakeTimeOff";
 import EditRsvp from "./components/schedule/rsvpComponents/editRsvpFolder/EditRsvp";
 import { NotificationContext } from "./components/contexts/NotficationContext";
@@ -17,7 +18,7 @@ import TimeSelect from "./components/availability/TimeSelect";
 
 const App = () => {
   const { notification, setNotification } = useContext(NotificationContext);
-  const location = useLocation();
+  // const location = useLocation();
 
   useEffect(() => {
     if (notification !== "") {
@@ -28,27 +29,22 @@ const App = () => {
   }, [notification, setNotification]);
   return (
     <div>
-      {location.pathname !== "/dashboard/check" &&
-        location.pathname.includes("/dashboard") && <NavBar />}
+      <NavBar />
       {notification !== "" && <Notification>{notification}</Notification>}
       <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/404" element={<NotGrant />} />
-      </Routes>
+        <Route path="/" element={<Schedule />} />
+        {/* <Route path="/404" element={<NotGrant />} /> */}
+        {/* </Routes>
       <RequireAuth>
-        <Routes>
-          <Route path="/dashboard/check" element={<Check />} />
-          <Route path="/dashboard/data" element={<BusinessData />} />
-          <Route path="/dashboard/websiteTools" element={<WebsiteTools />} />
-          <Route path="/dashboard/availability" element={<TimeSelect />} />
-          <Route
-            path="/dashboard/timeOff/:barberId"
-            element={<TakeTimeOff />}
-          />
-          <Route path="/dashboard/schedule" element={<Schedule />} />
-          <Route path="/dashboard/schedule/:_id" element={<EditRsvp />} />
-        </Routes>
-      </RequireAuth>
+        <Routes> */}
+        {/* <Route path="/check" element={<Check />} /> */}
+        {/* <Route path="/data" element={<BusinessData />} /> */}
+        <Route path="/websiteTools" element={<WebsiteTools />} />
+        <Route path="/availability" element={<TimeSelect />} />
+        <Route path="/timeOff/:barberId" element={<TakeTimeOff />} />
+        <Route path="/schedule/:_id" element={<EditRsvp />} />
+      </Routes>
+      {/* </RequireAuth> */}
     </div>
   );
 };

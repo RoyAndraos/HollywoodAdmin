@@ -11,10 +11,10 @@ const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
 const WHITE_LIST = process.env.WHITE_LIST;
 // Initialize the MongoDB client
-const client = new MongoClient(MONGO_URI, options);
+const client = new MongoClient(MONGO_URI_RALF, options);
 // Create an HTTP server with your Express app
 
 // Connect to the MongoDB server
@@ -92,7 +92,7 @@ const sendEmail = async (
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 const getClients = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -107,7 +107,7 @@ const getClients = async (req, res) => {
 };
 
 const getSearchResults = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const searchTerm = req.params.searchTerm;
   try {
     await client.connect();
@@ -140,7 +140,7 @@ const getSearchResults = async (req, res) => {
 };
 
 const getUserInfo = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -171,7 +171,7 @@ const getUserInfo = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 
 const addReservation = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const { reservation } = req.body;
   const _id = uuid();
   const client_id = uuid();
@@ -230,7 +230,7 @@ const addReservation = async (req, res) => {
 };
 
 const addTimeOff = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const { startDate, endDate, _id } = req.body;
   try {
     await client.connect();
@@ -258,7 +258,7 @@ const addTimeOff = async (req, res) => {
 
 const uploadImage = async (req, res) => {
   const _id = uuid();
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const fileSrc = req.body.src;
   const filename = req.body.filename;
   const imageInfo = {
@@ -318,7 +318,7 @@ const uploadImage = async (req, res) => {
 };
 
 const addBarber = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const barberInfo = req.body.barberInfo;
   const _id = uuid();
   try {
@@ -359,7 +359,7 @@ const addBarber = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 const deleteBarberProfile = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const { barberId } = req.body;
   try {
     await client.connect();
@@ -375,7 +375,7 @@ const deleteBarberProfile = async (req, res) => {
 };
 
 const deleteImage = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -390,7 +390,7 @@ const deleteImage = async (req, res) => {
 };
 
 const deleteTimeOff = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const { _id, startDate, endDate } = req.body;
   try {
     await client.connect();
@@ -416,7 +416,7 @@ const deleteTimeOff = async (req, res) => {
 };
 
 const deleteReservation = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const _id = req.params._id;
   try {
     await client.connect();
@@ -454,7 +454,7 @@ const adminCheck = async (req, res) => {
 };
 
 const updateAvailability = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const { _id, availability } = req.body;
   try {
     await client.connect();
@@ -471,7 +471,7 @@ const updateAvailability = async (req, res) => {
 };
 
 const updateReservation = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const reservation = req.body;
   try {
     await client.connect();
@@ -499,7 +499,7 @@ const updateReservation = async (req, res) => {
 };
 
 const updateBarberProfile = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const { barberId, barberInfo } = req.body;
   try {
     await client.connect();
@@ -524,7 +524,7 @@ const updateBarberProfile = async (req, res) => {
 };
 
 const updateText = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const { textId, text } = req.body;
   try {
     await client.connect();
@@ -542,7 +542,7 @@ const updateText = async (req, res) => {
 };
 
 const updateClient = async (req, res) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI_RALF, options);
   const _id = req.body[1];
   const field = Object.keys(req.body[0])[0];
   const value = Object.values(req.body[0])[0];

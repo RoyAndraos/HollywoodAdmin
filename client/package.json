@@ -4,11 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.12.4",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "@tippyjs/react": "^4.2.6",
     "js-cookie": "^3.0.5",
     "moment": "^2.29.4",

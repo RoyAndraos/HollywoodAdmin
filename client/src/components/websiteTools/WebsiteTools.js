@@ -30,7 +30,9 @@ const WebsiteTools = () => {
         const headers = {
           authorization: token,
         };
-        fetch(`/getUserInfo`, { headers })
+        fetch(`/https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
+          headers,
+        })
           .then((res) => res.json())
           .then((result) => {
             setUserInfo(result.userInfo);

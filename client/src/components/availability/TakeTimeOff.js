@@ -52,7 +52,9 @@ const TakeTimeOff = () => {
         const headers = {
           authorization: token,
         };
-        fetch(`/getUserInfo`, { headers })
+        fetch(`/https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
+          headers,
+        })
           .then((res) => res.json())
           .then((result) => {
             setUserInfo(result.userInfo);
@@ -128,7 +130,7 @@ const TakeTimeOff = () => {
     const headers = {
       authorization: token,
     };
-    fetch("/deleteTimeOff", {
+    fetch("/https://hollywood-fairmount-admin.onrender.com/deleteTimeOff", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -171,7 +173,7 @@ const TakeTimeOff = () => {
     const headers = {
       authorization: token,
     };
-    fetch("/addTimeOff", {
+    fetch("/https://hollywood-fairmount-admin.onrender.com/addTimeOff", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

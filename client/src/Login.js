@@ -24,7 +24,7 @@ const Login = () => {
     setPasswordFocused("true");
   };
   const handleSubmit = () => {
-    fetch("/login", {
+    fetch("/https://hollywood-fairmount-admin.onrender.com/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),

@@ -23,8 +23,6 @@ const App = () => {
 
   const location = useLocation();
 
-  // fetches the data from the database
-
   useEffect(() => {
     if (notification !== "") {
       setTimeout(() => {

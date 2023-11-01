@@ -22,7 +22,7 @@ const AboutText = () => {
       authorization: token,
     };
     e.preventDefault();
-    fetch("/updateText", {
+    fetch("/https://hollywood-fairmount-admin.onrender.com/updateText", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

@@ -13,7 +13,10 @@ const Clients = () => {
     const headers = {
       authorization: token,
     };
-    fetch(`/search/${searchTerm}`, { headers })
+    fetch(
+      `/https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}`,
+      { headers }
+    )
       .then((res) => res.json())
       .then((data) => {
         const newClientsArray = data.data.map((client) => ({

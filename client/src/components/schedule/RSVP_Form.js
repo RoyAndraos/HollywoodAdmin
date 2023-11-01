@@ -76,7 +76,7 @@ const AddReservation = () => {
       };
     }
 
-    fetch("/addReservation", {
+    fetch("/https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

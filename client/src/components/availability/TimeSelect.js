@@ -1,24 +1,81 @@
 import React, { useState, useContext, useEffect } from "react";
 import { styled } from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getDailyHours } from "../helpers";
 import { UserContext } from "../contexts/UserContext";
 import { initialAvailability } from "../helpers";
 import { NotificationContext } from "../contexts/NotficationContext";
+import { ReservationContext } from "../contexts/ReservationContext";
+import { ServicesContext } from "../contexts/ServicesContext";
+import { ImageContext } from "../contexts/ImageContext";
+import { TextContext } from "../contexts/TextContext";
+import Cookies from "js-cookie";
+import Loader from "../Loader";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
-  const [selectedAdminInfo, setSelectedAdminInfo] = useState(userInfo[0]);
+  const [selectedAdminInfo, setSelectedAdminInfo] = useState(
+    userInfo !== null ? userInfo[0] : null
+  );
   const [showBarbers, setShowBarbers] = useState(false);
-  const [selectedCells, setSelectedCells] = useState(initialAvailability);
-
-  // useEffect: link the available cells to the selected barber's availability (set them) everytime the selected barber changes
-  useEffect(() => {
-    setSelectedCells(selectedAdminInfo.availability);
-  }, [selectedAdminInfo]);
+  const [selectedCells, setSelectedCells] = useState(
+    selectedAdminInfo !== null ? selectedAdminInfo.availability : null
+  );
+  const { setReservations, reservations } = useContext(ReservationContext);
+  const { setServices, services } = useContext(ServicesContext);
+  const { setImages, images } = useContext(ImageContext);
+  const { setText, text } = useContext(TextContext);
   const navigate = useNavigate();
+  useEffect(() => {
+    if (!userInfo) {
+      const token = Cookies.get("token");
+      if (!token) {
+        return;
+      } else {
+        const headers = {
+          authorization: token,
+        };
+        fetch(`/getUserInfo`, { headers })
+          .then((res) => res.json())
+          .then((result) => {
+            setUserInfo(result.userInfo);
+            setReservations(result.reservations);
+            setServices(result.services);
+            setImages(result.images);
+            setText(result.text);
+          });
+      }
+    } else {
+      if (!selectedAdminInfo) {
+      } else {
+        setSelectedCells(selectedAdminInfo.availability);
+      }
+    }
+  }, [
+    setReservations,
+    setServices,
+    setUserInfo,
+    setImages,
+    setText,
+    selectedAdminInfo,
+  ]);
+  // useEffect: link the available cells to the selected barber's availability (set them) everytime the selected barber changes
 
+  if (!userInfo || !reservations || !services || !images || !text)
+    return <Loader />;
+
+  if (!selectedAdminInfo) {
+    return (
+      <NoBarbers>
+        <p>No Barbers In The System</p>
+        <Link to={"/websitetools"} style={{ fontSize: "1.4rem" }}>
+          Click here Add One Here
+        </Link>
+      </NoBarbers>
+    );
+  }
+  if (!userInfo) return <Loader />;
   // day names for the table
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -34,6 +91,10 @@ const TimeSelect = () => {
 
   // function: save changes updates the availability of the selected barber in the database and the context
   const saveChanges = () => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     setSelectedAdminInfo({ ...selectedAdminInfo, availability: selectedCells });
     const adminToBeUpdated = userInfo.findIndex(
       (user) => user.given_name === selectedAdminInfo.given_name
@@ -45,6 +106,7 @@ const TimeSelect = () => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify({
         _id: selectedAdminInfo._id,
@@ -56,7 +118,7 @@ const TimeSelect = () => {
         if (result.status === 200) {
           setNotification("Availability updated successfully");
         }
-        navigate("/dashboard/schedule");
+        navigate("/schedule");
       });
   };
 
@@ -116,7 +178,7 @@ const TimeSelect = () => {
     setSelectedCells(updatedCells);
   };
   const handleNavToTimeOff = () => {
-    navigate(`/dashboard/timeOff/${selectedAdminInfo._id}`);
+    navigate(`/timeOff/${selectedAdminInfo._id}`);
   };
 
   return (
@@ -331,5 +393,15 @@ const AvailButtons = styled.div`
   justify-content: space-evenly;
   width: 100%;
 `;
-
+const NoBarbers = styled.div`
+  width: 100%;
+  height: 90vh;
+  background-color: #e5e2e2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-family: "Roboto", sans-serif;
+`;
 export default TimeSelect;

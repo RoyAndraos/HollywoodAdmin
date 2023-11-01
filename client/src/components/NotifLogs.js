@@ -53,7 +53,12 @@ const NotifLogs = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     setShowLogs(false);
-                    navigate(`/dashboard/schedule/${log._id}`);
+                    setNotificationLogs((prevLogs) => {
+                      return prevLogs.map((log) => {
+                        return { ...log, read: true };
+                      });
+                    });
+                    navigate(`/schedule/${log._id}`);
                   }}
                 >
                   {log.read ? (

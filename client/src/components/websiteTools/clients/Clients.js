@@ -2,13 +2,18 @@ import { useState } from "react";
 import SearchBar from "./SearchBar";
 import styled from "styled-components";
 import SearchResults from "./SearchResults";
+import Cookies from "js-cookie";
 // import SearchType from "./SearchType";
 const Clients = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const token = Cookies.get("token");
   //   const [searchType, setSearchType] = useState("name");
   const handleSearchClick = () => {
-    fetch(`/search/${searchTerm}`)
+    const headers = {
+      authorization: token,
+    };
+    fetch(`/search/${searchTerm}`, { headers })
       .then((res) => res.json())
       .then((data) => {
         const newClientsArray = data.data.map((client) => ({
@@ -21,7 +26,6 @@ const Clients = () => {
             note: false,
           },
         }));
-        console.log(newClientsArray);
         setSearchResults(newClientsArray);
       });
   };

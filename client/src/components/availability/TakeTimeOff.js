@@ -7,6 +7,13 @@ import { UserContext } from "../contexts/UserContext";
 import { NotificationContext } from "../contexts/NotficationContext";
 import { BarberContainer, AdminName } from "./TimeSelect";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { ReservationContext } from "../contexts/ReservationContext";
+import { ServicesContext } from "../contexts/ServicesContext";
+import { ImageContext } from "../contexts/ImageContext";
+import { TextContext } from "../contexts/TextContext";
+import Loader from "../Loader";
+
 const TakeTimeOff = () => {
   // useState/useContext: start date of time off, end date of time off, user info to see who's selected, notification
   const { barberId } = useParams();
@@ -16,9 +23,14 @@ const TakeTimeOff = () => {
   const { setNotification } = useContext(NotificationContext);
   const [showBarbers, setShowBarbers] = useState(false);
   //get the selected barber
-  const barber = userInfo.filter((user) => {
-    return user._id === barberId;
-  });
+  let barber;
+  if (userInfo) {
+    barber = userInfo.filter((user) => {
+      return user._id === barberId;
+    });
+  } else {
+    barber = [];
+  }
 
   const navigate = useNavigate();
   //popper element is the calendar that pops up when you click on the datepicker
@@ -26,6 +38,32 @@ const TakeTimeOff = () => {
   //theres inline styling imported with the react-datepicker module
   //so we have to override it with this useEffect (after the component mounts)
   const popper = document.getElementsByClassName("react-datepicker-popper");
+  const { setReservations, reservations } = useContext(ReservationContext);
+  const { setServices, services } = useContext(ServicesContext);
+  const { setImages, images } = useContext(ImageContext);
+  const { setText, text } = useContext(TextContext);
+
+  useEffect(() => {
+    if (!userInfo) {
+      const token = Cookies.get("token");
+      if (!token) {
+        return;
+      } else {
+        const headers = {
+          authorization: token,
+        };
+        fetch(`/getUserInfo`, { headers })
+          .then((res) => res.json())
+          .then((result) => {
+            setUserInfo(result.userInfo);
+            setReservations(result.reservations);
+            setServices(result.services);
+            setImages(result.images);
+            setText(result.text);
+          });
+      }
+    }
+  }, [setReservations, setServices, setUserInfo, setImages, setText]);
   useEffect(() => {
     if (popper.length !== 0) {
       popper[0].style.position = "relative";
@@ -86,10 +124,15 @@ const TakeTimeOff = () => {
   };
   //function: delete time off from the database and the context
   const handleDeleteTimeOff = (timeOff) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     fetch("/deleteTimeOff", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify({
         _id: barberId,
@@ -124,10 +167,15 @@ const TakeTimeOff = () => {
 
   //function: submit time off to the database and the context
   const handleSubmitTimeOff = (date1, date2) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     fetch("/addTimeOff", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify({
         _id: barberId,
@@ -166,10 +214,11 @@ const TakeTimeOff = () => {
   const selectBarber = (e, barber) => {
     e.preventDefault();
     setShowBarbers(false);
-    navigate(`/dashboard/timeOff/${barber._id}`);
+    navigate(`/timeOff/${barber._id}`);
   };
 
-  if (!barber) return null;
+  if (!reservations || !services || !text || !images || !userInfo)
+    return <Loader />;
   return (
     <Wrapper>
       <BarberContainer>

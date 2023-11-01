@@ -3,7 +3,8 @@ import { UserContext } from "../../contexts/UserContext";
 import styled from "styled-components";
 import EditProfileForm from "./EditProfileForm";
 import { NotificationContext } from "../../contexts/NotficationContext";
-// import { initialAvailability } from "../../helpers";
+import Cookies from "js-cookie";
+import { initialAvailability } from "../../helpers";
 const BarberProfiles = () => {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
@@ -17,15 +18,24 @@ const BarberProfiles = () => {
     setNewBarber((prevInfo) => ({ ...prevInfo, [key]: value }));
   };
   const handleToggleEditMode = (profileId) => {
+    setBarberInfo(userInfo.filter((barber) => barber._id === profileId)[0]);
     setEditModes((prevModes) => ({
       ...prevModes,
       [profileId]: !prevModes[profileId],
     }));
   };
   const handleSave = (profileId) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     // Send PATCH request to server with barberInfo
     fetch("/updateBarberProfile", {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
       body: JSON.stringify({
         barberId: profileId,
         barberInfo: barberInfo,
@@ -56,9 +66,17 @@ const BarberProfiles = () => {
     }));
   };
   const handleDelete = (profileId) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     // Send DELETE request to server with barberId
     fetch("/deleteBarberProfile", {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
       body: JSON.stringify({
         barberId: profileId,
       }),
@@ -79,14 +97,23 @@ const BarberProfiles = () => {
     setUserInfo(updatedUserInfo);
   };
   const handleAddBarber = () => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
+    const barberToSend = {
+      ...newBarber,
+      availability: initialAvailability,
+    };
     // Send POST request to server with barberInfo
     fetch("/addBarber", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify({
-        barberInfo: newBarber,
+        barberInfo: barberToSend,
       }),
     })
       .then((res) => res.json())
@@ -133,7 +160,7 @@ const BarberProfiles = () => {
                   <Email>{barber.email}</Email>
                   <Description>{barber.description}</Description>
                 </DisplayWrapper>
-                <BarberImage src={barber.picture} />
+                {barber.picture !== "" && <BarberImage src={barber.picture} />}
                 <ButtonWrapper key={"notEdit" + barber._id}>
                   <EditButton onClick={() => handleToggleEditMode(barber._id)}>
                     Edit

@@ -7,7 +7,7 @@ import { ReservationContext } from "../contexts/ReservationContext";
 import ServiceSelector from "./rsvpComponents/ServiceSelector";
 import SlotSelector from "./rsvpComponents/SlotSelector";
 import { NotificationContext } from "../contexts/NotficationContext";
-
+import Cookies from "js-cookie";
 const AddReservation = () => {
   const { reservations, setReservations } = useContext(ReservationContext);
   const { setNotification } = useContext(NotificationContext);
@@ -47,6 +47,10 @@ const AddReservation = () => {
 
   //submit reservation
   const handleSubmit = (e) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     e.preventDefault();
     let reservation = {};
     if (selectedService.duration === 1) {
@@ -71,10 +75,12 @@ const AddReservation = () => {
         clientNumber: clientNumber,
       };
     }
+
     fetch("/addReservation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify({
         reservation: reservation,

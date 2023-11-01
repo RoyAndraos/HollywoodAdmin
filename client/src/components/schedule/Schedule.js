@@ -1,32 +1,44 @@
 import { styled } from "styled-components";
 import NewCalendar from "./rsvpComponents/NewCalendar";
 import AddReservation from "../schedule/RSVP_Form";
+import Cookies from "js-cookie";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
 import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
+import Loader from "../Loader";
 const Schedule = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
   const { setImages, images } = useContext(ImageContext);
   const { setText, text } = useContext(TextContext);
-  // fetches the data from the database
+
   useEffect(() => {
-    fetch(`/getUserInfo`)
-      .then((res) => res.json())
-      .then((result) => {
-        setUserInfo(result.userInfo);
-        setReservations(result.reservations);
-        setServices(result.services);
-        setImages(result.images);
-        setText(result.text);
-      });
+    if (!userInfo) {
+      const token = Cookies.get("token");
+      if (!token) {
+        return;
+      } else {
+        const headers = {
+          authorization: token,
+        };
+        fetch(`/getUserInfo`, { headers })
+          .then((res) => res.json())
+          .then((result) => {
+            setUserInfo(result.userInfo);
+            setReservations(result.reservations);
+            setServices(result.services);
+            setImages(result.images);
+            setText(result.text);
+          });
+      }
+    }
   }, [setReservations, setServices, setUserInfo, setImages, setText]);
   if (!userInfo || !reservations || !services || !images || !text)
-    return <div>Loading...</div>;
+    return <Loader />;
   return (
     <div>
       <Wrapper key={"calendar"}>

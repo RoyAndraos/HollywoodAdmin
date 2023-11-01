@@ -1,17 +1,52 @@
-import React from "react";
 import { styled } from "styled-components";
 import { NavLink } from "react-router-dom";
 import NotifLogs from "./NotifLogs";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+
 const NavBar = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    const token = Cookies.get("token");
+    fetch("/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: token }),
+    });
+    Cookies.remove("token");
+    navigate("/");
+  };
+
   return (
     <Wrapper>
-      <StyledNavLink to="/">Schedule</StyledNavLink>
+      <StyledNavLink to="/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/availability">Availability</StyledNavLink>
       <StyledNavLink to="/websiteTools">Tools</StyledNavLink>
+      <Logout
+        onClick={() => {
+          handleLogout();
+        }}
+      >
+        Logout
+      </Logout>
       <NotifLogs />
     </Wrapper>
   );
 };
+const Logout = styled.button`
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  font-size: inherit;
+  font-weight: inherit;
+  background-color: transparent;
+  border: none;
+  color: #efefef;
+  padding: 10px 15px 10px 15px;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+`;
 const Wrapper = styled.div`
   font-family: "Roboto", sans-serif;
   letter-spacing: 2px;
@@ -36,6 +71,7 @@ const StyledNavLink = styled(NavLink)`
   border-radius: 5px;
   transition: all 0.3s ease-in-out;
   &.active {
+    outline: none;
     text-decoration: underline;
     background-color: #efefef;
     color: #2c3e50;

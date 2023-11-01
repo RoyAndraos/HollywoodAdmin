@@ -1,8 +1,41 @@
 require("dotenv").config();
 
 const { v4: uuid } = require("uuid");
-const { initialAvailability } = require("./helpers");
-
+// const { initialAvailability } = require("./helpers");
+//-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
+//TOKEN STUFF
+//-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
+const jwt = require("jsonwebtoken");
+const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
+const verifyToken = async (req, res, next) => {
+  const token = req.headers.authorization;
+  const client = new MongoClient(MONGO_URI_RALF, options);
+  try {
+    client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const isRevoked = await db.collection("revoked").findOne({ token: token });
+    if (isRevoked) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+  } catch (err) {
+    console.error("Error verifying token:", err);
+  }
+  if (!token) {
+    return res.status(401).json({ message: "Token is missing" });
+  }
+  jwt.verify(token, JWT_TOKEN_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    // Token is valid; user identification is available in decoded.userId
+    req.userId = decoded.userId;
+    next();
+  });
+};
+//-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
 //MONGO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
@@ -170,6 +203,44 @@ const getUserInfo = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
+const login = async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const correctUsername =
+      process.env.LOGIN_USERNAME.toLowerCase() === username.toLowerCase();
+    const correctPassword = process.env.LOGIN_PASSWORD === password;
+    if (correctPassword && correctUsername) {
+      const token = jwt.sign({ userId: "admin" }, JWT_TOKEN_KEY, {
+        expiresIn: "13h",
+      });
+      res.status(200).json({ status: 200, token: token });
+    } else {
+      res
+        .status(401)
+        .json({ status: 401, message: "Invalid username or password" });
+    }
+  } catch (err) {
+    console.error("Error logging in:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+const logout = async (req, res) => {
+  const body = req.body;
+  const client = new MongoClient(MONGO_URI_RALF, options);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db.collection("revoked").insertOne(body);
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    console.error("Error logging out:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 const addReservation = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
   const { reservation } = req.body;
@@ -212,7 +283,7 @@ const addReservation = async (req, res) => {
         lname: reservation.clientName.split(" ")[1],
         number: reservation.clientNumber,
         note: "",
-        reservations: [reservation],
+        reservations: [reservation._id],
       });
 
       //if client exists, add reservation to client
@@ -237,7 +308,7 @@ const addTimeOff = async (req, res) => {
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").updateOne(
       {
-        _id: new ObjectId(`${_id}`),
+        _id: _id,
       },
       {
         $push: {
@@ -299,7 +370,7 @@ const uploadImage = async (req, res) => {
     } else {
       await db.collection("admin").updateOne(
         {
-          _id: new ObjectId(`${filename}`),
+          _id: filename,
         },
         {
           $set: {
@@ -332,7 +403,7 @@ const addBarber = async (req, res) => {
       picture: "",
       description: barberInfo.description,
       time_off: [],
-      availability: initialAvailability,
+      availability: barberInfo.availability,
     };
     await db.collection("admin").insertOne({
       _id: _id,
@@ -342,7 +413,7 @@ const addBarber = async (req, res) => {
       picture: "",
       description: barberInfo.description,
       time_off: [],
-      availability: initialAvailability,
+      availability: barberInfo.availability,
     });
     res.status(200).json({ status: 200, message: "success", data: newBarber });
   } catch (err) {
@@ -364,7 +435,7 @@ const deleteBarberProfile = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    await db.collection("admin").deleteOne({ _id: new ObjectId(barberId) });
+    await db.collection("admin").deleteOne({ _id: barberId });
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     console.error("Error deleting barber profile:", err);
@@ -381,7 +452,7 @@ const deleteImage = async (req, res) => {
     const db = client.db("HollywoodBarberShop");
     const query = { _id: req.params._id };
     await db.collection("Images").deleteOne(query);
-    res.status(200).json({ status: 200, data: query });
+    res.status(200).json({ status: 200, data: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {
@@ -396,7 +467,7 @@ const deleteTimeOff = async (req, res) => {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = {
-      _id: new ObjectId(`${_id}`),
+      _id: _id,
     };
     const newValues = {
       $pull: {
@@ -459,7 +530,7 @@ const updateAvailability = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const query = { _id: new ObjectId(`${_id}`) };
+    const query = { _id: _id };
     const newValues = { $set: { availability: availability } };
     const result = await db.collection("admin").updateOne(query, newValues);
     res.status(200).json({ status: 200, data: result });
@@ -504,13 +575,14 @@ const updateBarberProfile = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const query = { _id: new ObjectId(`${barberId}`) };
+    const query = { _id: barberId };
     const newValues = {
       $set: {
-        name: barberInfo.name,
-        availability: barberInfo.availability,
+        given_name: barberInfo.given_name,
+        family_name: barberInfo.family_name,
+        email: barberInfo.email,
+        description: barberInfo.description,
         picture: barberInfo.picture,
-        bio: barberInfo.bio,
       },
     };
     await db.collection("admin").updateOne(query, newValues);
@@ -582,4 +654,7 @@ module.exports = {
   getClients,
   updateClient,
   startChangeStream,
+  login,
+  logout,
+  verifyToken,
 };

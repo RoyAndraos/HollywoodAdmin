@@ -2,19 +2,25 @@ import React, { useContext } from "react";
 import { ImageContext } from "../../contexts/ImageContext.js";
 import { NotificationContext } from "../../contexts/NotficationContext.js";
 import { styled } from "styled-components";
+import Cookies from "js-cookie";
 
 const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
   const { setNotification } = useContext(NotificationContext);
   const { images, setImages } = useContext(ImageContext);
   const handleDeleteImage = (image) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     fetch(`/images/${image}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
     })
       .then((res) => {
-        res.json();
+        return res.json();
       })
       .then((result) => {
         if (result.status === 200) {

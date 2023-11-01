@@ -3,6 +3,7 @@ import { ReservationContext } from "../../../contexts/ReservationContext";
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../../../contexts/NotficationContext";
+import Cookies from "js-cookie";
 const SaveDelete = ({ formData, initialFormData }) => {
   // useContext: notification, reservations
   const { setNotification } = useContext(NotificationContext);
@@ -29,15 +30,20 @@ const SaveDelete = ({ formData, initialFormData }) => {
 
   // function: delete reservation from database and context
   const handleDeleteReservation = (e) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     e.preventDefault();
     fetch(`/deleteReservation/${params}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
     })
       .then((res) => {
-        res.json();
+        return res.json();
       })
       .then((response) => {
         if (response.status === 200) {
@@ -45,7 +51,7 @@ const SaveDelete = ({ formData, initialFormData }) => {
           setReservations(
             reservations.filter((reservation) => reservation._id !== params)
           );
-          navigate("/dashboard/schedule");
+          navigate("/schedule");
         }
       })
       .catch(() => setNotification("Something went wrong"));
@@ -53,16 +59,21 @@ const SaveDelete = ({ formData, initialFormData }) => {
 
   // function: save reservation to database and context
   const handleSaveReservationEdit = (e) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     e.preventDefault();
     fetch(`/updateReservation`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify(formData),
     })
       .then((res) => {
-        res.json();
+        return res.json();
       })
       .then((response) => {
         if (response.status === 200) {
@@ -75,7 +86,7 @@ const SaveDelete = ({ formData, initialFormData }) => {
             })
           );
           setNotification("Reservation updated successfully");
-          navigate("/dashboard/schedule");
+          navigate("/schedule");
         }
       })
       .catch(() => setNotification("Something went wrong"));

@@ -7,28 +7,26 @@ export const NotificationLogsProvider = ({ children }) => {
   const [notificationLogs, setNotificationLogs] = useState([]);
   useEffect(() => {
     const socket = io("http://localhost:4000");
-    socket.on("connect", () => {
-      console.log("Socket connected");
-    });
+    socket.on("connect", () => {});
     // Set up Socket.IO listeners for reservation updates
     socket.on("reservationChange", (change) => {
-      const newChange = {
-        ...change.fullDocument,
-        read: false,
-      };
-      setNotificationLogs((prevLogs) => {
-        console.log(prevLogs);
-        if (prevLogs.length === 0) {
-          console.log("empty");
-          return [newChange];
-        } else {
-          return [...prevLogs, newChange];
-        }
-      });
+      if (change.operationType === "insert") {
+        const newChange = {
+          ...change.fullDocument,
+          read: false,
+        };
+        setNotificationLogs((prevLogs) => {
+          if (prevLogs.length === 0) {
+            return [newChange];
+          } else {
+            return [...prevLogs, newChange];
+          }
+        });
+      } else {
+        return;
+      }
     });
-    socket.on("connect_error", (err) => {
-      console.log(`connect_error due to ${err.message}`);
-    });
+    socket.on("connect_error", (err) => {});
 
     return () => {
       socket.disconnect();

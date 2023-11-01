@@ -7,7 +7,6 @@ const cors = require("cors"); // Import the cors package
 const PORT = 4000;
 
 const {
-  adminCheck,
   getUserInfo,
   updateAvailability,
   addReservation,
@@ -25,6 +24,9 @@ const {
   getClients,
   updateClient,
   startChangeStream,
+  login,
+  logout,
+  verifyToken,
 } = require("./server");
 
 // Create the express app
@@ -52,23 +54,24 @@ app.use("/", express.static(__dirname + "/"));
 app.get("/", (req, res) => {
   res.send("Welcome to my server");
 });
-app.get("/getUserInfo", getUserInfo);
-app.get("/search/:searchTerm", getSearchResults);
-app.get("/clients", getClients);
-app.post("/addReservation", addReservation);
-app.post("/checkIfAdmin", adminCheck);
-app.post("/addBarber", addBarber);
-app.patch("/updateClient", updateClient);
-app.patch("/upload", uploadImage);
-app.patch("/updateAvailability", updateAvailability);
-app.patch("/addTimeOff", addTimeOff);
-app.patch("/updateReservation", updateReservation);
-app.patch("/updateBarberProfile", updateBarberProfile);
-app.patch("/updateText", updateText);
-app.delete("/images/:_id", deleteImage);
-app.delete("/deleteTimeOff", deleteTimeOff);
-app.delete("/deleteReservation/:_id", deleteReservation);
-app.delete("/deleteBarberProfile", deleteBarberProfile);
+app.get("/getUserInfo", verifyToken, getUserInfo);
+app.get("/search/:searchTerm", verifyToken, getSearchResults); //
+app.get("/clients", verifyToken, getClients); //
+app.post("/logout", logout);
+app.post("/login", login);
+app.post("/addReservation", verifyToken, addReservation); //
+app.post("/addBarber", verifyToken, addBarber); //
+app.patch("/updateClient", verifyToken, updateClient); //
+app.patch("/upload", verifyToken, uploadImage); //
+app.patch("/updateAvailability", verifyToken, updateAvailability); //
+app.patch("/addTimeOff", verifyToken, addTimeOff); //
+app.patch("/updateReservation", verifyToken, updateReservation); //
+app.patch("/updateBarberProfile", verifyToken, updateBarberProfile); //
+app.patch("/updateText", verifyToken, updateText); //
+app.delete("/images/:_id", verifyToken, deleteImage);
+app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
+app.delete("/deleteReservation/:_id", verifyToken, deleteReservation); //
+app.delete("/deleteBarberProfile", verifyToken, deleteBarberProfile); //
 
 const server = http.createServer(app); // Create an HTTP server
 

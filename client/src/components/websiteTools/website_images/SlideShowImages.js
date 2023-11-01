@@ -34,7 +34,7 @@ const SlideShowImages = () => {
                   </DeleteButton>
                   {showDeleteConfirmations[index] && (
                     <ConfirmDelete
-                      key={image._id}
+                      key={image._id + "confirm"}
                       setConfirmDelete={(value) => {
                         const newShowDeleteConfirmations = [
                           ...showDeleteConfirmations,

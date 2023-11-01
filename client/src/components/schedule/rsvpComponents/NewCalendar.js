@@ -18,7 +18,6 @@ const NewCalendar = () => {
   const [currentDay, setCurrentDay] = useState(false);
   const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
-
   const events = reservations.map((reservation) => {
     let time = reservation.slot[0].split("-")[1];
     const toEdit = time.slice(-2);
@@ -49,7 +48,7 @@ const NewCalendar = () => {
   maxTime.setHours(21, 0, 0);
 
   const handleEventClick = (event) => {
-    navigate(`/dashboard/schedule/${event._id}`);
+    navigate(`/schedule/${event._id}`);
   };
 
   document.addEventListener("DOMContentLoaded", function () {

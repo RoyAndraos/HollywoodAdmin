@@ -29,7 +29,7 @@ const EditRsvp = () => {
 
   const handleExit = (e) => {
     e.preventDefault();
-    navigate("/dashboard/schedule");
+    navigate("/schedule");
   };
   return (
     <Wrapper style={{ position: "relative" }} key={"edit"}>

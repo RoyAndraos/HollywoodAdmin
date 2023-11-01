@@ -8,12 +8,17 @@ import ClientNumber from "./ClientNumber";
 import ClientNote from "./ClientNote";
 import ClientReservation from "./ClientReservation";
 import ClientLastName from "./ClientLastName";
+import Cookies from "js-cookie";
 
 const SearchResults = ({ searchResults, setSearchResults }) => {
   const [clients, setClients] = useState([]);
   //get all clients
   useEffect(() => {
-    fetch("/clients")
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
+    fetch("/clients", { headers })
       .then((res) => res.json())
       .then((data) => {
         setClients(
@@ -52,10 +57,15 @@ const SearchResults = ({ searchResults, setSearchResults }) => {
 
   // Function to save the changes made
   const handleSaveChange = (clientId, field, value) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     fetch("/updateClient", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify([
         {

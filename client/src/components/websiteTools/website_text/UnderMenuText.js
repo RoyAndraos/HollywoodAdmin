@@ -4,6 +4,7 @@ import { Title } from "../website_images/SlideShowImages";
 import { Wrapper, SaveButton, Language, Line } from "./SlideShowText";
 import styled from "styled-components";
 import { NotificationContext } from "../../contexts/NotficationContext";
+import Cookies from "js-cookie";
 const UnderMenuText = () => {
   const { text, setText } = useContext(TextContext);
   const { setNotification } = useContext(NotificationContext);
@@ -16,11 +17,16 @@ const UnderMenuText = () => {
   )[0].french;
   const [frenchMenuText, setFrenchMenuText] = useState(initialFrenchMenuText);
   const handleSubmit = (e) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     e.preventDefault();
     fetch("/updateText", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify({
         textId: "underMenu",

@@ -3,6 +3,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { ImageContext } from "../../contexts/ImageContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
+import Cookies from "js-cookie";
 const ImageInput = ({ filename, height, initialImage }) => {
   const { images, setImages } = useContext(ImageContext);
   const { setNotification } = useContext(NotificationContext);
@@ -34,10 +35,14 @@ const ImageInput = ({ filename, height, initialImage }) => {
   };
   const uploadImage = async (base64EncodedImage) => {
     try {
+      const token = Cookies.get("token");
+      const headers = {
+        authorization: token,
+      };
       await fetch("/upload", {
         method: "PATCH",
         body: JSON.stringify({ filename: filename, src: base64EncodedImage }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...headers },
       })
         .then((res) => res.json())
         .then((result) => {
@@ -75,7 +80,7 @@ const ImageInput = ({ filename, height, initialImage }) => {
         <StyledChosenImage
           src={previewSource}
           alt="chosen picture"
-          imageHeight={imageHeight}
+          imageheight={imageHeight}
         />
       )}
     </Wrapper>
@@ -132,10 +137,10 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 const StyledChosenImage = styled.img`
-  height: ${(props) => (props.imageHeight === "200px" ? "200px" : "300px")};
+  height: ${(props) => (props.imageheight === "200px" ? "200px" : "300px")};
   width: auto;
   margin-top: 20px;
   box-shadow: ${(props) =>
-    props.imageHeight === "200px" ? "0 0 10px black" : ""};
+    props.imageheight === "200px" ? "0 0 10px black" : ""};
 `;
 export default ImageInput;

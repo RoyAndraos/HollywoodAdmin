@@ -15,10 +15,15 @@ import { useContext } from "react";
 import styled from "styled-components";
 import { useEffect } from "react";
 import TimeSelect from "./components/availability/TimeSelect";
+import Login from "./Login";
+import { useLocation } from "react-router-dom";
 
 const App = () => {
   const { notification, setNotification } = useContext(NotificationContext);
-  // const location = useLocation();
+
+  const location = useLocation();
+
+  // fetches the data from the database
 
   useEffect(() => {
     if (notification !== "") {
@@ -27,12 +32,13 @@ const App = () => {
       }, 3000);
     }
   }, [notification, setNotification]);
+
   return (
     <div>
-      <NavBar />
+      {location.pathname !== "/" && <NavBar />}
       {notification !== "" && <Notification>{notification}</Notification>}
       <Routes>
-        <Route path="/" element={<Schedule />} />
+        <Route path="/" element={<Login />} />
         {/* <Route path="/404" element={<NotGrant />} /> */}
         {/* </Routes>
       <RequireAuth>
@@ -40,6 +46,7 @@ const App = () => {
         {/* <Route path="/check" element={<Check />} /> */}
         {/* <Route path="/data" element={<BusinessData />} /> */}
         <Route path="/websiteTools" element={<WebsiteTools />} />
+        <Route path="/schedule" element={<Schedule />} />
         <Route path="/availability" element={<TimeSelect />} />
         <Route path="/timeOff/:barberId" element={<TakeTimeOff />} />
         <Route path="/schedule/:_id" element={<EditRsvp />} />

@@ -39,7 +39,7 @@ const ImageInput = ({ filename, height, initialImage }) => {
       const headers = {
         authorization: token,
       };
-      await fetch("/upload", {
+      await fetch("https://hollywood-fairmount-admin.onrender.com/upload", {
         method: "PATCH",
         body: JSON.stringify({ filename: filename, src: base64EncodedImage }),
         headers: { "Content-Type": "application/json", ...headers },

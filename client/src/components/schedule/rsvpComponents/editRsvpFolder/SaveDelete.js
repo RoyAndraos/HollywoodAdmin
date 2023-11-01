@@ -35,13 +35,16 @@ const SaveDelete = ({ formData, initialFormData }) => {
       authorization: token,
     };
     e.preventDefault();
-    fetch(`/deleteReservation/${params}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-    })
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/deleteReservation/${params}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+      }
+    )
       .then((res) => {
         return res.json();
       })
@@ -64,7 +67,7 @@ const SaveDelete = ({ formData, initialFormData }) => {
       authorization: token,
     };
     e.preventDefault();
-    fetch(`/updateReservation`, {
+    fetch(`https://hollywood-fairmount-admin.onrender.com/updateReservation`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

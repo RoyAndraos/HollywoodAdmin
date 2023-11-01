@@ -12,7 +12,7 @@ const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
     const headers = {
       authorization: token,
     };
-    fetch(`/images/${image}`, {
+    fetch(`https://hollywood-fairmount-admin.onrender.com/images/${image}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

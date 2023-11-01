@@ -8,7 +8,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     const token = Cookies.get("token");
-    fetch("/logout", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/logout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: token }),

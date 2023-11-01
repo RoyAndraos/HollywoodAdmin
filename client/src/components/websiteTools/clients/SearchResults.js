@@ -10,7 +10,7 @@ import ClientReservation from "./ClientReservation";
 import ClientLastName from "./ClientLastName";
 import Cookies from "js-cookie";
 
-const SearchResults = ({ searchResults, setSearchResults }) => {
+const SearchResults = ({ searchResults }) => {
   const [clients, setClients] = useState([]);
   //get all clients
   useEffect(() => {
@@ -18,7 +18,9 @@ const SearchResults = ({ searchResults, setSearchResults }) => {
     const headers = {
       authorization: token,
     };
-    fetch("/clients", { headers })
+    fetch("https://hollywood-fairmount-admin.onrender.com/clients", {
+      headers,
+    })
       .then((res) => res.json())
       .then((data) => {
         setClients(
@@ -61,7 +63,7 @@ const SearchResults = ({ searchResults, setSearchResults }) => {
     const headers = {
       authorization: token,
     };
-    fetch("/updateClient", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/updateClient", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

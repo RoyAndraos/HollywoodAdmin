@@ -36,7 +36,9 @@ const TimeSelect = () => {
         const headers = {
           authorization: token,
         };
-        fetch(`/getUserInfo`, { headers })
+        fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
+          headers,
+        })
           .then((res) => res.json())
           .then((result) => {
             setUserInfo(result.userInfo);
@@ -103,17 +105,20 @@ const TimeSelect = () => {
     const updatedUserInfo = [...userInfo];
     updatedUserInfo[adminToBeUpdated].availability = selectedCells;
     setUserInfo(updatedUserInfo);
-    fetch("/updateAvailability", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      body: JSON.stringify({
-        _id: selectedAdminInfo._id,
-        availability: selectedCells,
-      }),
-    })
+    fetch(
+      "/https://hollywood-fairmount-admin.onrender.com/updateAvailability",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({
+          _id: selectedAdminInfo._id,
+          availability: selectedCells,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         if (result.status === 200) {

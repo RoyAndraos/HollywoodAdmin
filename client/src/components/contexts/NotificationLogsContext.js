@@ -6,7 +6,7 @@ export const NotificationLogsContext = createContext("");
 export const NotificationLogsProvider = ({ children }) => {
   const [notificationLogs, setNotificationLogs] = useState([]);
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    const socket = io("https://hollywood-fairmount-admin.onrender.com");
     socket.on("connect", () => {});
     // Set up Socket.IO listeners for reservation updates
     socket.on("reservationChange", (change) => {

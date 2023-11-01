@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors"); // Import the cors package
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 const {
   getUserInfo,

@@ -36,7 +36,7 @@ const Schedule = () => {
           });
       }
     }
-  }, [setReservations, setServices, setUserInfo, setImages, setText]);
+  }, [setReservations, setServices, setUserInfo, setImages, setText, userInfo]);
   if (!userInfo || !reservations || !services || !images || !text)
     return <Loader />;
   return (

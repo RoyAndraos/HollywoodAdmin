@@ -63,7 +63,7 @@ const TakeTimeOff = () => {
           });
       }
     }
-  }, [setReservations, setServices, setUserInfo, setImages, setText]);
+  }, [setReservations, setServices, setUserInfo, setImages, setText, userInfo]);
   useEffect(() => {
     if (popper.length !== 0) {
       popper[0].style.position = "relative";

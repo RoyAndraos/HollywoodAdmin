@@ -59,6 +59,7 @@ const TimeSelect = () => {
     setImages,
     setText,
     selectedAdminInfo,
+    userInfo,
   ]);
   // useEffect: link the available cells to the selected barber's availability (set them) everytime the selected barber changes
 

@@ -39,7 +39,7 @@ const verifyToken = async (req, res, next) => {
 //MONGO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-const { MongoClient, ObjectId } = require("mongodb");
+const { MongoClient } = require("mongodb");
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,

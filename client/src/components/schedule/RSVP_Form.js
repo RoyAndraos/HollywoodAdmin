@@ -59,9 +59,10 @@ const AddReservation = () => {
         date: selectedDate.toDateString(),
         slot: selectedSlot,
         service: selectedService,
-        clientName: clientName,
-        clientEmail: clientEmail,
-        clientNumber: clientNumber,
+        fname: clientName.split(" ")[0],
+        lname: clientName.split(" ")[1],
+        email: clientEmail,
+        number: clientNumber,
       };
     } else {
       const newSlotArray = [...selectedSlot, selectNextSlot(selectedSlot[0])];
@@ -70,12 +71,13 @@ const AddReservation = () => {
         date: selectedDate.toDateString(),
         slot: newSlotArray,
         service: selectedService,
-        clientName: clientName,
-        clientEmail: clientEmail,
-        clientNumber: clientNumber,
+        fname: clientName.split(" ")[0],
+        lname: clientName.split(" ")[1] || "",
+        email: clientEmail,
+        number: clientNumber,
       };
     }
-
+    console.log({ reservation: reservation });
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {
@@ -88,9 +90,9 @@ const AddReservation = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        reservation._id = data.data;
-        setReservations([...reservations, reservation]);
         if (data.status === 200) {
+          reservation._id = data.data;
+          setReservations([...reservations, reservation]);
           setNotification("Reservation added successfully");
         }
       })

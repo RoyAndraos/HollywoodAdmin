@@ -5,6 +5,7 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import styled from "styled-components";
 const ClientReservation = ({ client }) => {
+  console.log(client);
   return (
     <Container>
       <LabelInputEditWrapper>

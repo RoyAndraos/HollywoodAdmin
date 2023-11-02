@@ -100,7 +100,7 @@ export const EditButton = styled.button`
   background-color: #035e3f;
   width: 100px;
   background-color: ${(props) => {
-    return props.props === true ? " #ad0606" : "#035e3f";
+    return props.props === "true" ? " #ad0606" : "#035e3f";
   }};
   color: whitesmoke;
   border-radius: 10px;

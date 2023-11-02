@@ -4,7 +4,7 @@ import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
 import styled from "styled-components";
 const BarberFormEdit = ({ reservation, handleChange }) => {
   const { userInfo } = useContext(UserContext);
-  const [barberEdit, setBarberEdit] = useState(false);
+  const [barberEdit, setBarberEdit] = useState("false");
   return (
     <LabelInfoWrapper>
       <StyledLabel>Barber </StyledLabel>
@@ -25,10 +25,14 @@ const BarberFormEdit = ({ reservation, handleChange }) => {
         props={barberEdit}
         onClick={() => {
           handleChange("barber", reservation.barber);
-          setBarberEdit(!barberEdit);
+          if (barberEdit === "false") {
+            setBarberEdit("true");
+          } else {
+            setBarberEdit("false");
+          }
         }}
       >
-        {barberEdit ? "Cancel" : "Edit"}
+        {barberEdit === "true" ? "Cancel" : "Edit"}
       </EditButton>
     </LabelInfoWrapper>
   );

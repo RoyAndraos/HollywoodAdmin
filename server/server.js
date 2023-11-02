@@ -243,57 +243,67 @@ const logout = async (req, res) => {
 
 const addReservation = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
-  const { reservation } = req.body;
+  const reservation = req.body.reservation;
   const _id = uuid();
   const client_id = uuid();
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-
-    reservation._id = _id;
-
+    const reservationToSend = {
+      _id: _id,
+      fname: reservation.fname,
+      lname: reservation.lname,
+      email: reservation.email,
+      number: reservation.number,
+      barber: reservation.barber,
+      service: reservation.service,
+      date: reservation.date,
+      slot: reservation.slot,
+    };
     //add reservation to db
-    await db.collection("reservations").insertOne(reservation);
-
-    //send email to client
-    if (reservation.clientEmail !== "") {
-      await sendEmail(
-        reservation.clientEmail,
-        reservation.barber,
-        reservation.clientName.split(" ")[0],
-        reservation.clientName.split(" ")[1],
-        reservation.date,
-        reservation.slot[0].split("-")[1],
-        reservation.service.name,
-        reservation.service.price
-      );
-    }
-
+    await db.collection("reservations").insertOne(reservationToSend);
     //check if client exists
     const isClient = await db
       .collection("Clients")
-      .findOne({ email: reservation.clientEmail });
+      .findOne({ email: reservation.email });
 
     //if client does not exist, create client
     if (!isClient) {
       await db.collection("Clients").insertOne({
         _id: client_id,
-        email: reservation.clientEmail,
-        fname: reservation.clientName.split(" ")[0],
-        lname: reservation.clientName.split(" ")[1],
-        number: reservation.clientNumber,
+        email: reservation.email,
+        fname: reservation.fname,
+        lname: reservation.lname,
+        number: reservation.number,
         note: "",
-        reservations: [reservation._id],
+        reservations: [_id],
       });
-
       //if client exists, add reservation to client
     } else {
       await db
         .collection("Clients")
         .updateOne({ _id: isClient._id }, { $push: { reservations: _id } });
     }
-    res.status(200).json({ status: 200, message: "success", data: _id });
+
+    //send email to client
+    if (reservation.email !== "") {
+      await sendEmail(
+        reservation.email,
+        reservation.barber,
+        reservation.fname,
+        reservation.lname,
+        reservation.date,
+        reservation.slot[0].split("-")[1],
+        reservation.service.name,
+        reservation.service.price
+      );
+    }
+    res
+      .status(200)
+      .json({ status: 200, message: "success", data: reservationToSend._id });
   } catch (err) {
+    console.log(err);
+    console.log(req.body);
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     client.close();
@@ -632,6 +642,26 @@ const updateClient = async (req, res) => {
     client.close();
   }
 };
+
+const updateServices = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF, options);
+  const serviceEdit = req.body;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db
+      .collection("services")
+      .updateOne({ _id: serviceEdit._id }, { $set: serviceEdit });
+    res
+      .status(200)
+      .json({ status: 200, data: serviceEdit, message: "success" });
+  } catch (err) {
+    console.error("Error updating services:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -657,4 +687,5 @@ module.exports = {
   login,
   logout,
   verifyToken,
+  updateServices,
 };

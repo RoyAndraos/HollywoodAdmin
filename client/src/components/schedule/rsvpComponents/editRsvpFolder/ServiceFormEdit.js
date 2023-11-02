@@ -5,7 +5,7 @@ import { ServicesContext } from "../../../contexts/ServicesContext";
 import styled from "styled-components";
 const ServiceFormEdit = ({ reservation, handleChange }) => {
   const { services } = useContext(ServicesContext);
-  const [serviceEdit, setServiceEdit] = useState(false);
+  const [serviceEdit, setServiceEdit] = useState("false");
   return (
     <LabelInfoWrapper>
       <StyledLabel>Service </StyledLabel>
@@ -33,12 +33,20 @@ const ServiceFormEdit = ({ reservation, handleChange }) => {
         onClick={() => {
           if (serviceEdit) {
             handleChange("service", reservation.service.name);
-            setServiceEdit(!serviceEdit);
+            if (serviceEdit === "false") {
+              setServiceEdit("true");
+            } else {
+              setServiceEdit("false");
+            }
           }
-          setServiceEdit(!serviceEdit);
+          if (serviceEdit === "false") {
+            setServiceEdit("true");
+          } else {
+            setServiceEdit("false");
+          }
         }}
       >
-        {serviceEdit ? "Cancel" : "Edit"}
+        {serviceEdit === "true" ? "Cancel" : "Edit"}
       </EditButton>
     </LabelInfoWrapper>
   );

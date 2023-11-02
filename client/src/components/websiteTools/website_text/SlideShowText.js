@@ -165,7 +165,7 @@ const FormWrapper = styled.div`
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
-  border-bottom
+  border-bottom: 1px solid #035e3f;
 `;
 
 export const SaveButton = styled.button`

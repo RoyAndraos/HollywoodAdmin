@@ -27,6 +27,7 @@ const {
   login,
   logout,
   verifyToken,
+  updateServices,
 } = require("./server");
 
 // Create the express app
@@ -68,6 +69,7 @@ app.patch("/addTimeOff", verifyToken, addTimeOff); //
 app.patch("/updateReservation", verifyToken, updateReservation); //
 app.patch("/updateBarberProfile", verifyToken, updateBarberProfile); //
 app.patch("/updateText", verifyToken, updateText); //
+app.patch("/updateServices", verifyToken, updateServices); //
 app.delete("/images/:_id", verifyToken, deleteImage);
 app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
 app.delete("/deleteReservation/:_id", verifyToken, deleteReservation); //
@@ -77,7 +79,7 @@ const server = http.createServer(app); // Create an HTTP server
 
 const io = socketIo(server, {
   cors: {
-    origin: "*", // This is the URL of the React app
+    origin: "*",
   },
 });
 

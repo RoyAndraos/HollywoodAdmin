@@ -2,11 +2,11 @@ import { useState } from "react";
 import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
 import styled from "styled-components";
 const NameFormEdit = ({ handleChange, reservation }) => {
-  const [clientNameEdit, setClientNameEdit] = useState(false);
+  const [clientNameEdit, setClientNameEdit] = useState("false");
   return (
     <LabelInfoWrapper>
       <StyledLabel>Client Name </StyledLabel>
-      {clientNameEdit ? (
+      {clientNameEdit === "true" ? (
         <NameInput
           placeholder={reservation.clientName}
           autoFocus
@@ -22,10 +22,14 @@ const NameFormEdit = ({ handleChange, reservation }) => {
         props={clientNameEdit}
         onClick={(e) => {
           handleChange(e.target.id, reservation.name);
-          setClientNameEdit(!clientNameEdit);
+          if (clientNameEdit === "false") {
+            setClientNameEdit("true");
+          } else {
+            setClientNameEdit("false");
+          }
         }}
       >
-        {clientNameEdit ? "Cancel" : "Edit"}
+        {clientNameEdit === "true" ? "Cancel" : "Edit"}
       </EditButton>
     </LabelInfoWrapper>
   );

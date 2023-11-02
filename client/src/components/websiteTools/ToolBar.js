@@ -48,6 +48,13 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
       >
         Clients
       </StyledNavButton>
+      <StyledNavButton
+        key={"services"}
+        onClick={() => setSelectedOption("services")}
+        isselected={selectedOption === "services" ? "true" : "false"}
+      >
+        Services
+      </StyledNavButton>
     </Wrapper>
   );
 };

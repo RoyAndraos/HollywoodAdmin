@@ -20,7 +20,7 @@ const SlideShowImages = () => {
     <Container key={"slideshow"}>
       <Title>Slideshow Images</Title>
       <PreviewWrapper key={"slideshow"}>
-        {images !== [] &&
+        {images.length !== 0 &&
           images.map((image, index) => {
             if (image.filename === "slideShow") {
               return (

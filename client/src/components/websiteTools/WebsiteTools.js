@@ -12,6 +12,7 @@ import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
+import Services from "./services/Services";
 
 const WebsiteTools = () => {
   const [selectedOption, setSelectedOption] = useState("barberProfiles");
@@ -58,6 +59,7 @@ const WebsiteTools = () => {
           {selectedOption === "images" && <Upload />}
           {selectedOption === "barberProfiles" && <BarberProfiles />}
           {selectedOption === "clients" && <Clients />}
+          {selectedOption === "services" && <Services />}
         </RestWrapper>
       </div>
     </Wrapper>

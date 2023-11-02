@@ -55,6 +55,7 @@ const Wrapper = styled.div`
   justify-content: space-evenly;
   font-size: 20px;
   font-weight: 600;
+  height: 9vh;
   background-color: #035e3f;
   box-shadow: 0 0 10px black;
   border-top-right-radius: 10px;

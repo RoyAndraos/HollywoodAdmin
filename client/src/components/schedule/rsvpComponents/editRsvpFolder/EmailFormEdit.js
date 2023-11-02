@@ -2,7 +2,7 @@ import { useState } from "react";
 import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
 import styled from "styled-components";
 const EmailFormEdit = ({ reservation, handleChange }) => {
-  const [clientEmailEdit, setClientEmailEdit] = useState(false);
+  const [clientEmailEdit, setClientEmailEdit] = useState("false");
   return (
     <LabelInfoWrapper>
       <StyledLabel>Email </StyledLabel>
@@ -20,9 +20,15 @@ const EmailFormEdit = ({ reservation, handleChange }) => {
 
       <EditButton
         props={clientEmailEdit}
-        onClick={() => setClientEmailEdit(!clientEmailEdit)}
+        onClick={() => {
+          if (clientEmailEdit === "false") {
+            setClientEmailEdit("true");
+          } else {
+            setClientEmailEdit("false");
+          }
+        }}
       >
-        {clientEmailEdit ? "Cancel" : "Edit"}
+        {clientEmailEdit === "true" ? "Cancel" : "Edit"}
       </EditButton>
     </LabelInfoWrapper>
   );

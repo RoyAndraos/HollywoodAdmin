@@ -6,16 +6,16 @@ const EmailFormEdit = ({ reservation, handleChange }) => {
   return (
     <LabelInfoWrapper>
       <StyledLabel>Email </StyledLabel>
-      {clientEmailEdit ? (
+      {clientEmailEdit === "true" ? (
         <StyledInput
           autoFocus
-          placeholder={reservation.clientEmail}
+          placeholder={reservation.email}
           onChange={(e) => handleChange("email", e.target.value)}
         ></StyledInput>
       ) : reservation.email === "" ? (
         <span>Not Provided</span>
       ) : (
-        <span>{reservation.clientEmail}</span>
+        <span>{reservation.email}</span>
       )}
 
       <EditButton

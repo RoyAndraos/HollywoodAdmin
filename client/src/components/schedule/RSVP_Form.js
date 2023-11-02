@@ -77,7 +77,6 @@ const AddReservation = () => {
         number: clientNumber,
       };
     }
-    console.log({ reservation: reservation });
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {

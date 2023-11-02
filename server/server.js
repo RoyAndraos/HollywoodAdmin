@@ -302,8 +302,6 @@ const addReservation = async (req, res) => {
       .status(200)
       .json({ status: 200, message: "success", data: reservationToSend._id });
   } catch (err) {
-    console.log(err);
-    console.log(req.body);
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     client.close();

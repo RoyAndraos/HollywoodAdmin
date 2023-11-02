@@ -6,15 +6,15 @@ const NumberFormEdit = ({ reservation, handleChange }) => {
   return (
     <LabelInfoWrapper>
       <StyledLabel>Number</StyledLabel>
-      {clientNumberEdit ? (
+      {clientNumberEdit === "true" ? (
         <StyledInput
           autoFocus
           onChange={(e) => handleChange("number", e.target.value)}
         ></StyledInput>
-      ) : reservation.clientNumber === "" ? (
+      ) : reservation.number === "" ? (
         <span>Not Provided</span>
       ) : (
-        <span>{reservation.clientNumber}</span>
+        <span>{reservation.number}</span>
       )}
       <EditButton
         props={clientNumberEdit}

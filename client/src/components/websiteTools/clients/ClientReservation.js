@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { LabelInputEditWrapper, Info } from "./SearchResults";
 import { Container } from "./ClientName";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import styled from "styled-components";
+import { ReservationContext } from "../../contexts/ReservationContext";
 const ClientReservation = ({ client }) => {
-  console.log(client);
+  const { reservations } = useContext(ReservationContext);
+  const thisReservation = reservations.filter(
+    (reservation) => reservation._id === client.reservations[0]
+  );
   return (
     <Container>
       <LabelInputEditWrapper>
@@ -14,17 +18,15 @@ const ClientReservation = ({ client }) => {
             <div>
               <InfoContainer>
                 <p>Date </p>
-                <Variable>{client.reservations[0].date.slice(0, 10)}</Variable>
+                <Variable>{thisReservation[0].date}</Variable>
               </InfoContainer>
               <InfoContainer>
                 <p>Time </p>
-                <Variable>
-                  {client.reservations[0].slot[0].slice(4, 10)}
-                </Variable>
+                <Variable>{thisReservation[0].slot[0]}</Variable>
               </InfoContainer>
               <InfoContainer>
                 <p>Price </p>
-                <Variable>{client.reservations[0].service.price}</Variable>
+                <Variable>{thisReservation[0].service.price}</Variable>
               </InfoContainer>
               <InfoContainer>
                 <p>Reservations </p>
@@ -33,8 +35,8 @@ const ClientReservation = ({ client }) => {
             </div>
           }
         >
-          <Info key={client.reservations[0]._id}>
-            {client.reservations[0].service.name}
+          <Info key={thisReservation[0]._id}>
+            {thisReservation[0].service.name}
           </Info>
         </StyledTippy>
       </LabelInputEditWrapper>

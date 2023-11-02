@@ -2,7 +2,9 @@ import { useState, useContext } from "react";
 import styled from "styled-components";
 import Cookies from "js-cookie";
 import { ServicesContext } from "../../contexts/ServicesContext";
+import { NotificationContext } from "../../contexts/NotficationContext";
 const SService = ({ service }) => {
+  const { setNotification } = useContext(NotificationContext);
   const { setServices } = useContext(ServicesContext);
   const [serviceEdit, setServiceEdit] = useState(service);
   const initialService = service;
@@ -24,7 +26,7 @@ const SService = ({ service }) => {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
+        setNotification("Service updated successfully");
         setServices((prevServices) => {
           return prevServices.map((service) => {
             if (service._id === result._id) {
@@ -35,7 +37,7 @@ const SService = ({ service }) => {
           });
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setNotification("Something went wrong"));
   };
   return (
     <WrapperInner key={service._id + "inner"}>

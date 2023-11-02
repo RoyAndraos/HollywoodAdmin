@@ -8,7 +8,7 @@ const NameFormEdit = ({ handleChange, reservation }) => {
       <StyledLabel>Client Name </StyledLabel>
       {clientNameEdit === "true" ? (
         <NameInput
-          placeholder={reservation.clientName}
+          placeholder={reservation.fname + " " + reservation.lname}
           autoFocus
           id="name"
           onChange={(e) => {
@@ -16,7 +16,9 @@ const NameFormEdit = ({ handleChange, reservation }) => {
           }}
         />
       ) : (
-        <span>{reservation.clientName}</span>
+        <span>
+          {reservation.fname} {reservation.lname}
+        </span>
       )}
       <EditButton
         props={clientNameEdit}

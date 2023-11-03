@@ -1,13 +1,14 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ReservationContext } from "../../../contexts/ReservationContext";
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../../../contexts/NotficationContext";
 import Cookies from "js-cookie";
-const SaveDelete = ({ formData, initialFormData }) => {
+const SaveDelete = ({ formData, initialFormData, intitalNote, note }) => {
   // useContext: notification, reservations
   const { setNotification } = useContext(NotificationContext);
   const { reservations, setReservations } = useContext(ReservationContext);
+  const [hasNoteChanged, setHasNoteChanged] = useState(intitalNote !== note);
 
   // function: check if initial state has been changed
   const isEqual = (objA, objB) => {
@@ -24,27 +25,27 @@ const SaveDelete = ({ formData, initialFormData }) => {
     return true;
   };
   const isFormDataDifferent = !isEqual(formData, initialFormData);
-
   const params = useParams()._id;
   const navigate = useNavigate();
 
   // function: delete reservation from database and context
   const handleDeleteReservation = (e) => {
+    const client_id = reservations.filter(
+      (reservation) => reservation._id === params
+    )[0].client._id;
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
     };
     e.preventDefault();
-    fetch(
-      `https://hollywood-fairmount-admin.onrender.com/deleteReservation/${params}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...headers,
-        },
-      }
-    )
+    fetch(`https://hollywood-fairmount-admin.onrender.com/deleteReservation`, {
+      method: "DELETE",
+      body: JSON.stringify({ res_id: params, client_id: client_id }),
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+    })
       .then((res) => {
         return res.json();
       })
@@ -67,6 +68,25 @@ const SaveDelete = ({ formData, initialFormData }) => {
       authorization: token,
     };
     e.preventDefault();
+    if (hasNoteChanged) {
+      fetch(`https://hollywood-fairmount-admin.onrender.com/updateClientNote`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({ client_id: formData.client_id, note: note }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            setNotification("Note updated successfully");
+          }
+        })
+        .catch(() => setNotification("Something went wrong"));
+    }
     fetch(`https://hollywood-fairmount-admin.onrender.com/updateReservation`, {
       method: "PATCH",
       headers: {
@@ -99,7 +119,7 @@ const SaveDelete = ({ formData, initialFormData }) => {
       <Delete onClick={(e) => handleDeleteReservation(e)}>Delete</Delete>
       <SaveChanges
         onClick={(e) => handleSaveReservationEdit(e)}
-        disabled={!isFormDataDifferent}
+        disabled={!isFormDataDifferent || hasNoteChanged}
       >
         Save
       </SaveChanges>

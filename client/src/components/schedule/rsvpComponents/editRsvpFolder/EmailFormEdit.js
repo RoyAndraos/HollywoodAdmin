@@ -34,7 +34,7 @@ const EmailFormEdit = ({ reservation, handleChange }) => {
   );
 };
 
-const StyledInput = styled.input`
+export const StyledInput = styled.input`
   font-size: 1rem;
   outline: none;
   border: none;

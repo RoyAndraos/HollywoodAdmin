@@ -17,6 +17,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
   const { reservations } = useContext(ReservationContext);
   const { userInfo } = useContext(UserContext);
   const selectedService = reservation.service;
+
   // function: format date to "Mon Jan 1"
   const formatDate = (date) => {
     const dateObj = new Date(date);
@@ -30,9 +31,9 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
     return dateObj.toLocaleDateString(undefined, options);
   };
   const selectedDate = reservation.date;
-  const selectedBarberForm = userInfo.filter(
-    (barber) => barber.given_name === reservation.barber
-  )[0];
+  const selectedBarberForm = userInfo.filter((barber) => {
+    return barber.given_name.toLowerCase() === reservation.barber.toLowerCase();
+  })[0];
 
   useEffect(() => {
     //if theres no selected barber

@@ -139,6 +139,23 @@ const getClients = async (req, res) => {
   }
 };
 
+const getClientNotes = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF, options);
+  const _id = req.params.client_id;
+  console.log(_id);
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const clientData = await db.collection("Clients").findOne({ _id: _id });
+    res.status(200).json({ status: 200, data: clientData.note });
+  } catch (err) {
+    console.error("Error getting client notes:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 const getSearchResults = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
   const searchTerm = req.params.searchTerm;
@@ -249,19 +266,7 @@ const addReservation = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const reservationToSend = {
-      _id: _id,
-      fname: reservation.fname,
-      lname: reservation.lname,
-      email: reservation.email,
-      number: reservation.number,
-      barber: reservation.barber,
-      service: reservation.service,
-      date: reservation.date,
-      slot: reservation.slot,
-    };
-    //add reservation to db
-    await db.collection("reservations").insertOne(reservationToSend);
+
     //check if client exists
     const isClient = await db
       .collection("Clients")
@@ -278,29 +283,70 @@ const addReservation = async (req, res) => {
         note: "",
         reservations: [_id],
       });
+
+      const reservationToSend = {
+        _id: _id,
+        client_id: client_id,
+        fname: reservation.fname,
+        lname: reservation.lname,
+        email: reservation.email,
+        number: reservation.number,
+        barber: reservation.barber,
+        service: reservation.service,
+        date: reservation.date,
+        slot: reservation.slot,
+      };
+
+      //add reservation to db
+      await db.collection("reservations").insertOne(reservationToSend);
+
+      //send email to client
+      if (reservation.email !== "") {
+        await sendEmail(
+          reservation.email,
+          reservation.barber,
+          reservation.fname,
+          reservation.lname,
+          reservation.date,
+          reservation.slot[0].split("-")[1],
+          reservation.service.name,
+          reservation.service.price
+        );
+      }
+      res.status(200).json({
+        status: 200,
+        message: "success",
+        res_id: reservationToSend._id,
+        client_id: client_id,
+      });
+
       //if client exists, add reservation to client
     } else {
       await db
         .collection("Clients")
         .updateOne({ _id: isClient._id }, { $push: { reservations: _id } });
-    }
+      const reservationToSend = {
+        _id: _id,
+        client_id: isClient.client_id,
+        fname: reservation.fname,
+        lname: reservation.lname,
+        email: reservation.email,
+        number: reservation.number,
+        barber: reservation.barber,
+        service: reservation.service,
+        date: reservation.date,
+        slot: reservation.slot,
+      };
 
-    //send email to client
-    if (reservation.email !== "") {
-      await sendEmail(
-        reservation.email,
-        reservation.barber,
-        reservation.fname,
-        reservation.lname,
-        reservation.date,
-        reservation.slot[0].split("-")[1],
-        reservation.service.name,
-        reservation.service.price
-      );
+      //add reservation to db
+      await db.collection("reservations").insertOne(reservationToSend);
+      res.status(200).json({
+        status: 200,
+        message: "success",
+        res_id: _id,
+        client_id: isClient._id,
+      });
     }
-    res
-      .status(200)
-      .json({ status: 200, message: "success", data: reservationToSend._id });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {
@@ -496,11 +542,16 @@ const deleteTimeOff = async (req, res) => {
 
 const deleteReservation = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
-  const _id = req.params._id;
+  const _id = req.body.res_id;
+  const client_id = req.body.client_id;
+  console.log(_id, client_id);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("reservations").deleteOne({ _id: _id });
+    await db
+      .collection("Clients")
+      .updateOne({ _id: client_id }, { $pull: { reservations: _id } });
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -686,4 +737,9 @@ module.exports = {
   logout,
   verifyToken,
   updateServices,
+  getClientNotes,
 };
+
+// availability: PATCH REQUEST
+// Client Res: Note to add
+// when res delete, remove from client

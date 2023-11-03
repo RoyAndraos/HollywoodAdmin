@@ -28,6 +28,7 @@ const {
   logout,
   verifyToken,
   updateServices,
+  getClientNotes,
 } = require("./server");
 
 // Create the express app
@@ -58,9 +59,10 @@ app.get("/", (req, res) => {
 app.get("/getUserInfo", verifyToken, getUserInfo);
 app.get("/search/:searchTerm", verifyToken, getSearchResults); //
 app.get("/clients", verifyToken, getClients); //
+app.get("/getClientNote/:client_id", getClientNotes); //
 app.post("/logout", logout);
 app.post("/login", login);
-app.post("/addReservation", verifyToken, addReservation); //
+app.post("/addReservation", addReservation); //
 app.post("/addBarber", verifyToken, addBarber); //
 app.patch("/updateClient", verifyToken, updateClient); //
 app.patch("/upload", verifyToken, uploadImage); //
@@ -72,7 +74,7 @@ app.patch("/updateText", verifyToken, updateText); //
 app.patch("/updateServices", verifyToken, updateServices); //
 app.delete("/images/:_id", verifyToken, deleteImage);
 app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
-app.delete("/deleteReservation/:_id", verifyToken, deleteReservation); //
+app.delete("/deleteReservation", deleteReservation); //
 app.delete("/deleteBarberProfile", verifyToken, deleteBarberProfile); //
 
 const server = http.createServer(app); // Create an HTTP server

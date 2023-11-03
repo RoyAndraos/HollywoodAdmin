@@ -90,7 +90,9 @@ const AddReservation = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 200) {
-          reservation._id = data.data;
+          console.log(data);
+          reservation._id = data.res_id;
+          reservation.client_id = data.client_id;
           setReservations([...reservations, reservation]);
           setNotification("Reservation added successfully");
         }

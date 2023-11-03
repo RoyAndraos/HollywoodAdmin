@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ReservationContext } from "../../../contexts/ReservationContext";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -11,15 +11,35 @@ import TimeSlotEdit from "./TimeSlotEdit";
 import SaveDelete from "./SaveDelete";
 import NumberFormEdit from "./NumberFormEdit";
 import EmailFormEdit from "./EmailFormEdit";
+import NoteFormEdit from "./NoteFormEdit";
 const EditRsvp = () => {
   const { reservations } = useContext(ReservationContext);
   const params = useParams()._id;
   const navigate = useNavigate();
-  const thisReservation = reservations.filter(
+  let thisReservation = reservations.filter(
     (reservation) => reservation._id === params
   );
   const [formData, setFormData] = useState(thisReservation[0]);
-
+  const [note, setNote] = useState("");
+  const [initialNote, setInitialNote] = useState("");
+  const handleChangeNote = (e) => {
+    setNote(e.target.value);
+  };
+  useEffect(() => {
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation.client_id}`
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.note === "") {
+          setNote("");
+          setInitialNote("");
+        } else {
+          setNote(result.note);
+          setInitialNote(result.note);
+        }
+      });
+  });
   const handleChange = (key, value) => {
     setFormData({
       ...formData,
@@ -31,6 +51,7 @@ const EditRsvp = () => {
     e.preventDefault();
     navigate("/schedule");
   };
+
   return (
     <Wrapper style={{ position: "relative" }} key={"edit"}>
       <BackButton onClick={(e) => handleExit(e)}>
@@ -66,7 +87,17 @@ const EditRsvp = () => {
           handleChange={handleChange}
           reservation={thisReservation[0]}
         />
-        <SaveDelete formData={formData} initialFormData={thisReservation[0]} />
+        <NoteFormEdit
+          handleChange={handleChangeNote}
+          reservation={thisReservation[0]}
+          note={note}
+        />
+        <SaveDelete
+          formData={formData}
+          initialFormData={thisReservation[0]}
+          initialNote={initialNote}
+          note={note}
+        />
       </SmallWrapper>
     </Wrapper>
   );

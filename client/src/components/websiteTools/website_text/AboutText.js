@@ -30,7 +30,8 @@ const AboutText = () => {
       },
       body: JSON.stringify({
         textId: "about",
-        text: aboutText,
+        content: aboutText,
+        french: frenchAboutText,
       }),
     })
       .then((res) => res.json())

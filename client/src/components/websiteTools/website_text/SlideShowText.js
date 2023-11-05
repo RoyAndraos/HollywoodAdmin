@@ -31,7 +31,8 @@ const SlideShowText = () => {
       },
       body: JSON.stringify({
         textId: "slideshow",
-        text: slideShowText,
+        content: slideShowText,
+        french: frenchSlideShowText,
       }),
     })
       .then((res) => res.json())

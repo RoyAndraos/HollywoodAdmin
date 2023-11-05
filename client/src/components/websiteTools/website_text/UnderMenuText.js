@@ -30,7 +30,8 @@ const UnderMenuText = () => {
       },
       body: JSON.stringify({
         textId: "underMenu",
-        text: underMenuText,
+        content: underMenuText,
+        french: frenchMenuText,
       }),
     })
       .then((res) => res.json())

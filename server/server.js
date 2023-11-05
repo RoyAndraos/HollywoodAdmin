@@ -639,13 +639,16 @@ const updateBarberProfile = async (req, res) => {
 
 const updateText = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
-  const { textId, text } = req.body;
+  const { textId, content, french } = req.body;
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db
       .collection("web_text")
-      .updateOne({ _id: textId }, { $set: { content: text } });
+      .updateOne(
+        { _id: textId },
+        { $set: { content: content, french: french } }
+      );
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     console.error("Error updating text:", err);

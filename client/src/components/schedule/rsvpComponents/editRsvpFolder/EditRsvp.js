@@ -34,7 +34,7 @@ const EditRsvp = () => {
       .then((result) => {
         setInitialNote(result.data);
       });
-  }, []);
+  }, [thisReservation]);
 
   const handleChange = (key, value) => {
     setFormData({

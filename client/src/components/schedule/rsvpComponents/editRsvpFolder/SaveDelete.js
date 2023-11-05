@@ -1,30 +1,26 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../../contexts/ReservationContext";
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../../../contexts/NotficationContext";
 import Cookies from "js-cookie";
-const SaveDelete = ({ formData, initialFormData, intitalNote, note }) => {
+import { isEqual } from "../../../helpers";
+const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
   // useContext: notification, reservations
   const { setNotification } = useContext(NotificationContext);
   const { reservations, setReservations } = useContext(ReservationContext);
-  const [hasNoteChanged, setHasNoteChanged] = useState(intitalNote !== note);
+  const [hasNoteChanged, setHasNoteChanged] = useState(initialNote !== note);
 
-  // function: check if initial state has been changed
-  const isEqual = (objA, objB) => {
-    const keysA = Object.keys(objA);
-    const keysB = Object.keys(objB);
-    if (keysA.length !== keysB.length) {
-      return false;
-    }
-    for (const key of keysA) {
-      if (objA[key] !== objB[key]) {
-        return false;
-      }
-    }
-    return true;
-  };
-  const isFormDataDifferent = !isEqual(formData, initialFormData);
+  const [isFormDataDifferent, setIsFormDataDifferent] = useState(
+    !isEqual(formData, initialFormData)
+  );
+
+  useEffect(() => {
+    // Update hasNoteChanged inside the useEffect
+    setHasNoteChanged(initialNote !== note);
+    setIsFormDataDifferent(!isEqual(formData, initialFormData));
+  }, [note, initialNote, formData, initialFormData]);
+
   const params = useParams()._id;
   const navigate = useNavigate();
 
@@ -32,7 +28,7 @@ const SaveDelete = ({ formData, initialFormData, intitalNote, note }) => {
   const handleDeleteReservation = (e) => {
     const client_id = reservations.filter(
       (reservation) => reservation._id === params
-    )[0].client._id;
+    )[0].client_id;
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
@@ -119,7 +115,7 @@ const SaveDelete = ({ formData, initialFormData, intitalNote, note }) => {
       <Delete onClick={(e) => handleDeleteReservation(e)}>Delete</Delete>
       <SaveChanges
         onClick={(e) => handleSaveReservationEdit(e)}
-        disabled={!isFormDataDifferent || hasNoteChanged}
+        disabled={!isFormDataDifferent && !hasNoteChanged}
       >
         Save
       </SaveChanges>

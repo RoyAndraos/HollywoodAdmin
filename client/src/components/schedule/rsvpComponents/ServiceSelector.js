@@ -26,6 +26,11 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
         <BarberSlot
           key={selectedService.name}
           onClick={() => setSelectedService("")}
+          style={{
+            background: "#035e3f",
+            border: "transparent solid 1px",
+            color: "whitesmoke",
+          }}
         >
           {selectedService.name}
         </BarberSlot>

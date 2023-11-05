@@ -135,6 +135,11 @@ const SlotSelector = ({
               onClick={() => {
                 setSelectedSlot([]);
               }}
+              style={{
+                background: "#035e3f",
+                border: "transparent solid 1px",
+                color: "whitesmoke",
+              }}
             >
               {selectedSlot[0].split("-")[1]}
             </SelectedSlot>

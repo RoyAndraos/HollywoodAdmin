@@ -16,11 +16,14 @@ const SlideShowImages = () => {
     setShowDeleteConfirmations(newShowDeleteConfirmations);
     setSelectedImageToDelete(image);
   };
+  const slideShowImagesLength = images.filter(
+    (image) => image.filename === "slideShow"
+  ).length;
   return (
     <Container key={"slideshow"}>
       <Title>Slideshow Images</Title>
       <PreviewWrapper key={"slideshow"}>
-        {images.length !== 0 &&
+        {slideShowImagesLength !== 0 ? (
           images.map((image, index) => {
             if (image.filename === "slideShow") {
               return (
@@ -50,7 +53,10 @@ const SlideShowImages = () => {
             } else {
               return null;
             }
-          })}
+          })
+        ) : (
+          <NoImages>No Images</NoImages>
+        )}
       </PreviewWrapper>
       <InputWrapper>
         <Title
@@ -136,5 +142,18 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const NoImages = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  opacity: 0.5;
+  margin: 5rem 0;
 `;
 export default SlideShowImages;

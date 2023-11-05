@@ -10,6 +10,7 @@ const ClientReservation = ({ client }) => {
   const thisReservation = reservations.filter(
     (reservation) => reservation._id === client.reservations[0]
   );
+  if (!thisReservation[0]) return <Info>No reservations</Info>;
   return (
     <Container>
       <LabelInputEditWrapper>

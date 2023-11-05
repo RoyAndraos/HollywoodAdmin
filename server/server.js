@@ -544,7 +544,6 @@ const deleteReservation = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
   const _id = req.body.res_id;
   const client_id = req.body.client_id;
-  console.log(_id, client_id);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -566,22 +565,6 @@ const deleteReservation = async (req, res) => {
 //PATCH REQUESTS
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-
-const adminCheck = async (req, res) => {
-  const userInfo = req.body;
-  if (WHITE_LIST.includes(userInfo.email.toLowerCase())) {
-    res.status(200).json({
-      status: 200,
-      data: userInfo,
-      message: `Welcome Back ${userInfo.given_name}!`,
-    });
-  } else {
-    res.status(404).json({
-      status: 404,
-      message: "you are not allowed access",
-    });
-  }
-};
 
 const updateAvailability = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
@@ -711,11 +694,28 @@ const updateServices = async (req, res) => {
     client.close();
   }
 };
+
+const updateClientNote = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF, options);
+  const { client_id, note } = req.body;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db
+      .collection("Clients")
+      .updateOne({ _id: client_id }, { $set: { note: note } });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    console.error("Error updating client note:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
 module.exports = {
-  adminCheck,
   getUserInfo,
   updateAvailability,
   addReservation,
@@ -738,6 +738,7 @@ module.exports = {
   verifyToken,
   updateServices,
   getClientNotes,
+  updateClientNote,
 };
 
 // availability: PATCH REQUEST

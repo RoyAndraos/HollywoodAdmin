@@ -1,10 +1,13 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { LabelInputWrapper } from "../RSVP_Form";
 import styled from "styled-components";
 import { StyledLabel } from "../RSVP_Form";
 const BarberSelect = ({ selectedBarberForm, setBarber }) => {
   const { userInfo } = useContext(UserContext);
+  useEffect(() => {
+    if (userInfo.length === 1) setBarber(userInfo[0]);
+  }, []);
   return (
     <LabelInputWrapper>
       <StyledLabel>Barber</StyledLabel>
@@ -24,7 +27,15 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
             );
           })
         ) : (
-          <BarberSlot style={{ width: "30vw" }} onClick={() => setBarber({})}>
+          <BarberSlot
+            style={{
+              width: "30vw",
+              background: "#035e3f",
+              border: "transparent solid 1px",
+              color: "whitesmoke",
+            }}
+            onClick={() => setBarber({})}
+          >
             {selectedBarberForm.given_name}
           </BarberSlot>
         )}

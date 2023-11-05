@@ -23,6 +23,7 @@ const NumberFormEdit = ({ reservation, handleChange }) => {
             setClientNumberEdit("true");
           } else {
             setClientNumberEdit("false");
+            handleChange("number", reservation.number);
           }
         }}
       >

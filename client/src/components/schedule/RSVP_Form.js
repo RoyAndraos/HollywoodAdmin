@@ -90,7 +90,6 @@ const AddReservation = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 200) {
-          console.log(data);
           reservation._id = data.res_id;
           reservation.client_id = data.client_id;
           setReservations([...reservations, reservation]);
@@ -326,6 +325,9 @@ const CustomDatePicker = styled(DatePicker)`
   font-size: 1.2rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   padding: 10px 0 10px 0;
+  background-color: #035e3f;
+  border: 1px solid transparent;
+  color: whitesmoke;
   &:hover {
     cursor: pointer;
     background-color: #ccc;
@@ -399,7 +401,7 @@ const Book = styled.button`
   border: 2px solid transparent;
   position: absolute;
   width: 15vw;
-  bottom: 0;
+  bottom: 200px;
   background-color: #035e3f;
   color: white;
   padding: 10px 20px 10px 20px;
@@ -407,7 +409,6 @@ const Book = styled.button`
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   font-size: 20px;
-  margin-bottom: 30px;
 
   &:hover {
     background-color: whitesmoke;

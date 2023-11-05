@@ -2,7 +2,7 @@ import { useState } from "react";
 import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
 import { StyledInput } from "./EmailFormEdit";
 
-const NoteFormEdit = ({ note, handleChange }) => {
+const NoteFormEdit = ({ note, handleChange, initialNote, setNote }) => {
   const [noteEdit, setNoteEdit] = useState("false");
   return (
     <LabelInfoWrapper>
@@ -28,6 +28,7 @@ const NoteFormEdit = ({ note, handleChange }) => {
           if (noteEdit === "false") {
             setNoteEdit("true");
           } else {
+            setNote(initialNote);
             setNoteEdit("false");
           }
         }}

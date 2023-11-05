@@ -3,11 +3,12 @@ import styled from "styled-components";
 import Cookies from "js-cookie";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
+import { objectsAreEqual } from "../../helpers";
 const SService = ({ service }) => {
   const { setNotification } = useContext(NotificationContext);
   const { setServices } = useContext(ServicesContext);
   const [serviceEdit, setServiceEdit] = useState(service);
-  const initialService = service;
+  const [initialService, setInitialService] = useState(service);
   const handleChange = (key, value) => {
     setServiceEdit({ ...serviceEdit, [key]: value });
   };
@@ -29,8 +30,8 @@ const SService = ({ service }) => {
         setNotification("Service updated successfully");
         setServices((prevServices) => {
           return prevServices.map((service) => {
-            if (service._id === result._id) {
-              return result;
+            if (service._id === result.data._id) {
+              return result.data;
             } else {
               return service;
             }
@@ -77,7 +78,7 @@ const SService = ({ service }) => {
         onClick={() => {
           handleSaveChanges();
         }}
-        disabled={serviceEdit === initialService ? true : false}
+        disabled={objectsAreEqual(serviceEdit, initialService)}
       >
         Save Changes
       </StyledButton>

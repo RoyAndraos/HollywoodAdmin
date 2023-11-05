@@ -12,11 +12,12 @@ import SaveDelete from "./SaveDelete";
 import NumberFormEdit from "./NumberFormEdit";
 import EmailFormEdit from "./EmailFormEdit";
 import NoteFormEdit from "./NoteFormEdit";
+import LastNameFormEdit from "./LastNameFormEdit";
 const EditRsvp = () => {
   const { reservations } = useContext(ReservationContext);
   const params = useParams()._id;
   const navigate = useNavigate();
-  let thisReservation = reservations.filter(
+  const thisReservation = reservations.filter(
     (reservation) => reservation._id === params
   );
   const [formData, setFormData] = useState(thisReservation[0]);
@@ -27,19 +28,14 @@ const EditRsvp = () => {
   };
   useEffect(() => {
     fetch(
-      `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation.client_id}`
+      `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation[0].client_id}`
     )
       .then((res) => res.json())
       .then((result) => {
-        if (result.note === "") {
-          setNote("");
-          setInitialNote("");
-        } else {
-          setNote(result.note);
-          setInitialNote(result.note);
-        }
+        setInitialNote(result.data);
       });
-  });
+  }, []);
+
   const handleChange = (key, value) => {
     setFormData({
       ...formData,
@@ -51,7 +47,6 @@ const EditRsvp = () => {
     e.preventDefault();
     navigate("/schedule");
   };
-
   return (
     <Wrapper style={{ position: "relative" }} key={"edit"}>
       <BackButton onClick={(e) => handleExit(e)}>
@@ -63,6 +58,10 @@ const EditRsvp = () => {
           <Id>{thisReservation[0]._id}</Id>
         </IdWrapper>
         <NameFormEdit
+          reservation={thisReservation[0]}
+          handleChange={handleChange}
+        />
+        <LastNameFormEdit
           reservation={thisReservation[0]}
           handleChange={handleChange}
         />
@@ -91,6 +90,8 @@ const EditRsvp = () => {
           handleChange={handleChangeNote}
           reservation={thisReservation[0]}
           note={note}
+          initialNote={initialNote}
+          setNote={setNote}
         />
         <SaveDelete
           formData={formData}

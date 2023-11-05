@@ -164,7 +164,9 @@ const BarberProfiles = () => {
                     {barber.given_name} {barber.family_name}
                   </Name>
                   <Email>{barber.email}</Email>
-                  <Description>{barber.description}</Description>
+                  {barber.description && barber.description !== "" && (
+                    <Description>{barber.description}</Description>
+                  )}
                 </DisplayWrapper>
                 {barber.picture !== "" && <BarberImage src={barber.picture} />}
                 <ButtonWrapper key={"notEdit" + barber._id}>

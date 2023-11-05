@@ -29,6 +29,7 @@ const {
   verifyToken,
   updateServices,
   getClientNotes,
+  updateClientNote,
 } = require("./server");
 
 // Create the express app
@@ -72,6 +73,7 @@ app.patch("/updateReservation", verifyToken, updateReservation); //
 app.patch("/updateBarberProfile", verifyToken, updateBarberProfile); //
 app.patch("/updateText", verifyToken, updateText); //
 app.patch("/updateServices", verifyToken, updateServices); //
+app.patch("/updateClientNote", updateClientNote); //
 app.delete("/images/:_id", verifyToken, deleteImage);
 app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
 app.delete("/deleteReservation", deleteReservation); //

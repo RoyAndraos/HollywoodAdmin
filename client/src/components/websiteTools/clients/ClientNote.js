@@ -19,6 +19,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
             <StyledInput
               type="text"
               autoFocus
+              placeholder={client.note}
               onChange={(e) => {
                 setEditedNote(e.target.value);
               }}
@@ -55,6 +56,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
           <StyledInput
             type="text"
             autoFocus
+            placeholder={client.note}
             onChange={(e) => {
               setEditedNote(e.target.value);
             }}

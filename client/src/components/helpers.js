@@ -584,5 +584,65 @@ export const getEndTimeEditRsvp = (lastSlot) => {
   }
 };
 
+export const isEqual = (objA, objB) => {
+  const keysA = Object.keys(objA);
+
+  for (const key of keysA) {
+    if (key === "slot") {
+      // Compare arrays
+      if (!arraysAreEqual(objA[key], objB[key])) {
+        return false;
+      }
+    } else if (key === "service") {
+      // Compare objects
+      if (!objectsAreEqual(objA[key], objB[key])) {
+        return false;
+      }
+    } else if (objA[key] !== objB[key]) {
+      // Compare other types
+      return false;
+    }
+  }
+
+  return true;
+};
+
+// Function to compare arrays
+export const arraysAreEqual = (arrayA, arrayB) => {
+  if (arrayA.length !== arrayB.length) {
+    return false;
+  }
+
+  for (let i = 0; i < arrayA.length; i++) {
+    if (arrayA[i] !== arrayB[i]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+// Function to compare objects
+export const objectsAreEqual = (objA, objB) => {
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  for (const key of keysA) {
+    if (!keysB.includes(key)) {
+      return false;
+    }
+
+    if (objA[key] !== objB[key]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 // 8.3% is 1 hour
 // 2.075% is 15 minutes

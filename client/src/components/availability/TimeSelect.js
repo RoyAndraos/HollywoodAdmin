@@ -105,20 +105,17 @@ const TimeSelect = () => {
     const updatedUserInfo = [...userInfo];
     updatedUserInfo[adminToBeUpdated].availability = selectedCells;
     setUserInfo(updatedUserInfo);
-    fetch(
-      "/https://hollywood-fairmount-admin.onrender.com/updateAvailability",
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...headers,
-        },
-        body: JSON.stringify({
-          _id: selectedAdminInfo._id,
-          availability: selectedCells,
-        }),
-      }
-    )
+    fetch("https://hollywood-fairmount-admin.onrender.com/updateAvailability", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      body: JSON.stringify({
+        _id: selectedAdminInfo._id,
+        availability: selectedCells,
+      }),
+    })
       .then((res) => res.json())
       .then((result) => {
         if (result.status === 200) {
@@ -186,7 +183,6 @@ const TimeSelect = () => {
   const handleNavToTimeOff = () => {
     navigate(`/timeOff/${selectedAdminInfo._id}`);
   };
-
   return (
     <Wrapper>
       <ControlPanel>

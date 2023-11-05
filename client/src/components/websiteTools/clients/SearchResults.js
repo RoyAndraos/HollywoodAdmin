@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { AiOutlineEdit } from "react-icons/ai";
 import { BsCheckSquare } from "react-icons/bs";
@@ -9,9 +9,10 @@ import ClientNote from "./ClientNote";
 import ClientReservation from "./ClientReservation";
 import ClientLastName from "./ClientLastName";
 import Cookies from "js-cookie";
-
+import { NotificationContext } from "../../contexts/NotficationContext";
 const SearchResults = ({ searchResults }) => {
   const [clients, setClients] = useState([]);
+  const { setNotification } = useContext(NotificationContext);
   //get all clients
   useEffect(() => {
     const token = Cookies.get("token");
@@ -75,18 +76,26 @@ const SearchResults = ({ searchResults }) => {
         },
         clientId,
       ]),
-    });
-    setClients((prevClients) => {
-      return prevClients.map((client) => {
-        if (client._id === clientId) {
-          return {
-            ...client,
-            [field]: value,
-          };
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 200) {
+          setClients((prevClients) => {
+            return prevClients.map((client) => {
+              if (client._id === clientId) {
+                return {
+                  ...client,
+                  [field]: value,
+                };
+              }
+              return client;
+            });
+          });
+          setNotification("Client updated successfully");
+        } else {
+          setNotification("Something went wrong");
         }
-        return client;
       });
-    });
   };
   if (!clients && searchResults.length === 0) return <div>Loading...</div>;
   if (searchResults.length === 0 && clients)

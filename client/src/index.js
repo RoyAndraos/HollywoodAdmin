@@ -21,7 +21,7 @@ root.render(
             <ServicesProvider>
               <NotificationProvider>
                 <NotificationLogsProvider>
-                  <BrowserRouter>
+                  <BrowserRouter basename="/">
                     <App />
                   </BrowserRouter>
                 </NotificationLogsProvider>

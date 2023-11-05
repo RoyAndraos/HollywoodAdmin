@@ -7,7 +7,7 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
   const { userInfo } = useContext(UserContext);
   useEffect(() => {
     if (userInfo.length === 1) setBarber(userInfo[0]);
-  }, []);
+  }, [userInfo, setBarber]);
   return (
     <LabelInputWrapper>
       <StyledLabel>Barber</StyledLabel>

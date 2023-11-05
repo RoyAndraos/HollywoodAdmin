@@ -8,7 +8,7 @@ const SService = ({ service }) => {
   const { setNotification } = useContext(NotificationContext);
   const { setServices } = useContext(ServicesContext);
   const [serviceEdit, setServiceEdit] = useState(service);
-  const [initialService, setInitialService] = useState(service);
+  const [initialService] = useState(service);
   const handleChange = (key, value) => {
     setServiceEdit({ ...serviceEdit, [key]: value });
   };

@@ -113,7 +113,7 @@ const sendEmail = async (
   );
   sendSmtpEmail.sender = {
     name: fname,
-    email: "roy_andraos@live.fr",
+    email: "hollywoodfairmount@gmail.com",
   };
   sendSmtpEmail.to = [{ email: email, name: `${userFName + " " + userLName}` }];
   await apiInstance.sendTransacEmail(sendSmtpEmail);

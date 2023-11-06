@@ -160,21 +160,40 @@ const Submit = styled.button`
   font-size: 1.2rem;
   width: 20%;
   height: 8%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #e7e7e7;
-  border: 2px solid transparent;
-  border-bottom: 5px solid #035e3f;
   border-radius: 10px;
   transition: all 0.3s ease-out;
   cursor: pointer;
+  position: relative;
   &:hover {
     transition: 0.5s ease-in-out;
-    background-color: #035e3f;
+    background-color: transparent;
     color: whitesmoke;
-    border-bottom: 5px solid #e7e7e7;
   }
   &:active {
     transform: scale(0.94);
     transition: 0.1s ease-in-out;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    background-color: transparent;
+    width: 80px;
+    height: 60%;
+    border-radius: 20px;
+    transform: translateX(10%) translateY(-90%);
+    transition: 0.5s ease-in-out;
+    display: block;
+    z-index: -1;
+  }
+  &:hover::after {
+    transition: 0.4s all ease-in-out;
+    background-color: rgba(3, 94, 63, 0.7);
+    transform: translateX(0%) translateY(0%);
   }
 `;
 

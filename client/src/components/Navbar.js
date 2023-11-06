@@ -22,27 +22,26 @@ const NavBar = () => {
       <StyledNavLink to="/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/availability">Availability</StyledNavLink>
       <StyledNavLink to="/websiteTools">Tools</StyledNavLink>
-      <Logout
-        onClick={() => {
-          handleLogout();
-        }}
-      >
-        Logout
-      </Logout>
+      <StyledNavLink to="/">
+        <Logout
+          onClick={() => {
+            handleLogout();
+          }}
+        >
+          Logout
+        </Logout>
+      </StyledNavLink>
       <NotifLogs />
     </Wrapper>
   );
 };
 const Logout = styled.button`
-  margin-top: 20px;
-  margin-bottom: 20px;
   text-decoration: none;
   font-size: inherit;
   font-weight: inherit;
   background-color: transparent;
   border: none;
   color: #efefef;
-  padding: 10px 15px 10px 15px;
   border-radius: 5px;
   transition: all 0.3s ease-in-out;
   cursor: pointer;

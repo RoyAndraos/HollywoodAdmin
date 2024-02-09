@@ -5,7 +5,7 @@
     height: 100%;
     color: rgba(0,0,0,0.2);
     @media (max-width: 768px) {
-        font-size: 16px;
+        font-size: 16px !important;
     }
 }
 .rbc-button-link:hover {
@@ -24,8 +24,8 @@
     margin: 0 40px 0 40px;
     color: whitesmoke;
     @media (max-width: 768px) {
-        font-size: 1rem;
-        margin: 20px 0;
+        font-size: 16px !important;
+        margin: 20px 0 !important;
     }
 }
 /* Day cell */
@@ -34,7 +34,7 @@
     height: calc(78vh/5);
     border: 1px solid rgba(0, 0, 0, 0.5);
     @media (max-width: 768px) {
-        height: calc(78vh/8);
+        height: calc(78vh/8) !important;
     }
 }
 .rbc-month-view{
@@ -69,7 +69,7 @@
     padding: 3px 0 3px 0;
     color: whitesmoke;
     @media (max-width: 768px) {
-        font-size: 1rem;
+        font-size: 16px;
     }
 }
 /* TOOLBAR */
@@ -88,7 +88,7 @@
     padding: 2px 4px 2px 4px;
     width: 100px;
     @media (max-width: 768px) {
-        font-size: 1rem;
+        font-size: 16px !important;
     }
   }
   .rbc-btn-group:last-of-type button:hover{
@@ -105,7 +105,7 @@
     padding: 4px 4px 4px 4px;
     width: 100px;
     @media (max-width: 768px) {
-        font-size: 1rem !important;
+        font-size: 16px !important;
     }
   }
   .rbc-btn-group:first-of-type button:first-child {

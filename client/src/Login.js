@@ -45,7 +45,7 @@ const Login = () => {
       <StyledBackground src={back} alt="dark green" />
       <LoginWrapper>
         <LabelInputWrapper>
-          <StyledLabel props={isUsernameFocused}>Username</StyledLabel>
+          <StyledLabel $props={isUsernameFocused}>Username</StyledLabel>
           <StyledInput
             onClick={() => {
               handleUsernameFocus();
@@ -57,7 +57,7 @@ const Login = () => {
         </LabelInputWrapper>
         <LabelInputWrapper>
           <StyledLabel
-            props={isPasswordFocused}
+            $props={isPasswordFocused}
             onChange={(e) => {
               setPassword(e.target.value);
             }}
@@ -110,6 +110,9 @@ const LoginWrapper = styled.div`
   background-color: rgba(0, 0, 0, 0.9);
   border-radius: 20px;
   z-index: 1;
+  @media (max-width: 768px) {
+    width: 80%;
+  }
 `;
 
 const StyledInput = styled.input`
@@ -128,21 +131,29 @@ const StyledInput = styled.input`
   &:focus {
     outline: 2px solid #035e3f;
   }
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const StyledLabel = styled.label`
   position: absolute;
   font-size: ${(props) => {
-    return props.props === "true" ? "2rem" : "1.2rem";
+    return props.$props === "true" ? "2rem" : "1.2rem";
   }};
   top: ${(props) => {
-    return props.props === "true" ? "-15%" : "24%";
+    return props.$props === "true" ? "-15%" : "24%";
   }};
   color: ${(props) => {
-    return props.props === "true" ? "#068d5f" : "rgba(0,0,0,0.9)";
+    return props.$props === "true" ? "#068d5f" : "rgba(0,0,0,0.9)";
   }};
   left: 23%;
   transition: all 0.2s;
+  @media (max-width: 768px) {
+    font-size: ${(props) => {
+      return props.$props === "true" ? "1.5rem" : "1rem";
+    }};
+  }
 `;
 
 const LabelInputWrapper = styled.div`
@@ -194,6 +205,9 @@ const Submit = styled.button`
     transition: 0.4s all ease-in-out;
     background-color: rgba(3, 94, 63, 0.7);
     transform: translateX(0%) translateY(0%);
+  }
+  @media (max-width: 768px) {
+    width: 60%;
   }
 `;
 

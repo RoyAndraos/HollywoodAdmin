@@ -29,7 +29,6 @@ const BarberSelect = ({ selectedBarberForm, setBarber }) => {
         ) : (
           <BarberSlot
             style={{
-              width: "30vw",
               background: "#035e3f",
               border: "transparent solid 1px",
               color: "whitesmoke",
@@ -53,12 +52,16 @@ export const BarberSlot = styled.div`
   width: 30vw;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  font-size: clamp(16px, 18px, 22px);
   &:hover {
     cursor: pointer;
     background-color: #ccc;
   }
   &:first-of-type {
     margin-top: 0;
+  }
+  @media (max-width: 768px) {
+    width: 80vw;
   }
 `;
 

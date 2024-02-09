@@ -250,7 +250,13 @@ const AddReservation = () => {
             setBarber={setBarber}
           />
         </div>
-        <div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
           <ServiceSelector
             selectedService={selectedService}
             setSelectedService={setSelectedService}
@@ -262,11 +268,10 @@ const AddReservation = () => {
             selectedDate={selectedDate}
             setSelectedSlot={setSelectedSlot}
           />
+          <Book type="submit" disabled={error}>
+            Book
+          </Book>
         </div>
-
-        <Book type="submit" disabled={error}>
-          Book
-        </Book>
       </StyledForm>
     </Wrapper>
   );
@@ -284,10 +289,12 @@ const fadeIn = keyframes`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: 1.2rem;
   height: 100vh;
   background-color: #011c13;
   border-radius: 20px;
+  @media (max-width: 768px) {
+    height: unset;
+  }
 `;
 
 const Title = styled.h1`
@@ -298,6 +305,9 @@ const Title = styled.h1`
   margin-top: 0;
   border-radius: 20px;
   padding: 20px 0 20px 0;
+  @media (max-width: 768px) {
+    font-size: clamp(20px, 22px, 26px);
+  }
 `;
 
 const StyledForm = styled.form`
@@ -309,6 +319,10 @@ const StyledForm = styled.form`
   align-items: flex-start;
   font-family: "Roboto", sans-serif;
   height: 100%;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const CustomDatePicker = styled(DatePicker)`
@@ -322,7 +336,7 @@ const CustomDatePicker = styled(DatePicker)`
   caret-color: transparent;
   text-align: center;
   transition: 0.3s ease-in-out;
-  font-size: 1.2rem;
+  font-size: clamp(16px, 18px, 22px);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   padding: 10px 0 10px 0;
   background-color: #035e3f;
@@ -331,6 +345,9 @@ const CustomDatePicker = styled(DatePicker)`
   &:hover {
     cursor: pointer;
     background-color: #ccc;
+  }
+  @media (max-width: 768px) {
+    width: 80vw;
   }
 `;
 
@@ -346,6 +363,10 @@ const CalendarContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
     rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
     rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  @media (max-width: 768px) {
+    left: -45vw;
+    top: -5vh;
+  }
 `;
 
 export const SelectedSlotContainer = styled.div`
@@ -385,7 +406,7 @@ const StyledInput = styled.input`
   margin: 5px 0 0 0;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  font-size: 1.2rem;
+  font-size: clamp(16px, 18px, 22px);
   width: 30vw;
   padding: 10px 0 10px 0;
   &:hover {
@@ -394,22 +415,24 @@ const StyledInput = styled.input`
   &:focus {
     outline: none;
   }
+  @media (max-width: 768px) {
+    width: 80vw;
+  }
 `;
 
 const Book = styled.button`
   border-radius: 10px;
   border: 2px solid transparent;
-  position: absolute;
   width: 15vw;
-  bottom: 200px;
   background-color: #035e3f;
+  position: relative;
   color: white;
   padding: 10px 20px 10px 20px;
   text-align: center;
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   font-size: 20px;
-
+  margin: 10 0px 0;
   &:hover {
     background-color: whitesmoke;
     color: #035e3f;
@@ -426,6 +449,10 @@ const Book = styled.button`
       border: 2px solid transparent;
       color: white;
     }
+  }
+  @media (max-width: 768px) {
+    width: 60vw;
+    margin: 50px 0 100px 0;
   }
 `;
 

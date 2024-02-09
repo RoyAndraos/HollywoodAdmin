@@ -162,6 +162,9 @@ const SelectedSlot = styled.div`
     cursor: pointer;
     background-color: #ccc;
   }
+  @media (max-width: 768px) {
+    width: 80vw;
+  }
 `;
 const SlotContainer = styled.div`
   display: flex;
@@ -179,6 +182,7 @@ export const Slot = styled.div`
   transition: 0.3s ease-in-out;
   width: 6vw;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  font-size: clamp(16px, 18px, 22px);
   &:hover {
     cursor: pointer;
     background-color: #ccc;

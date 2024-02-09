@@ -11,6 +11,7 @@ import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
+import { IsMobileContext } from "../contexts/IsMobileContext";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const { setUserInfo, userInfo } = useContext(UserContext);
@@ -26,7 +27,9 @@ const TimeSelect = () => {
   const { setServices, services } = useContext(ServicesContext);
   const { setImages, images } = useContext(ImageContext);
   const { setText, text } = useContext(TextContext);
+  const { isMobile } = useContext(IsMobileContext);
   const navigate = useNavigate();
+  const today = new Date().toDateString().slice(0, 3);
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
@@ -193,9 +196,11 @@ const TimeSelect = () => {
           <Reset key={"save"} onClick={saveChanges}>
             Save Changes
           </Reset>
-          <Reset key={"timeOff"} onClick={handleNavToTimeOff}>
-            Time Off
-          </Reset>
+          {!isMobile && (
+            <Reset key={"timeOff"} onClick={handleNavToTimeOff}>
+              Time Off
+            </Reset>
+          )}
         </AvailButtons>
         <BarberContainer>
           <AdminName onClick={() => setShowBarbers(!showBarbers)}>
@@ -218,38 +223,69 @@ const TimeSelect = () => {
         </BarberContainer>
       </ControlPanel>
 
-      <TableWrapper>
-        <FirstRow>
-          {firstDaily.map((time, index) => (
-            <FirstRowDay key={index}>{time}</FirstRowDay>
-          ))}
-        </FirstRow>
-
-        <Table>
-          <tbody>
-            {days.map((day) => (
-              <tr key={day}>
-                <TH onClick={() => handleRowClick(day)}>{day}</TH>
-                {daily.map((_) => {
-                  const cellKey = `${day}-${_}`;
-                  const cell = selectedCells.find(
-                    (cell) => cell.slot === cellKey
-                  );
-                  const isSelected = cell && cell.available;
-                  return (
-                    <td
-                      value={_}
-                      key={cellKey}
-                      onClick={() => handleCellClick(day, _)}
-                      className={isSelected ? "" : "selected"}
-                    ></td>
-                  );
-                })}
-              </tr>
+      {!isMobile ? (
+        <TableWrapper>
+          <FirstRow>
+            {firstDaily.map((time, index) => (
+              <FirstRowDay key={index}>{time}</FirstRowDay>
             ))}
-          </tbody>
-        </Table>
-      </TableWrapper>
+          </FirstRow>
+
+          <Table>
+            <tbody>
+              {days.map((day) => (
+                <tr key={day}>
+                  <TH onClick={() => handleRowClick(day)}>{day}</TH>
+                  {daily.map((_) => {
+                    const cellKey = `${day}-${_}`;
+                    const cell = selectedCells.find(
+                      (cell) => cell.slot === cellKey
+                    );
+                    const isSelected = cell && cell.available;
+                    return (
+                      <td
+                        value={_}
+                        key={cellKey}
+                        onClick={() => handleCellClick(day, _)}
+                        className={isSelected ? "" : "selected"}
+                      ></td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableWrapper>
+      ) : (
+        <TableWrapper>
+          <Table>
+            <tbody>
+              {daily.map((hour) => (
+                <tr key={hour}>
+                  <TH>{hour}</TH>
+                  {days
+                    .filter((day) => day === today)
+                    .map((day) => {
+                      const cellKey = `${day}-${hour}`;
+                      const cell = selectedCells.find(
+                        (cell) => cell.slot === cellKey
+                      );
+                      const isSelected = cell && cell.available;
+                      return (
+                        <td
+                          value={hour}
+                          key={cellKey}
+                          onClick={() => handleCellClick(day, hour)}
+                          className={isSelected ? "" : "selected"}
+                        ></td>
+                      );
+                    })}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableWrapper>
+      )}
     </Wrapper>
   );
 };
@@ -289,6 +325,9 @@ const Table = styled.table`
       background-color: rgba(0, 0, 0, 0.6);
     }
   }
+  @media (max-width: 768px) {
+    width: 70%;
+  }
 `;
 
 const TableWrapper = styled.div`
@@ -296,6 +335,11 @@ const TableWrapper = styled.div`
   height: 80vh;
   overflow: auto;
   border-radius: 30px;
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
 `;
 
 const TH = styled.th`
@@ -324,6 +368,10 @@ const FirstRow = styled.div`
   top: 10%;
   left: 4.5%;
   max-width: 94.3%;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: 50vh;
+  }
 `;
 const FirstRowDay = styled.div`
   background-color: #035e3f;
@@ -337,6 +385,14 @@ const FirstRowDay = styled.div`
   margin-right: 0.2%;
   &:last-of-type {
     margin-right: 0;
+  }
+  @media (max-width: 768px) {
+    height: 100%;
+    border-radius: 0;
+    margin-bottom: 1%;
+    &:first-of-type {
+      margin-top: 1%;
+    }
   }
 `;
 const Reset = styled.button`
@@ -365,6 +421,11 @@ const ControlPanel = styled.div`
   width: 80%;
   transform: translateX(10%) translateY(100%);
   z-index: 2;
+  @media (max-width: 768px) {
+    width: 90%;
+    transform: translateX(0) translateY(0);
+    margin: 20px 0;
+  }
 `;
 
 export const AdminName = styled.div`
@@ -406,4 +467,5 @@ const NoBarbers = styled.div`
   font-size: 2rem;
   font-family: "Roboto", sans-serif;
 `;
+
 export default TimeSelect;

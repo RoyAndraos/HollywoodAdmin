@@ -58,5 +58,8 @@ export const Wrapper = styled.div`
   flex-direction: column;
   background-color: whitesmoke;
   height: 91.5vh;
+  @media (max-width: 768px) {
+    height: unset;
+  }
 `;
 export default Schedule;

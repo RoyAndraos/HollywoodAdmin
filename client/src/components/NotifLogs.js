@@ -3,10 +3,12 @@ import { NotificationLogsContext } from "./contexts/NotificationLogsContext";
 import styled, { keyframes } from "styled-components";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { IsMobileContext } from "./contexts/IsMobileContext";
 const NotifLogs = () => {
   const { notificationLogs, setNotificationLogs } = useContext(
     NotificationLogsContext
   );
+  const { isMobile } = useContext(IsMobileContext);
   const navigate = useNavigate();
   const [showLogs, setShowLogs] = useState(false);
   const [unReadLogs, setUnReadLogs] = useState(
@@ -31,59 +33,67 @@ const NotifLogs = () => {
   };
   return (
     <Wrapper>
-      <IconWrapper
-        onClick={(e) => {
-          handleClickNotif(e);
-        }}
-      >
-        <IoNotificationsOutline />
-        {unReadLogs.length === 0 ? <></> : <Number>{unReadLogs.length}</Number>}
-      </IconWrapper>
-      {showLogs && (
-        <LogsWrapper>
-          {notificationLogs.length === 0 ? (
-            <NotifWrapper style={{ opacity: "0.5" }} key={"empty"}>
-              Nothing new here
-            </NotifWrapper>
-          ) : (
-            notificationLogs.map((log) => {
-              return (
-                <NotifWrapper
-                  key={log._id}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowLogs(false);
-                    setNotificationLogs((prevLogs) => {
-                      return prevLogs.map((log) => {
-                        return { ...log, read: true };
-                      });
-                    });
-                    navigate(`/schedule/${log._id}`);
-                  }}
-                >
-                  {log.read ? (
-                    <></>
-                  ) : (
-                    <Number
-                      style={{
-                        right: "10%",
-                        top: "45%",
-                        transform: "translateY(-50%)",
-                        backgroundColor: "#035e3f",
-                      }}
-                    />
-                  )}
-                  <Barber>{log.barber}</Barber>
-                  <span>{log.clientName}</span>
-                  <span>
-                    {log.date} {log.slot[0].split("-")[1]}
-                  </span>
-                  <span>{log.service.name}</span>
+      {(!isMobile || unReadLogs.length !== 0) && (
+        <>
+          <IconWrapper
+            onClick={(e) => {
+              handleClickNotif(e);
+            }}
+          >
+            <IoNotificationsOutline />
+            {unReadLogs.length === 0 ? (
+              <></>
+            ) : (
+              <Number>{unReadLogs.length}</Number>
+            )}
+          </IconWrapper>
+          {showLogs && (
+            <LogsWrapper>
+              {notificationLogs.length === 0 ? (
+                <NotifWrapper style={{ opacity: "0.5" }} key={"empty"}>
+                  Nothing new here
                 </NotifWrapper>
-              );
-            })
+              ) : (
+                notificationLogs.map((log) => {
+                  return (
+                    <NotifWrapper
+                      key={log._id}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowLogs(false);
+                        setNotificationLogs((prevLogs) => {
+                          return prevLogs.map((log) => {
+                            return { ...log, read: true };
+                          });
+                        });
+                        navigate(`/schedule/${log._id}`);
+                      }}
+                    >
+                      {log.read ? (
+                        <></>
+                      ) : (
+                        <Number
+                          style={{
+                            right: "10%",
+                            top: "45%",
+                            transform: "translateY(-50%)",
+                            backgroundColor: "#035e3f",
+                          }}
+                        />
+                      )}
+                      <Barber>{log.barber}</Barber>
+                      <span>{log.clientName}</span>
+                      <span>
+                        {log.date} {log.slot[0].split("-")[1]}
+                      </span>
+                      <span>{log.service.name}</span>
+                    </NotifWrapper>
+                  );
+                })
+              )}
+            </LogsWrapper>
           )}
-        </LogsWrapper>
+        </>
       )}
     </Wrapper>
   );

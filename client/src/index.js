@@ -9,6 +9,7 @@ import { TextProvider } from "./components/contexts/TextContext";
 import { ImageProvider } from "./components/contexts/ImageContext";
 import { NotificationProvider } from "./components/contexts/NotficationContext";
 import { NotificationLogsProvider } from "./components/contexts/NotificationLogsContext";
+import { IsMobileProvider } from "./components/contexts/IsMobileContext";
 
 const root = createRoot(document.getElementById("root"));
 
@@ -21,9 +22,11 @@ root.render(
             <ServicesProvider>
               <NotificationProvider>
                 <NotificationLogsProvider>
-                  <BrowserRouter basename="/">
-                    <App />
-                  </BrowserRouter>
+                  <IsMobileProvider>
+                    <BrowserRouter basename="/">
+                      <App />
+                    </BrowserRouter>
+                  </IsMobileProvider>
                 </NotificationLogsProvider>
               </NotificationProvider>
             </ServicesProvider>

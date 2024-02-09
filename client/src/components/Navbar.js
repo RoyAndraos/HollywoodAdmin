@@ -3,9 +3,12 @@ import { NavLink } from "react-router-dom";
 import NotifLogs from "./NotifLogs";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { IsMobileContext } from "./contexts/IsMobileContext";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const { isMobile } = useContext(IsMobileContext);
   const handleLogout = () => {
     const token = Cookies.get("token");
     fetch("https://hollywood-fairmount-admin.onrender.com/logout", {
@@ -21,7 +24,7 @@ const NavBar = () => {
     <Wrapper>
       <StyledNavLink to="/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/availability">Availability</StyledNavLink>
-      <StyledNavLink to="/websiteTools">Tools</StyledNavLink>
+      {!isMobile && <StyledNavLink to="/websiteTools">Tools</StyledNavLink>}
       <StyledNavLink to="/">
         <Logout
           onClick={() => {
@@ -52,6 +55,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+  align-items: center;
   font-size: 20px;
   font-weight: 600;
   height: 9vh;
@@ -60,11 +64,12 @@ const Wrapper = styled.div`
   border-top-right-radius: 10px;
   width: 100%;
   z-index: 1000;
+  @media (max-width: 768px) {
+    font-size: 15px;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`
-  margin-top: 20px;
-  margin-bottom: 20px;
   text-decoration: none;
   color: #efefef;
   padding: 10px 15px 10px 15px;
@@ -75,6 +80,9 @@ const StyledNavLink = styled(NavLink)`
     text-decoration: underline;
     background-color: #efefef;
     color: #2c3e50;
+  }
+  @media (max-width: 768px) {
+    padding: 5px 5px;
   }
 `;
 export default NavBar;

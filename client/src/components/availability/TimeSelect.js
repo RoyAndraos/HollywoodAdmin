@@ -257,7 +257,7 @@ const TimeSelect = () => {
           </Table>
         </TableWrapper>
       ) : (
-        <TableWrapper style={{ padding: "10vh 0" }}>
+        <TableWrapper style={{ paddingBottom: "10vh" }}>
           <Table>
             <tbody>
               {daily.map((hour) => (

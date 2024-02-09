@@ -294,6 +294,7 @@ const Wrapper = styled.div`
   border-radius: 20px;
   @media (max-width: 768px) {
     height: unset;
+    margin-top: 5vh;
   }
 `;
 

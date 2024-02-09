@@ -83,6 +83,18 @@ const NewCalendar = () => {
   });
 
   useEffect(() => {
+    const monthViewCellButtons = document.querySelectorAll(".rbc-button-link");
+    monthViewCellButtons.forEach((element) => {
+      element.style.fontSize = "16px";
+    });
+    const toolbarLabel = document.querySelectorAll(".rbc-toolbar-label");
+    const toolbarButton = document.querySelectorAll(".rbc-toolbar button");
+    toolbarLabel.forEach((element) => {
+      element.style.fontSize = "16px";
+    });
+    toolbarButton.forEach((element) => {
+      element.style.fontSize = "16px";
+    });
     const dayViewElements = document.querySelectorAll(
       ".rbc-day-slot .rbc-events-container .rbc-event"
     );

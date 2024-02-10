@@ -83,7 +83,6 @@ const NewCalendar = () => {
       }
     });
   });
-
   useEffect(() => {
     if (isMobile) {
       const monthViewCellButtons =
@@ -100,7 +99,9 @@ const NewCalendar = () => {
         element.style.fontSize = "16px";
       });
     }
+  }, [isMobile]);
 
+  useEffect(() => {
     const dayViewElements = document.querySelectorAll(
       ".rbc-day-slot .rbc-events-container .rbc-event"
     );
@@ -162,7 +163,7 @@ const NewCalendar = () => {
       </div>
     );
   };
-  const handleNavigate = (date, view) => {
+  const handleNavigate = () => {
     // Handle navigation events here...
     setCurrentDay(!currentDay); // Update the current view
   };

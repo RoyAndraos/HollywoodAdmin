@@ -386,6 +386,9 @@ export const StyledLabel = styled.label`
   border-bottom: 1px solid #035e3f;
   color: #049f6a;
   margin: 20px 0 10px 0;
+  @media (max-width: 768px) {
+    width: 80vw;
+  }
 `;
 
 export const LabelInputWrapper = styled.div`

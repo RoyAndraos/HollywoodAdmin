@@ -172,6 +172,9 @@ const SlotContainer = styled.div`
   width: 30vw;
   justify-content: space-evenly;
   line-height: 30px;
+  @media (max-width: 768px) {
+    width: 80vw;
+  }
 `;
 
 export const Slot = styled.div`
@@ -186,6 +189,10 @@ export const Slot = styled.div`
   &:hover {
     cursor: pointer;
     background-color: #ccc;
+  }
+  @media (max-width: 768px) {
+    width: 20vw;
+    font-size: 16px;
   }
 `;
 export default SlotSelector;

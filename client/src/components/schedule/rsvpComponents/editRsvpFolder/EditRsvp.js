@@ -2,7 +2,6 @@ import { useContext, useState, useEffect } from "react";
 import { ReservationContext } from "../../../contexts/ReservationContext";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { Wrapper } from "../../Schedule";
 import { FaArrowLeft } from "react-icons/fa";
 import BarberFormEdit from "./BarberFormEdit";
 import NameFormEdit from "./NameFormEdit";
@@ -111,12 +110,12 @@ const SmallWrapper = styled.div`
   align-items: center;
   height: 100%;
   width: 50%;
-  position: relative;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
   align-items: center;
   position: relative;
+  @media (max-width: 768px) {
+    width: 90%;
+    top: 10%;
+  }
 `;
 export const LabelInfoWrapper = styled.div`
   display: grid;
@@ -186,5 +185,22 @@ const IdWrapper = styled.div`
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #035e3f;
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+  }
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: whitesmoke;
+  height: 91.5vh;
+  @media (max-width: 768px) {
+    height: 80vh;
+    padding-bottom: 10vh;
+  }
 `;
 export default EditRsvp;

@@ -1,12 +1,9 @@
 /* Day number button */
 .rbc-button-link {
-    font-size: 3rem;
+    font-size: 1.5rem;
     width: 101.8%;
     height: 100%;
     color: rgba(0,0,0,0.2);
-    @media (max-width: 768px) {
-        font-size: 16px !important;
-    }
 }
 .rbc-button-link:hover {
     cursor: pointer;
@@ -21,12 +18,8 @@
     color: rgba(0,0,0,0.9);
     background-color: #035e3f;
     border-radius: 10px;
-    margin: 0 40px 0 40px;
+    margin: 20px 40px;
     color: whitesmoke;
-    @media (max-width: 768px) {
-        font-size: 16px !important;
-        margin: 20px 0 !important;
-    }
 }
 /* Day cell */
 .rbc-date-cell{

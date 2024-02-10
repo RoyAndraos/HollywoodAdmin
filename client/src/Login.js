@@ -92,12 +92,18 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 768px) {
+    height: unset;
+  }
 `;
 
 const StyledBackground = styled.img`
   position: absolute;
   width: 100%;
   height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   object-fit: cover;
 `;
 
@@ -106,13 +112,13 @@ const LoginWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 33%;
-  height: 70%;
+  width: 33vw;
+  height: 70vh;
   background-color: rgba(0, 0, 0, 0.9);
   border-radius: 20px;
   z-index: 1;
   @media (max-width: 768px) {
-    width: 80%;
+    width: 80vw;
   }
 `;
 

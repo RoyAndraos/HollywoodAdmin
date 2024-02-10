@@ -83,23 +83,6 @@ const NewCalendar = () => {
       }
     });
   });
-  useEffect(() => {
-    if (isMobile) {
-      const monthViewCellButtons =
-        document.querySelectorAll(".rbc-button-link ");
-      monthViewCellButtons.forEach((element) => {
-        element.style.fontSize = "16px";
-      });
-      const toolbarLabel = document.querySelectorAll(".rbc-toolbar-label");
-      const toolbarButton = document.querySelectorAll(".rbc-toolbar button");
-      toolbarLabel.forEach((element) => {
-        element.style.fontSize = "16px";
-      });
-      toolbarButton.forEach((element) => {
-        element.style.fontSize = "16px";
-      });
-    }
-  }, [isMobile]);
 
   useEffect(() => {
     const dayViewElements = document.querySelectorAll(

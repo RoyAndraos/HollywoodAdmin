@@ -187,11 +187,11 @@ const Submit = styled.button`
   transition: all 0.3s ease-out;
   cursor: pointer;
   position: relative;
-  &:hover {
+  /* &:hover {
     transition: 0.5s ease-in-out;
     background-color: transparent;
     color: whitesmoke;
-  }
+  } */
   &:active {
     transform: scale(0.94);
     transition: 0.1s ease-in-out;
@@ -208,11 +208,11 @@ const Submit = styled.button`
     display: block;
     z-index: -1;
   }
-  &:hover::after {
+  /* &:hover::after {
     transition: 0.4s all ease-in-out;
     background-color: rgba(3, 94, 63, 0.7);
     transform: translateX(0%) translateY(0%);
-  }
+  } */
   @media (max-width: 768px) {
     width: 60%;
   }

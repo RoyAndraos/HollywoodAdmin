@@ -24,31 +24,25 @@ const AddReservation = () => {
   const [error, setError] = useState(true);
 
   //searches for client data (when admin enters name in the client name input)
-  const fetchClientData = (name) => {
+  const fetchClientData = async (name) => {
     const token = Cookies.get("token");
-    const headers = {
-      authorization: token,
-    };
     if (!token) {
       console.error("Token is missing.");
       return;
     }
-    fetch(
-      `https://hollywood-fairmount-admin.onrender.com/clientByName?name=${name}`,
-      {
-        headers,
+
+    try {
+      const response = await fetch(
+        `https://hollywood-fairmount-admin.onrender.com/clientByName/${name}`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    )
-      .then((res) => {
-        console.log("res:", res);
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Client data:", data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching client data:", error);
-      });
+      const data = await response.json();
+      console.log("Client data:", data.data);
+    } catch (error) {
+      console.error("Error fetching client data:", error);
+    }
   };
   // when a service has a duration of 2 (meaning 2 slots), this function will select the next slot aka the slot that
   //was clicked and the one that comes after it

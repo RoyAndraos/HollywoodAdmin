@@ -123,7 +123,7 @@ const sendEmail = async (
 
 const getClientByName = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
-  const name = req.query.name.toLowerCase(); // Extracting the 'name' query parameter
+  const name = req.params.name.toLowerCase();
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");

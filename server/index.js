@@ -62,7 +62,7 @@ app.get("/getUserInfo", verifyToken, getUserInfo);
 app.get("/search/:searchTerm", verifyToken, getSearchResults); //
 app.get("/clients", verifyToken, getClients); //
 app.get("/getClientNote/:client_id", getClientNotes); //
-app.get("/clientByName", getClientByName); //
+app.get("/clientByName/:name", getClientByName); //
 app.post("/logout", logout);
 app.post("/login", login);
 app.post("/addReservation", addReservation); //

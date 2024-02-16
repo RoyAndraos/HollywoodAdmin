@@ -29,20 +29,27 @@ const AddReservation = () => {
     const headers = {
       authorization: token,
     };
+    if (!token) {
+      console.error("Token is missing.");
+      return;
+    }
     fetch(
       `https://hollywood-fairmount-admin.onrender.com/clientByName?name=${name}`,
-      { headers }
+      {
+        headers,
+      }
     )
-      .then((response) => response.json())
+      .then((res) => {
+        console.log("res:", res);
+        return res.json();
+      })
       .then((data) => {
-        // Handle fetched client data
-        console.log(data);
+        console.log("Client data:", data.data);
       })
       .catch((error) => {
         console.error("Error fetching client data:", error);
       });
   };
-
   // when a service has a duration of 2 (meaning 2 slots), this function will select the next slot aka the slot that
   //was clicked and the one that comes after it
   const selectNextSlot = (slot) => {

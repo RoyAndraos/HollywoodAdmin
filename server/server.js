@@ -127,7 +127,7 @@ const getClientByName = async (req, res) => {
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const query = { fname: { $regex: name, $options: "i" } };
+    const query = { fname: { $regex: name.toLowerCase(), $options: "i" } };
     const clients = await db.collection("Clients").find(query).toArray();
     console.log(clients);
     res.status(200).json({ status: 200, data: clients });

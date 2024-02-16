@@ -77,43 +77,44 @@ const startChangeStream = (io) => {
 //BREVO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-const brevo = require("@getbrevo/brevo");
-const { htmlContent } = require("./templates/Welcome");
-let defaultClient = brevo.ApiClient.instance;
-let apiKey = defaultClient.authentications["api-key"];
-apiKey.apiKey = process.env.EMAIL_API_KEY;
-const sendEmail = async (
-  email,
-  fname,
-  userFName,
-  userLName,
-  date,
-  time,
-  service,
-  price
-) => {
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  let apiInstance = new brevo.TransactionalEmailsApi();
-  let sendSmtpEmail = new brevo.SendSmtpEmail();
-  sendSmtpEmail.subject = "Your reservation at Hollywood Barbershop";
-  sendSmtpEmail.htmlContent = htmlContent(
-    userFName,
-    formattedDate,
-    time,
-    service,
-    price
-  );
-  sendSmtpEmail.sender = {
-    name: fname,
-    email: "hollywoodfairmount@gmail.com",
-  };
-  sendSmtpEmail.to = [{ email: email, name: `${userFName + " " + userLName}` }];
-  await apiInstance.sendTransacEmail(sendSmtpEmail);
-};
+// const brevo = require("@getbrevo/brevo");
+// const { htmlContent } = require("./templates/Welcome");
+// let defaultClient = brevo.ApiClient.instance;
+// let apiKey = defaultClient.authentications["api-key"];
+// apiKey.apiKey = process.env.EMAIL_API_KEY;
+// const sendEmail = async (
+//   email,
+//   fname,
+//   userFName,
+//   userLName,
+//   date,
+//   time,
+//   service,
+//   price
+// ) => {
+//   const formattedDate = new Date(date).toLocaleDateString("en-US", {
+//     year: "numeric",
+//     month: "long",
+//     day: "numeric",
+//   });
+//   let apiInstance = new brevo.TransactionalEmailsApi();
+//   let sendSmtpEmail = new brevo.SendSmtpEmail();
+//   sendSmtpEmail.subject = "Your reservation at Hollywood Barbershop";
+//   sendSmtpEmail.htmlContent = htmlContent(
+//     userFName,
+//     formattedDate,
+//     time,
+//     service,
+//     price
+//   );
+//   sendSmtpEmail.sender = {
+//     name: fname,
+//     email: "hollywoodfairmount@gmail.com",
+//   };
+//   sendSmtpEmail.to = [{ email: email, name: `${userFName + " " + userLName}` }];
+//   await apiInstance.sendTransacEmail(sendSmtpEmail);
+// };
+
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -129,6 +130,7 @@ const getClientByName = async (req, res) => {
     const db = client.db("HollywoodBarberShop");
     const query = { fname: { $regex: name.toLowerCase(), $options: "i" } };
     const clients = await db.collection("Clients").find(query).toArray();
+    res.set("Content-Type", "application/json");
     res.status(200).json({ status: 200, data: clients });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -314,24 +316,24 @@ const addReservation = async (req, res) => {
       await db.collection("reservations").insertOne(reservationToSend);
 
       //send email to client
-      if (reservation.email !== "") {
-        await sendEmail(
-          reservation.email,
-          reservation.barber,
-          reservation.fname,
-          reservation.lname,
-          reservation.date,
-          reservation.slot[0].split("-")[1],
-          reservation.service.name,
-          reservation.service.price
-        );
-      }
-      res.status(200).json({
-        status: 200,
-        message: "success",
-        res_id: reservationToSend._id,
-        client_id: client_id,
-      });
+      // if (reservation.email !== "") {
+      //   await sendEmail(
+      //     reservation.email,
+      //     reservation.barber,
+      //     reservation.fname,
+      //     reservation.lname,
+      //     reservation.date,
+      //     reservation.slot[0].split("-")[1],
+      //     reservation.service.name,
+      //     reservation.service.price
+      //   );
+      // }
+      // res.status(200).json({
+      //   status: 200,
+      //   message: "success",
+      //   res_id: reservationToSend._id,
+      //   client_id: client_id,
+      // });
 
       //if client exists, add reservation to client
     } else {

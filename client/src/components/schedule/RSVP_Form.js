@@ -179,7 +179,7 @@ const AddReservation = () => {
         break;
       case "name":
         setClientName(e.target.value);
-        if (e.target.value.length > 3) {
+        if (e.target.value.length > 2) {
           // If the entered name has more than 3 letters, fetch client data
           fetchClientData(e.target.value);
         }

@@ -23,6 +23,26 @@ const AddReservation = () => {
   const [selectedService, setSelectedService] = useState("");
   const [error, setError] = useState(true);
 
+  //searches for client data (when admin enters name in the client name input)
+  const fetchClientData = (name) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/clientByName?name=${name}`,
+      { headers }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle fetched client data
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching client data:", error);
+      });
+  };
+
   // when a service has a duration of 2 (meaning 2 slots), this function will select the next slot aka the slot that
   //was clicked and the one that comes after it
   const selectNextSlot = (slot) => {
@@ -159,8 +179,12 @@ const AddReservation = () => {
         break;
       case "name":
         setClientName(e.target.value);
+        if (e.target.value.length > 3) {
+          // If the entered name has more than 3 letters, fetch client data
+          fetchClientData(e.target.value);
+        }
         if (e.target.value.length <= 2) {
-          setNameError("name is required");
+          setNameError("Name is required");
           setError(true);
         } else {
           setNameError("");
@@ -436,7 +460,7 @@ const Book = styled.button`
   transition: 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   font-size: 20px;
-  margin: 10 0px 0;
+  margin: 50px 0px;
   &:hover {
     background-color: whitesmoke;
     color: #035e3f;

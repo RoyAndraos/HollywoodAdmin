@@ -40,6 +40,32 @@ const SService = ({ service }) => {
       })
       .catch((err) => setNotification("Something went wrong"));
   };
+  const handleDelete = (id) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/deleteService/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        setNotification("Service deleted successfully");
+        setServices((prevServices) => {
+          return prevServices.filter(
+            (service) => service._id !== result.data._id
+          );
+        });
+      })
+      .catch((err) => setNotification("Something went wrong"));
+  };
   return (
     <WrapperInner key={service._id + "inner"}>
       <StyledInput
@@ -82,6 +108,13 @@ const SService = ({ service }) => {
       >
         Save Changes
       </StyledButton>
+      <DeleteButton
+        onClick={() => {
+          handleDelete(service._id);
+        }}
+      >
+        Delete
+      </DeleteButton>
     </WrapperInner>
   );
 };
@@ -89,7 +122,8 @@ const SService = ({ service }) => {
 export const WrapperInner = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: 20% 20% 20% 20% 20%;
+  grid-template-columns: 16.6% 16.6% 16.6% 16.6% 16.6% 16.6%;
+
   height: 11.1%;
   align-items: center;
 `;
@@ -122,5 +156,18 @@ const StyledButton = styled.button`
     color: #a90000;
     cursor: not-allowed;
   }
+`;
+const DeleteButton = styled.button`
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #a90000;
+  border: none;
+  outline: none;
+  height: 45%;
+  transition: all 0.2s ease-in-out;
+  color: whitesmoke;
+  border-radius: 10px;
+  width: 60%;
+  margin-left: 5%;
 `;
 export default SService;

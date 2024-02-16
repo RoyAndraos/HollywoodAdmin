@@ -124,6 +124,23 @@ const sendEmail = async (
 //GET REQUESTS
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
+
+const getClientByName = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF, options);
+  const name = req.query.name.toLowerCase(); // Extracting the 'name' query parameter
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const query = { name: { $regex: name, $options: "i" } };
+    const clients = await db.collection("Clients").find(query).toArray();
+    res.status(200).json({ status: 200, data: clients });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 const getClients = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF, options);
   try {
@@ -270,15 +287,15 @@ const addReservation = async (req, res) => {
     //check if client exists
     const isClient = await db
       .collection("Clients")
-      .findOne({ email: reservation.email });
+      .findOne({ email: reservation.email.toLowerCase() });
 
     //if client does not exist, create client
     if (!isClient) {
       await db.collection("Clients").insertOne({
         _id: client_id,
-        email: reservation.email,
-        fname: reservation.fname,
-        lname: reservation.lname,
+        email: reservation.email.toLowerCase(),
+        fname: reservation.fname.toLowerCase(),
+        lname: reservation.lname.toLowerCase(),
         number: reservation.number,
         note: "",
         reservations: [_id],
@@ -287,9 +304,9 @@ const addReservation = async (req, res) => {
       const reservationToSend = {
         _id: _id,
         client_id: client_id,
-        fname: reservation.fname,
-        lname: reservation.lname,
-        email: reservation.email,
+        fname: reservation.fname.toLowerCase(),
+        lname: reservation.lname.toLowerCase(),
+        email: reservation.email.toLowerCase(),
         number: reservation.number,
         barber: reservation.barber,
         service: reservation.service,
@@ -328,9 +345,9 @@ const addReservation = async (req, res) => {
       const reservationToSend = {
         _id: _id,
         client_id: isClient.client_id,
-        fname: reservation.fname,
-        lname: reservation.lname,
-        email: reservation.email,
+        fname: reservation.fname.toLowerCase(),
+        lname: reservation.lname.toLowerCase(),
+        email: reservation.email.toLowerCase(),
         number: reservation.number,
         barber: reservation.barber,
         service: reservation.service,
@@ -742,6 +759,7 @@ module.exports = {
   updateServices,
   getClientNotes,
   updateClientNote,
+  getClientByName,
 };
 
 // availability: PATCH REQUEST

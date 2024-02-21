@@ -103,29 +103,22 @@ const SlotSelector = ({
       <SlotContainer>
         {selectedSlot.length === 0 ? (
           <SlotContainer>
-            {selectedService !== "" &&
-            Object.keys(selectedBarberForm).length !== 0 ? (
-              availableSlots.length !== 0 && !barberIsOff ? (
-                availableSlots.map((slot) => {
-                  return (
-                    <Slot
-                      key={slot}
-                      onClick={() => {
-                        setSelectedSlot([slot]);
-                      }}
-                    >
-                      {slot.split("-")[1]}
-                    </Slot>
-                  );
-                })
-              ) : (
-                <SelectedSlotContainer>
-                  <BarberSlot>No slots available</BarberSlot>
-                </SelectedSlotContainer>
-              )
+            {availableSlots.length !== 0 && !barberIsOff ? (
+              availableSlots.map((slot) => {
+                return (
+                  <Slot
+                    key={slot}
+                    onClick={() => {
+                      setSelectedSlot([slot]);
+                    }}
+                  >
+                    {slot.split("-")[1]}
+                  </Slot>
+                );
+              })
             ) : (
               <SelectedSlotContainer>
-                <SelectedSlot>select barber and service first</SelectedSlot>
+                <BarberSlot>Barber Is Off</BarberSlot>
               </SelectedSlotContainer>
             )}
           </SlotContainer>

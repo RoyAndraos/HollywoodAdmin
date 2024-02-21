@@ -574,6 +574,21 @@ const deleteReservation = async (req, res) => {
   }
 };
 
+const deleteClient = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+  const _id = req.body._id;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    await db.collection("Clients").deleteOne({ _id: _id });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -758,6 +773,7 @@ module.exports = {
   getClientNotes,
   updateClientNote,
   getClientByName,
+  deleteClient,
 };
 
 // availability: PATCH REQUEST

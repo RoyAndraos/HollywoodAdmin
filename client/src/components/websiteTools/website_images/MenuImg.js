@@ -36,7 +36,7 @@ const MenuImg = () => {
     </Wrapper>
   );
 };
-const ImageMenu = styled.img`
+export const ImageMenu = styled.img`
   height: 500px;
 `;
 export default MenuImg;

@@ -14,7 +14,12 @@ import { useNavigate } from "react-router-dom";
 import { IsMobileContext } from "../../contexts/IsMobileContext";
 
 const localizer = momentLocalizer(moment);
-const NewCalendar = () => {
+const NewCalendar = ({
+  selectedDate,
+  setSelectedDate,
+  selectedSlot,
+  setSelectedSlot,
+}) => {
   const [currentView, setCurrentView] = useState("month");
   const [currentDay, setCurrentDay] = useState(false);
   const navigate = useNavigate();
@@ -134,13 +139,42 @@ const NewCalendar = () => {
       );
       agendaDate[0].innerHTML = `${formattedFirstDate} - ${formattedLastDate}`;
     }
-  }, [currentView, currentDay, isMobile]);
+    const dayViewSlots = document.querySelectorAll(
+      ".rbc-day-slot .rbc-timeslot-group .rbc-time-slot"
+    );
+    if (dayViewSlots.length === 0) {
+      return;
+    }
+    dayViewSlots.forEach((slot) => {
+      slot.style.zIndex = "100";
+      const slotDateAndTimeObject =
+        Object.values(slot)[0].return.memoizedProps.value;
+      slot.addEventListener("click", () => {
+        const formattedSlot = moment(slotDateAndTimeObject).format("ddd-h:mma");
+        setSelectedDate(slotDateAndTimeObject);
+        setSelectedSlot([formattedSlot]);
+        const form = document.getElementById("rsvp");
+
+        form.scrollIntoView({ behavior: "smooth" });
+
+        //set scroll behavior to smooth then scroll to the bottom of the page
+      });
+    });
+  }, [
+    currentView,
+    currentDay,
+    isMobile,
+    selectedDate,
+    setSelectedSlot,
+    setSelectedDate,
+  ]);
 
   const CustomEventComponent = ({ event }) => {
     return (
       <div
         onClick={() => handleEventClick(event)}
         className="event-content-div"
+        style={{ zIndex: "101" }}
       >
         <span>{event.service}</span> <span>{event.title}</span>
       </div>

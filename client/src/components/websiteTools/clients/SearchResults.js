@@ -10,9 +10,18 @@ import ClientReservation from "./ClientReservation";
 import ClientLastName from "./ClientLastName";
 import Cookies from "js-cookie";
 import { NotificationContext } from "../../contexts/NotficationContext";
+import Loader from "../../Loader";
 const SearchResults = ({ searchResults }) => {
   const [clients, setClients] = useState([]);
   const { setNotification } = useContext(NotificationContext);
+  const [areYouSure, setAreYouSure] = useState(
+    clients.map((client) => {
+      return {
+        [client._id]: false,
+      };
+    })
+  );
+
   //get all clients
   useEffect(() => {
     const token = Cookies.get("token");
@@ -97,7 +106,31 @@ const SearchResults = ({ searchResults }) => {
         }
       });
   };
-  if (!clients && searchResults.length === 0) return <div>Loading...</div>;
+
+  // Function to delete a client
+  const handleDeleteClient = (clientId) => {
+    fetch(`https://hollywood-fairmount-admin.onrender.com/client/${clientId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: Cookies.get("token"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 200) {
+          setClients((prevClients) => {
+            return prevClients.filter(
+              (prevClient) => prevClient._id !== clientId
+            );
+          });
+          setNotification("Client deleted successfully");
+        } else {
+          setNotification("Something went wrong");
+        }
+      });
+  };
+  if (!clients && searchResults.length === 0) return <Loader></Loader>;
   if (searchResults.length === 0 && clients)
     return (
       <Wrapper key={"noSearch"}>
@@ -136,6 +169,33 @@ const SearchResults = ({ searchResults }) => {
               />
               <StyledLabel>Last Reservation</StyledLabel>
               <ClientReservation client={client} />
+              <DeleteClient
+                client={client}
+                onClick={() => {
+                  setAreYouSure({ ...areYouSure, [client._id]: !areYouSure });
+                }}
+              >
+                Delete Client
+              </DeleteClient>
+              {areYouSure[client._id] && (
+                <div>
+                  <p>Are you sure you want to delete this client?</p>
+                  <Yes
+                    onClick={() => {
+                      handleDeleteClient(client._id);
+                    }}
+                  >
+                    Yes
+                  </Yes>
+                  <No
+                    onClick={() => {
+                      setAreYouSure(!areYouSure);
+                    }}
+                  >
+                    No
+                  </No>
+                </div>
+              )}
             </ClientWrapper>
           );
         })}
@@ -261,6 +321,61 @@ export const SaveChanges = styled(BsCheckSquare)`
     cursor: pointer;
     background-color: whitesmoke;
     color: #035e3f;
+  }
+`;
+const DeleteClient = styled.button`
+  background-color: #a70000;
+  color: whitesmoke;
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  transition: 0.2s ease-in-out;
+  margin-top: 10px;
+  border: 2px solid transparent;
+  padding: 5px 10px;
+  border-radius: 5px;
+  &:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+    color: #a70000;
+    border: 2px solid #a70000;
+    font-weight: 600;
+  }
+`;
+
+const Yes = styled.button`
+  background-color: #a70000;
+  color: whitesmoke;
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  border: 2px solid transparent;
+  padding: 3px 10px;
+  border-radius: 5px;
+  &:hover {
+    background-color: whitesmoke;
+    color: #a70000;
+    border: 2px solid #a70000;
+  }
+`;
+const No = styled.button`
+  background-color: #035e3f;
+  color: whitesmoke;
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  margin-left: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  padding: 3px 10px;
+  border-radius: 5px;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    background-color: whitesmoke;
+    color: #035e3f;
+    border: 2px solid #035e3f;
   }
 `;
 export default SearchResults;

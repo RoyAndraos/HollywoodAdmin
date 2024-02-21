@@ -31,6 +31,7 @@ const {
   getClientNotes,
   updateClientNote,
   getClientByName,
+  deleteClient,
 } = require("./server");
 
 // Create the express app
@@ -80,6 +81,7 @@ app.delete("/images/:_id", verifyToken, deleteImage);
 app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
 app.delete("/deleteReservation", deleteReservation); //
 app.delete("/deleteBarberProfile", verifyToken, deleteBarberProfile); //
+app.delete("/deleteClient", verifyToken, deleteClient); //
 
 const server = http.createServer(app); // Create an HTTP server
 

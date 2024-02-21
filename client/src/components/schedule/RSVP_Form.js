@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import BarberSelect from "./rsvpComponents/BarberSelect";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,12 +8,15 @@ import ServiceSelector from "./rsvpComponents/ServiceSelector";
 import SlotSelector from "./rsvpComponents/SlotSelector";
 import { NotificationContext } from "../contexts/NotficationContext";
 import Cookies from "js-cookie";
-const AddReservation = () => {
+const AddReservation = ({
+  selectedDate,
+  setSelectedDate,
+  selectedSlot,
+  setSelectedSlot,
+}) => {
   const { reservations, setReservations } = useContext(ReservationContext);
   const { setNotification } = useContext(NotificationContext);
-  const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedBarberForm, setBarber] = useState({});
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [clientNumber, setClientNumber] = useState("");
@@ -22,12 +25,21 @@ const AddReservation = () => {
   const [nameError, setNameError] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [error, setError] = useState(true);
+  const [existingClient, setExistingClient] = useState([]);
+
+  useEffect(() => {
+    // Update input fields when existing client is selected
+    if (existingClient.length > 0) {
+      setClientName(existingClient.fname + " " + existingClient.lname);
+      setClientEmail(existingClient.email);
+      setClientNumber(existingClient.number);
+    }
+  }, [existingClient]);
 
   //searches for client data (when admin enters name in the client name input)
   const fetchClientData = async (name) => {
-    const token = Cookies.get("token");
-    if (!token) {
-      console.error("Token is missing.");
+    if (name.length <= 2) {
+      setExistingClient([]);
       return;
     }
 
@@ -35,13 +47,12 @@ const AddReservation = () => {
       const response = await fetch(
         `https://hollywood-fairmount-admin.onrender.com/clientByName/${name}`
       );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const data = await response.json();
-      console.log("Client data:", data.data);
+      if (data.data) {
+        setExistingClient(data.data);
+      }
     } catch (error) {
-      console.error("Error fetching client data:", error);
+      setNotification("Something went wrong");
     }
   };
   // when a service has a duration of 2 (meaning 2 slots), this function will select the next slot aka the slot that
@@ -187,6 +198,7 @@ const AddReservation = () => {
         if (e.target.value.length <= 2) {
           setNameError("Name is required");
           setError(true);
+          fetchClientData(e.target.value);
         } else {
           setNameError("");
           if (emailError === "" && numberError === "") {
@@ -203,7 +215,6 @@ const AddReservation = () => {
     setSelectedDate(date);
     setSelectedSlot("");
   };
-
   return (
     <Wrapper>
       <Title>Make a reservation</Title>
@@ -220,12 +231,34 @@ const AddReservation = () => {
                 type="text"
                 placeholder="Name"
                 name="name"
+                id="clientname"
                 required
-                defaultValue={clientName}
                 onChange={(e) => {
                   handleChange(e, e.target.name);
                 }}
               ></StyledInput>
+              {existingClient.length && (
+                <ExistingClientSelect>
+                  {existingClient.map((client) => {
+                    return (
+                      <Client
+                        key={client._id}
+                        onClick={() => {
+                          setExistingClient([]);
+                          setClientEmail(client.email);
+                          setClientNumber(client.number);
+                          setClientName(client.fname + " " + client.lname);
+                          document.getElementById("clientname").value =
+                            client.fname + " " + client.lname;
+                        }}
+                      >
+                        {client.fname} {client.lname} <br />
+                        {client.email}
+                      </Client>
+                    );
+                  })}
+                </ExistingClientSelect>
+              )}
             </SelectedSlotContainer>
             {nameError !== "" && <ErrorMessage>{nameError}</ErrorMessage>}
           </LabelInputWrapper>
@@ -236,7 +269,7 @@ const AddReservation = () => {
                 type="text"
                 placeholder="email@example.com (Optional)"
                 name="email"
-                defaultValue={clientEmail}
+                value={clientEmail}
                 onChange={(e) => {
                   handleChange(e, e.target.name);
                 }}
@@ -491,5 +524,23 @@ const ErrorMessage = styled.span`
   left: 0;
   bottom: -30%;
 `;
-
+const ExistingClientSelect = styled.div`
+  position: absolute;
+  bottom: -6vh;
+  left: 0;
+  width: 100%;
+  background-color: #035e3f;
+  color: white;
+  padding: 10px 0;
+  z-index: 100;
+`;
+const Client = styled.div`
+  padding: 10px 0;
+  text-align: center;
+  transition: 0.3s ease-in-out;
+  &:hover {
+    background-color: #049f6a;
+    cursor: pointer;
+  }
+`;
 export default AddReservation;

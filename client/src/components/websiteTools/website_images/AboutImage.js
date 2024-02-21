@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import ImageInput from "./SlideshowInput";
 import { Title } from "./SlideShowImages";
 import { ImageContext } from "../../contexts/ImageContext";
+import { ImageMenu } from "./MenuImg";
 const AboutImage = () => {
   const { images } = useContext(ImageContext);
   const [aboutImage, setAboutImage] = useState([]);
@@ -20,7 +21,7 @@ const AboutImage = () => {
         <Title>About Image</Title>
         <PreviewWrapper key={"about"}>
           {aboutImage.length !== 0 && (
-            <img src={aboutImage[0].src} alt={"about"} />
+            <ImageMenu src={aboutImage[0].src} alt={"about"} />
           )}
         </PreviewWrapper>
         <Title

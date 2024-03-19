@@ -16,6 +16,7 @@ const EditRsvp = () => {
   const { reservations } = useContext(ReservationContext);
   const params = useParams()._id;
   const navigate = useNavigate();
+  console.log(reservations);
   const thisReservation = reservations.filter(
     (reservation) => reservation._id === params
   );

@@ -34,7 +34,6 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
   const selectedBarberForm = userInfo.filter((barber) => {
     return barber.given_name.toLowerCase() === reservation.barber.toLowerCase();
   })[0];
-
   useEffect(() => {
     //if theres no selected barber
     if (Object.keys(selectedBarberForm).length === 0) {

@@ -109,13 +109,16 @@ const SearchResults = ({ searchResults }) => {
 
   // Function to delete a client
   const handleDeleteClient = (clientId) => {
-    fetch(`https://hollywood-fairmount-admin.onrender.com/client/${clientId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: Cookies.get("token"),
-      },
-    })
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/deleteClient/${clientId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: Cookies.get("token"),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 200) {

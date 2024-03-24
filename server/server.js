@@ -74,47 +74,12 @@ const startChangeStream = (io) => {
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
-//BREVO STUFF
+//TWILIO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-// const brevo = require("@getbrevo/brevo");
-// const { htmlContent } = require("./templates/Welcome");
-// let defaultClient = brevo.ApiClient.instance;
-// let apiKey = defaultClient.authentications["api-key"];
-// apiKey.apiKey = process.env.EMAIL_API_KEY;
-// const sendEmail = async (
-//   email,
-//   fname,
-//   userFName,
-//   userLName,
-//   date,
-//   time,
-//   service,
-//   price
-// ) => {
-//   const formattedDate = new Date(date).toLocaleDateString("en-US", {
-//     year: "numeric",
-//     month: "long",
-//     day: "numeric",
-//   });
-//   let apiInstance = new brevo.TransactionalEmailsApi();
-//   let sendSmtpEmail = new brevo.SendSmtpEmail();
-//   sendSmtpEmail.subject = "Your reservation at Hollywood Barbershop";
-//   sendSmtpEmail.htmlContent = htmlContent(
-//     userFName,
-//     formattedDate,
-//     time,
-//     service,
-//     price
-//   );
-//   sendSmtpEmail.sender = {
-//     name: fname,
-//     email: "hollywoodfairmount@gmail.com",
-//   };
-//   sendSmtpEmail.to = [{ email: email, name: `${userFName + " " + userLName}` }];
-//   await apiInstance.sendTransacEmail(sendSmtpEmail);
-// };
-
+const accountSid = process.env.SMS_SSID;
+const authToken = process.env.SMS_AUTH_TOKEN;
+const twilioClient = require("twilio")(accountSid, authToken);
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -157,7 +122,6 @@ const getClients = async (req, res) => {
 const getClientNotes = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.params.client_id;
-  console.log(_id);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -314,6 +278,19 @@ const addReservation = async (req, res) => {
 
       //add reservation to db
       await db.collection("reservations").insertOne(reservationToSend);
+
+      // send message to client
+      await twilioClient.messages.create({
+        body: `Hello ${reservation.fname} ${
+          reservation.lname
+        }, your reservation at Hollywood Barbershop is confirmed for ${formattedDate} at ${
+          reservation.slot[0].split("-")[1]
+        }. You will be getting a ${reservation.service.name} for ${
+          reservation.service.price
+        }. ~${reservation.barber}`,
+        messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+        to: userInfo.number,
+      });
 
       //send email to client
       // if (reservation.email !== "") {

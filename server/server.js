@@ -249,7 +249,7 @@ const addReservation = async (req, res) => {
     //check if client exists
     const isClient = await db
       .collection("Clients")
-      .findOne({ email: reservation.email.toLowerCase() });
+      .findOne({ number: reservation.number });
 
     //if client does not exist, create client
     if (!isClient) {

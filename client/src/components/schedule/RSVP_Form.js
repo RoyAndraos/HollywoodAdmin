@@ -27,7 +27,7 @@ const AddReservation = ({
   const [error, setError] = useState(true);
   const [existingClient, setExistingClient] = useState([]);
   const [barberError, setBarberError] = useState(false);
-
+  const [serviceError, setServiceError] = useState(false);
   useEffect(() => {
     // Update input fields when existing client is selected
     if (existingClient.length > 0) {
@@ -43,7 +43,12 @@ const AddReservation = ({
     } else {
       setBarberError(false);
     }
-  }, [selectedBarberForm]);
+    if (Object.keys(selectedService).length === 0) {
+      setServiceError(true);
+    } else {
+      setServiceError(false);
+    }
+  }, [selectedBarberForm, selectedService]);
 
   //searches for client data (when admin enters name in the client name input)
   const fetchClientData = async (name) => {
@@ -335,7 +340,7 @@ const AddReservation = ({
             selectedDate={selectedDate}
             setSelectedSlot={setSelectedSlot}
           />
-          <Book type="submit" disabled={error || barberError}>
+          <Book type="submit" disabled={error || barberError || serviceError}>
             Book
           </Book>
         </div>

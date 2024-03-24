@@ -27,7 +27,7 @@
     height: calc(78vh/5);
     border: 1px solid rgba(0, 0, 0, 0.5);
     @media (max-width: 768px) {
-        height: calc(78vh/8) !important;
+        height: calc(85vh/8) !important;
     }
 }
 .rbc-month-view{
@@ -39,7 +39,7 @@
     font-family: sans-serif;
     height: 85vh !important;
     @media (max-width: 768px) {
-        height: 70vh !important;
+        height: 85vh !important;
     }
 }
 /* off range date cell */
@@ -148,14 +148,14 @@
     left: 1%;
     position: relative;
     background-color: #035e3f !important;
-    display: flex !important;
+    display: flex;
     flex-direction: row !important;
     align-items: center !important;
     opacity: 0.3;
     transition: 0.2s ease-in-out;
   }
   .rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event:hover{
-    opacity: 1 !important;
+    opacity: 1 ;
   }
 
 .rbc-row:first-of-type{
@@ -213,12 +213,14 @@ height: 20px !important;
 
 .rbc-day-slot .rbc-events-container .rbc-event{
     background-color: #035e3f;
-    width: 50% !important;
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     border:none;
     transform: scaleX(0.95);
+    @media (max-width: 768px) {
+        font-size: 10px !important;
+    }
 }
 
 /* AGENDA */

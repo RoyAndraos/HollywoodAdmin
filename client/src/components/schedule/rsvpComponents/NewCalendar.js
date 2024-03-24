@@ -14,12 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { IsMobileContext } from "../../contexts/IsMobileContext";
 
 const localizer = momentLocalizer(moment);
-const NewCalendar = ({
-  selectedDate,
-  setSelectedDate,
-  selectedSlot,
-  setSelectedSlot,
-}) => {
+const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
   const [currentView, setCurrentView] = useState("month");
   const [currentDay, setCurrentDay] = useState(false);
   const navigate = useNavigate();
@@ -37,6 +32,7 @@ const NewCalendar = ({
     return {
       title: reservation.barber,
       service: reservation.service.name,
+      client: reservation.fname,
       day: reservation.date,
       _id: reservation._id,
       start: startTimeDate,
@@ -65,7 +61,9 @@ const NewCalendar = ({
     dayViewElements.forEach((element) => {
       if (element.innerHTML.includes("Ralf")) {
         element.style.left = "50%";
+        element.style.zIndex = "100";
       } else {
+        element.style.zIndex = "100";
         element.style.left = "0%";
       }
     });
@@ -77,14 +75,6 @@ const NewCalendar = ({
         element.style.backgroundColor = "#70bd70";
       } else {
         element.style.backgroundColor = "green";
-      }
-    });
-    const monthViewElements = document.querySelectorAll(
-      ".rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event .rbc-event-content .event-content-div "
-    );
-    monthViewElements.forEach((element) => {
-      if (element.innerHTML.includes("Ralf")) {
-        element.style.display = "none !important";
       }
     });
   });
@@ -96,8 +86,10 @@ const NewCalendar = ({
     dayViewElements.forEach((element) => {
       if (element.innerHTML.includes("Ralf")) {
         element.style.left = "50%";
+        element.style.zIndex = "100";
       } else {
         element.style.left = "0%";
+        element.style.zIndex = "100";
       }
     });
     const dayViewColor = document.querySelectorAll(
@@ -110,14 +102,7 @@ const NewCalendar = ({
         element.style.backgroundColor = "green";
       }
     });
-    const monthViewElements = document.querySelectorAll(
-      ".rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event .rbc-event-content .event-content-div "
-    );
-    monthViewElements.forEach((element) => {
-      if (element.innerHTML.includes("Ralf")) {
-        element.style.display = "none !important";
-      }
-    });
+
     if (currentView === "agenda") {
       const agendaDate = document.querySelectorAll(".rbc-toolbar-label");
       const firstDate = agendaDate[0].innerHTML.split("–")[0];
@@ -146,15 +131,20 @@ const NewCalendar = ({
       return;
     }
     dayViewSlots.forEach((slot) => {
-      slot.style.zIndex = "100";
+      slot.style.zIndex = "10";
       const slotDateAndTimeObject =
         Object.values(slot)[0].return.memoizedProps.value;
       slot.addEventListener("click", () => {
         const formattedSlot = moment(slotDateAndTimeObject).format("ddd-h:mma");
         setSelectedDate(slotDateAndTimeObject);
+        const slotTaken = reservations.findIndex((reservation) => {
+          return reservation.slot[0] === formattedSlot;
+        });
+        if (slotTaken !== -1) {
+          return;
+        }
         setSelectedSlot([formattedSlot]);
         const form = document.getElementById("rsvp");
-
         form.scrollIntoView({ behavior: "smooth" });
 
         //set scroll behavior to smooth then scroll to the bottom of the page
@@ -167,16 +157,32 @@ const NewCalendar = ({
     selectedDate,
     setSelectedSlot,
     setSelectedDate,
+    reservations,
   ]);
 
   const CustomEventComponent = ({ event }) => {
+    if (currentView === "month" && isMobile) {
+      const monthViewElements = document.querySelectorAll(
+        ".rbc-month-view .rbc-event"
+      );
+      const buttonElement = document.querySelectorAll(".rbc-show-more");
+      buttonElement.forEach((element) => {
+        element.style.display = "none";
+      });
+
+      monthViewElements.forEach((element) => {
+        element.style.opacity = "0";
+        element.style.zIndex = "-1";
+      });
+      return;
+    }
     return (
       <div
         onClick={() => handleEventClick(event)}
         className="event-content-div"
         style={{ zIndex: "101" }}
       >
-        <span>{event.service}</span> <span>{event.title}</span>
+        <span>{event.client}</span> <span>{event.title}</span>
       </div>
     );
   };

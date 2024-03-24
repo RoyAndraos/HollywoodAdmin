@@ -61,6 +61,7 @@ const SService = ({ service }) => {
         setNotification("Service deleted successfully");
 
         setServices((prevServices) => {
+          console.log(prevServices);
           return prevServices.filter(
             (service) => service._id !== result.data._id
           );

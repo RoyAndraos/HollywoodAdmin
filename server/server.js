@@ -289,7 +289,7 @@ const addReservation = async (req, res) => {
           reservation.service.price
         }. ~${reservation.barber}`,
         messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-        to: userInfo.number,
+        to: reservation.number,
       });
 
       //send email to client

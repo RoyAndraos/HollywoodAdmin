@@ -80,10 +80,10 @@ app.patch("/updateServices", verifyToken, updateServices); //
 app.patch("/updateClientNote", updateClientNote); //
 app.delete("/images/:_id", verifyToken, deleteImage);
 app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
-app.delete("/deleteReservation", deleteReservation); //
+app.delete("/deleteReservation", verifyToken, deleteReservation); //
 app.delete("/deleteBarberProfile", verifyToken, deleteBarberProfile); //
-app.delete("/deleteClient/:_id", verifyToken, deleteClient); //
-app.delete("/deleteService/:_id", deleteService); //
+app.delete("/deleteClient/:_id", deleteClient); //
+app.delete("/deleteService/:_id", verifyToken, deleteService); //
 
 const server = http.createServer(app); // Create an HTTP server
 

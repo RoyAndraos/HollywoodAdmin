@@ -482,7 +482,7 @@ const deleteService = async (req, res) => {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("services").deleteOne({ _id: _id });
-    res.status(200).json({ status: 200, message: "success" });
+    res.status(200).json({ status: 200, _id: _id });
   } catch {
     res.status(500).json({ status: 500, message: err.message });
   } finally {
@@ -568,12 +568,12 @@ const deleteReservation = async (req, res) => {
 
 const deleteClient = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
-  const _id = req.params;
+  const _id = req.params._id;
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("Clients").deleteOne({ _id: _id });
-    res.status(200).json({ status: 200, message: "success" });
+    res.status(200).json({ status: 200, _id: _id });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {

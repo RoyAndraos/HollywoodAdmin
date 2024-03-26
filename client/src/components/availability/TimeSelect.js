@@ -201,6 +201,14 @@ const TimeSelect = () => {
               Time Off
             </Reset>
           )}
+          <Reset
+            key={"schedule"}
+            onClick={() =>
+              navigate(`/availability/daily/${selectedAdminInfo.given_name}`)
+            }
+          >
+            Daily
+          </Reset>
         </AvailButtons>
         <BarberContainer>
           <AdminName onClick={() => setShowBarbers(!showBarbers)}>

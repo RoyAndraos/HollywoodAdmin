@@ -176,13 +176,14 @@ const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
       });
       return;
     }
+    const eventTime = moment(event.start).format("h:mm A");
     return (
       <div
         onClick={() => handleEventClick(event)}
         className="event-content-div"
         style={{ zIndex: "101" }}
       >
-        <span>{event.client}</span> <span>{event.title}</span>
+        <span>{event.client}</span> <span>{eventTime}</span>
       </div>
     );
   };

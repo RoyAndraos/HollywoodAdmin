@@ -124,7 +124,7 @@ const SearchResults = ({ searchResults }) => {
         if (data.status === 200) {
           setClients((prevClients) => {
             return prevClients.filter(
-              (prevClient) => prevClient._id !== clientId
+              (prevClient) => prevClient._id !== data._id
             );
           });
           setNotification("Client deleted successfully");
@@ -175,7 +175,10 @@ const SearchResults = ({ searchResults }) => {
               <DeleteClient
                 client={client}
                 onClick={() => {
-                  setAreYouSure({ ...areYouSure, [client._id]: !areYouSure });
+                  setAreYouSure({
+                    ...areYouSure,
+                    [client._id]: !areYouSure[client._id],
+                  });
                 }}
               >
                 Delete Client
@@ -239,6 +242,33 @@ const SearchResults = ({ searchResults }) => {
                 />
                 <StyledLabel>Last Reservation</StyledLabel>
                 <ClientReservation client={client} />
+                <DeleteClient
+                  client={client}
+                  onClick={() => {
+                    setAreYouSure({ ...areYouSure, [client._id]: !areYouSure });
+                  }}
+                >
+                  Delete Client
+                </DeleteClient>
+                {areYouSure[client._id] && (
+                  <div>
+                    <p>Are you sure you want to delete this client?</p>
+                    <Yes
+                      onClick={() => {
+                        handleDeleteClient(client._id);
+                      }}
+                    >
+                      Yes
+                    </Yes>
+                    <No
+                      onClick={() => {
+                        setAreYouSure(!areYouSure);
+                      }}
+                    >
+                      No
+                    </No>
+                  </div>
+                )}
               </ClientWrapper>
             );
           })}

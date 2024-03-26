@@ -41,7 +41,6 @@ const SService = ({ service }) => {
       .catch((err) => setNotification("Something went wrong"));
   };
   const handleDelete = (id) => {
-    console.log(id);
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
@@ -59,12 +58,8 @@ const SService = ({ service }) => {
       .then((res) => res.json())
       .then((result) => {
         setNotification("Service deleted successfully");
-
         setServices((prevServices) => {
-          console.log(prevServices);
-          return prevServices.filter(
-            (service) => service._id !== result.data._id
-          );
+          return prevServices.filter((service) => service._id !== result._id);
         });
       })
       .catch((err) => setNotification("Something went wrong"));

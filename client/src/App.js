@@ -1,9 +1,3 @@
-// import Homepage from "./components/login/Homepage";
-// // import RequireAuth from "./components/login/RequireAuth";
-// import Check from "./components/login/Check";
-// import BusinessData from "./components/BusinessData";
-// import NotGrant from "./components/login/NotGrant";
-
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/Navbar";
 import WebsiteTools from "./components/websiteTools/WebsiteTools";
@@ -17,6 +11,7 @@ import { useEffect } from "react";
 import TimeSelect from "./components/availability/TimeSelect";
 import Login from "./Login";
 import { useLocation } from "react-router-dom";
+import DailyAvailability from "./components/availability/DailyAvailability";
 
 const App = () => {
   const { notification, setNotification } = useContext(NotificationContext);
@@ -37,19 +32,16 @@ const App = () => {
       {notification !== "" && <Notification>{notification}</Notification>}
       <Routes>
         <Route path="/" element={<Login />} />
-        {/* <Route path="/404" element={<NotGrant />} /> */}
-        {/* </Routes>
-      <RequireAuth>
-        <Routes> */}
-        {/* <Route path="/check" element={<Check />} /> */}
-        {/* <Route path="/data" element={<BusinessData />} /> */}
         <Route path="/websiteTools" element={<WebsiteTools />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/availability" element={<TimeSelect />} />
+        <Route
+          path="/availability/daily/Ralph"
+          element={<DailyAvailability />}
+        />
         <Route path="/timeOff/:barberId" element={<TakeTimeOff />} />
         <Route path="/schedule/:_id" element={<EditRsvp />} />
       </Routes>
-      {/* </RequireAuth> */}
     </div>
   );
 };

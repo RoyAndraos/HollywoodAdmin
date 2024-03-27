@@ -33,6 +33,7 @@ const {
   getClientByName,
   deleteClient,
   deleteService,
+  updateDailyAvailability,
 } = require("./server");
 
 // Create the express app
@@ -78,6 +79,7 @@ app.patch("/updateBarberProfile", verifyToken, updateBarberProfile); //
 app.patch("/updateText", verifyToken, updateText); //
 app.patch("/updateServices", verifyToken, updateServices); //
 app.patch("/updateClientNote", updateClientNote); //
+app.patch("/updateDailyAvailability", updateDailyAvailability); //
 app.delete("/images/:_id", verifyToken, deleteImage);
 app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
 app.delete("/deleteReservation", verifyToken, deleteReservation); //

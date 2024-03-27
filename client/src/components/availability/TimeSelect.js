@@ -12,6 +12,7 @@ import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
 import { IsMobileContext } from "../contexts/IsMobileContext";
+import DailyAvailability from "./DailyAvailability";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const { setUserInfo, userInfo } = useContext(UserContext);
@@ -19,9 +20,13 @@ const TimeSelect = () => {
   const [selectedAdminInfo, setSelectedAdminInfo] = useState(
     userInfo !== null ? userInfo[0] : null
   );
+  const [dailyAvailabilityToggle, setDailyAvailabilityToggle] = useState(false);
   const [showBarbers, setShowBarbers] = useState(false);
   const [selectedCells, setSelectedCells] = useState(
     selectedAdminInfo !== null ? selectedAdminInfo.availability : null
+  );
+  const [selectedDailyCells, setSelectedDailyCells] = useState(
+    selectedAdminInfo !== null ? selectedAdminInfo.dailyAvailability : null
   );
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
@@ -29,7 +34,7 @@ const TimeSelect = () => {
   const { setText, text } = useContext(TextContext);
   const { isMobile } = useContext(IsMobileContext);
   const navigate = useNavigate();
-  const today = new Date().toDateString().slice(0, 3);
+  // const [selectedDailyCells, setSelectedDailyCells] = useState(selectedAdminInfo !== null ? selectedAdminInfo.dailyAvailability : null);
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
@@ -105,27 +110,59 @@ const TimeSelect = () => {
     const adminToBeUpdated = userInfo.findIndex(
       (user) => user.given_name === selectedAdminInfo.given_name
     );
-    const updatedUserInfo = [...userInfo];
-    updatedUserInfo[adminToBeUpdated].availability = selectedCells;
-    setUserInfo(updatedUserInfo);
-    fetch("https://hollywood-fairmount-admin.onrender.com/updateAvailability", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      body: JSON.stringify({
+    let updatedUserInfo = [...userInfo];
+    if (dailyAvailabilityToggle) {
+      updatedUserInfo[adminToBeUpdated].dailyAvailability = selectedDailyCells;
+      console.log({
         _id: selectedAdminInfo._id,
-        availability: selectedCells,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.status === 200) {
-          setNotification("Availability updated successfully");
-        }
-        navigate("/schedule");
+        dailyAvailability: selectedDailyCells,
       });
+      fetch(
+        "https://hollywood-fairmount-admin.onrender.com/updateDailyAvailability",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            ...headers,
+          },
+          body: JSON.stringify({
+            _id: selectedAdminInfo._id,
+            dailyAvailability: selectedDailyCells,
+          }),
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.status === 200) {
+            setNotification("Availability updated successfully");
+          }
+          navigate("/schedule");
+        });
+    } else {
+      updatedUserInfo[adminToBeUpdated].availability = selectedCells;
+      fetch(
+        "https://hollywood-fairmount-admin.onrender.com/updateAvailability",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            ...headers,
+          },
+          body: JSON.stringify({
+            _id: selectedAdminInfo._id,
+            availability: selectedCells,
+          }),
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.status === 200) {
+            setNotification("Availability updated successfully");
+          }
+          navigate("/schedule");
+        });
+    }
+    setUserInfo(updatedUserInfo);
   };
 
   // function: reset schedule resets the availability of the selected barber to the initial state (open all slots)
@@ -201,14 +238,23 @@ const TimeSelect = () => {
               Time Off
             </Reset>
           )}
-          <Reset
-            key={"schedule"}
-            onClick={() =>
-              navigate(`/availability/daily/${selectedAdminInfo.given_name}`)
-            }
-          >
-            Daily
-          </Reset>
+          {!isMobile && (
+            <Reset
+              key={"schedule"}
+              onClick={() => {
+                if (dailyAvailabilityToggle) {
+                  setSelectedDailyCells(selectedAdminInfo.dailyAvailability);
+                } else {
+                  setSelectedCells(selectedAdminInfo.availability);
+                }
+                setDailyAvailabilityToggle(!dailyAvailabilityToggle);
+              }}
+            >
+              {dailyAvailabilityToggle
+                ? "Weekly Availability"
+                : "Daily Availability"}
+            </Reset>
+          )}
         </AvailButtons>
         <BarberContainer>
           <AdminName onClick={() => setShowBarbers(!showBarbers)}>
@@ -231,7 +277,7 @@ const TimeSelect = () => {
         </BarberContainer>
       </ControlPanel>
 
-      {!isMobile ? (
+      {!isMobile && !dailyAvailabilityToggle ? (
         <TableWrapper>
           <FirstRow>
             {firstDaily.map((time, index) => (
@@ -265,34 +311,10 @@ const TimeSelect = () => {
           </Table>
         </TableWrapper>
       ) : (
-        <TableWrapper style={{ paddingBottom: "10vh" }}>
-          <Table>
-            <tbody>
-              {daily.map((hour) => (
-                <tr key={hour}>
-                  <TH>{hour}</TH>
-                  {days
-                    .filter((day) => day === today)
-                    .map((day) => {
-                      const cellKey = `${day}-${hour}`;
-                      const cell = selectedCells.find(
-                        (cell) => cell.slot === cellKey
-                      );
-                      const isSelected = cell && cell.available;
-                      return (
-                        <td
-                          value={hour}
-                          key={cellKey}
-                          onClick={() => handleCellClick(day, hour)}
-                          className={isSelected ? "" : "selected"}
-                        ></td>
-                      );
-                    })}
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableWrapper>
+        <DailyAvailability
+          selectedDailyCells={selectedDailyCells}
+          setSelectedDailyCells={setSelectedDailyCells}
+        />
       )}
     </Wrapper>
   );
@@ -305,6 +327,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 90vh;
   z-index: 1;
+  overflow-x: hidden;
 `;
 
 const Table = styled.table`

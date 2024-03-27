@@ -1,11 +1,6 @@
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
-const { MONGO_URI } = process.env;
-
-const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
+const MONGO_URI = process.env.MONGO_URI_RALF;
 
 const data = [
   {
@@ -329,6 +324,185 @@ const data = [
   },
 ];
 
+const dailyAvailability = [
+  {
+    slot: "9:00am",
+    available: false,
+  },
+  {
+    slot: "9:15am",
+    available: false,
+  },
+  {
+    slot: "9:30am",
+    available: false,
+  },
+  {
+    slot: "9:45am",
+    available: false,
+  },
+  {
+    slot: "10:00am",
+    available: true,
+  },
+  {
+    slot: "10:15am",
+    available: true,
+  },
+  {
+    slot: "10:30am",
+    available: true,
+  },
+  {
+    slot: "10:45am",
+    available: true,
+  },
+  {
+    slot: "11:00am",
+    available: true,
+  },
+  {
+    slot: "11:15am",
+    available: true,
+  },
+  {
+    slot: "11:30am",
+    available: true,
+  },
+  {
+    slot: "11:45am",
+    available: true,
+  },
+  {
+    slot: "12:00pm",
+    available: true,
+  },
+  {
+    slot: "12:15pm",
+    available: true,
+  },
+  {
+    slot: "12:30pm",
+    available: true,
+  },
+  {
+    slot: "12:45pm",
+    available: true,
+  },
+  {
+    slot: "1:00pm",
+    available: true,
+  },
+  {
+    slot: "1:15pm",
+    available: true,
+  },
+  {
+    slot: "1:30pm",
+    available: true,
+  },
+  {
+    slot: "1:45pm",
+    available: true,
+  },
+  {
+    slot: "2:00pm",
+    available: true,
+  },
+  {
+    slot: "2:15pm",
+    available: true,
+  },
+  {
+    slot: "2:30pm",
+    available: true,
+  },
+  {
+    slot: "2:45pm",
+    available: true,
+  },
+  {
+    slot: "3:00pm",
+    available: true,
+  },
+  {
+    slot: "3:15pm",
+    available: true,
+  },
+  {
+    slot: "3:30pm",
+    available: true,
+  },
+  {
+    slot: "3:45pm",
+    available: true,
+  },
+  {
+    slot: "4:00pm",
+    available: true,
+  },
+  {
+    slot: "4:15pm",
+    available: true,
+  },
+  {
+    slot: "4:30pm",
+    available: true,
+  },
+  {
+    slot: "4:45pm",
+    available: true,
+  },
+  {
+    slot: "5:00pm",
+    available: true,
+  },
+  {
+    slot: "5:15pm",
+    available: true,
+  },
+  {
+    slot: "5:30pm",
+    available: true,
+  },
+  {
+    slot: "5:45pm",
+    available: true,
+  },
+  {
+    slot: "6:00pm",
+    available: true,
+  },
+  {
+    slot: "6:15pm",
+    available: true,
+  },
+  {
+    slot: "6:30pm",
+    available: true,
+  },
+  {
+    slot: "6:45pm",
+    available: true,
+  },
+  {
+    slot: "7:00pm",
+    available: true,
+  },
+  {
+    slot: "7:15pm",
+    available: true,
+  },
+  {
+    slot: "7:30pm",
+    available: true,
+  },
+  {
+    slot: "7:45pm",
+    available: true,
+  },
+];
+
 const services = [
   { _id: "01", name: "coupe femme", price: "30$", duration: "2" },
   { _id: "02", name: "coupe et lavage", price: "30$", duration: "2" },
@@ -357,11 +531,16 @@ const doc = [
   },
 ];
 const batchImport = async (data) => {
-  const client = new MongoClient(MONGO_URI, options);
+  const client = new MongoClient(MONGO_URI);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const result = await db.collection("web_text").insertMany(data);
+    const result = await db
+      .collection("admin")
+      .updateOne(
+        { _id: "44e8be60-485b-4e79-aa4b-dc59d65d43b5" },
+        { $set: { dailyAvailability: data } }
+      );
     if (result.acknowledged) {
       console.log("Success");
     } else {
@@ -374,4 +553,5 @@ const batchImport = async (data) => {
   client.close();
 };
 
-batchImport(doc);
+batchImport(dailyAvailability);
+module.exports = { dailyAvailability };

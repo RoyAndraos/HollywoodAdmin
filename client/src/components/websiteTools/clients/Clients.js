@@ -35,7 +35,6 @@ const Clients = () => {
 
   return (
     <Wrapper>
-      {/* <SearchType setSearchType={setSearchType} searchType={searchType} /> */}
       <SearchBar
         setSearchTerm={setSearchTerm}
         handleSearchClick={handleSearchClick}

@@ -19,6 +19,13 @@ const SlotSelector = ({
   const { reservations } = useContext(ReservationContext);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [barberIsOff, setBarberIsOff] = useState(false);
+  const todayDate = new Date();
+  // format date for Wed Mar 27 2024
+  const formattedDate = moment(todayDate).format("ddd MMM DD YYYY").toString();
+
+  const isToday =
+    formattedDate ===
+    moment(selectedDate).format("ddd MMM DD YYYY").toString().slice(0, 15);
   const formatDate = (date) => {
     const options = { month: "short", weekday: "short", day: "numeric" };
     return date.toLocaleDateString(undefined, options);
@@ -70,13 +77,37 @@ const SlotSelector = ({
             return filterSlotBeforeFor2Duration(reservation.slot[0]);
           }
         );
-        setAvailableSlots(
-          filteredSlots
-            .filter((slot) => {
-              return slot !== "";
-            })
-            .filter((item) => !removedBeforeSlotsFor2Duration.includes(item))
-        );
+        //filter out the dailyAvailability slots
+        if (isToday) {
+          const dailyAvailabilityFilteredSlots =
+            selectedBarberForm.dailyAvailability
+              .filter((slot) => {
+                return slot.available === false;
+              })
+              .map((slot) => {
+                return slot.slot;
+              });
+          setAvailableSlots(
+            filteredSlots
+              .filter((slot) => {
+                return slot !== "";
+              })
+              .filter((item) => !removedBeforeSlotsFor2Duration.includes(item))
+              .filter((item) => {
+                return !dailyAvailabilityFilteredSlots.some((slot) =>
+                  item.includes(slot)
+                );
+              })
+          );
+        } else {
+          setAvailableSlots(
+            filteredSlots
+              .filter((slot) => {
+                return slot !== "";
+              })
+              .filter((item) => !removedBeforeSlotsFor2Duration.includes(item))
+          );
+        }
       } else {
         setAvailableSlots(
           filteredSlots.filter((slot) => {
@@ -91,54 +122,69 @@ const SlotSelector = ({
     selectedDate,
     selectedService,
     barberIsOff,
+    isToday,
   ]);
 
   const handleFormatDateForSlots = (date) => {
     const options = { weekday: "short" };
     return date.toLocaleDateString(undefined, options);
   };
+
+  /* if service is not selected dont display slots */
+
   return (
     <LabelInputWrapper>
       <StyledLabel>Time Slot</StyledLabel>
-      <SlotContainer>
-        {selectedSlot.length === 0 ? (
-          <SlotContainer>
-            {availableSlots.length !== 0 && !barberIsOff ? (
-              availableSlots.map((slot) => {
-                return (
-                  <Slot
-                    key={slot}
-                    onClick={() => {
-                      setSelectedSlot([slot]);
-                    }}
-                  >
-                    {slot.split("-")[1]}
-                  </Slot>
-                );
-              })
-            ) : (
-              <SelectedSlotContainer>
-                <BarberSlot>Barber Is Off</BarberSlot>
-              </SelectedSlotContainer>
-            )}
-          </SlotContainer>
-        ) : (
-          <SelectedSlotContainer>
-            <SelectedSlot
-              onClick={() => {
-                setSelectedSlot([]);
-              }}
-              style={{
-                background: "#035e3f",
-                border: "transparent solid 1px",
-                color: "whitesmoke",
-              }}
-            >
-              {selectedSlot[0].split("-")[1]}
-            </SelectedSlot>
-          </SelectedSlotContainer>
-        )}
-      </SlotContainer>
+      {selectedService.length !== 0 ? (
+        <SlotContainer>
+          {selectedSlot.length === 0 ? (
+            <SlotContainer>
+              {availableSlots.length !== 0 && !barberIsOff ? (
+                availableSlots.map((slot) => {
+                  return (
+                    <Slot
+                      key={slot}
+                      onClick={() => {
+                        setSelectedSlot([slot]);
+                      }}
+                    >
+                      {slot.split("-")[1]}
+                    </Slot>
+                  );
+                })
+              ) : (
+                <SelectedSlotContainer>
+                  <BarberSlot>Barber Is Off</BarberSlot>
+                </SelectedSlotContainer>
+              )}
+            </SlotContainer>
+          ) : (
+            <SelectedSlotContainer>
+              <SelectedSlot
+                onClick={() => {
+                  setSelectedSlot([]);
+                }}
+                style={{
+                  background: "#035e3f",
+                  border: "transparent solid 1px",
+                  color: "whitesmoke",
+                }}
+              >
+                {selectedSlot[0].split("-")[1]}
+              </SelectedSlot>
+            </SelectedSlotContainer>
+          )}
+        </SlotContainer>
+      ) : (
+        <SelectedSlotContainer>
+          <BarberSlot>
+            Select Service
+            {Object.keys(selectedBarberForm).length === 0
+              ? ", Select Barber"
+              : ""}
+          </BarberSlot>
+        </SelectedSlotContainer>
+      )}
     </LabelInputWrapper>
   );
 };

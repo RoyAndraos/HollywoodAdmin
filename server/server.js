@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const { dailyAvailability } = require("./batchImport");
 const { v4: uuid } = require("uuid");
 // const { initialAvailability } = require("./helpers");
 //-------------------------------------------------------------------------------------------------------------
@@ -246,6 +246,19 @@ const addReservation = async (req, res) => {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
 
+    // send message to client
+    await twilioClient.messages.create({
+      body: `Hello ${reservation.fname} ${
+        reservation.lname
+      }, your reservation at Hollywood Barbershop is confirmed for ${
+        reservation.date
+      } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
+        reservation.service.name
+      } for ${reservation.service.price} CAD. ~${reservation.barber}`,
+      messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+      to: reservation.number,
+    });
+
     //check if client exists
     const isClient = await db
       .collection("Clients")
@@ -278,42 +291,14 @@ const addReservation = async (req, res) => {
 
       //add reservation to db
       await db.collection("reservations").insertOne(reservationToSend);
-
-      // send message to client
-      await twilioClient.messages.create({
-        body: `Hello ${reservation.fname} ${
-          reservation.lname
-        }, your reservation at Hollywood Barbershop is confirmed for ${formattedDate} at ${
-          reservation.slot[0].split("-")[1]
-        }. You will be getting a ${reservation.service.name} for ${
-          reservation.service.price
-        }. ~${reservation.barber}`,
-        messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-        to: reservation.number,
+      res.status(200).json({
+        status: 200,
+        message: "success",
+        res_id: _id,
+        client_id: client_id,
       });
-
-      //send email to client
-      // if (reservation.email !== "") {
-      //   await sendEmail(
-      //     reservation.email,
-      //     reservation.barber,
-      //     reservation.fname,
-      //     reservation.lname,
-      //     reservation.date,
-      //     reservation.slot[0].split("-")[1],
-      //     reservation.service.name,
-      //     reservation.service.price
-      //   );
-      // }
-      // res.status(200).json({
-      //   status: 200,
-      //   message: "success",
-      //   res_id: reservationToSend._id,
-      //   client_id: client_id,
-      // });
-
-      //if client exists, add reservation to client
     } else {
+      //if client exists, add reservation to client
       await db
         .collection("Clients")
         .updateOne({ _id: isClient._id }, { $push: { reservations: _id } });
@@ -367,6 +352,7 @@ const addTimeOff = async (req, res) => {
     );
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
+    client.close();
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     client.close();
@@ -450,6 +436,7 @@ const addBarber = async (req, res) => {
       description: barberInfo.description,
       time_off: [],
       availability: barberInfo.availability,
+      dailyAvailability: dailyAvailability,
     };
     await db.collection("admin").insertOne({
       _id: _id,
@@ -460,6 +447,7 @@ const addBarber = async (req, res) => {
       description: barberInfo.description,
       time_off: [],
       availability: barberInfo.availability,
+      dailyAvailability: dailyAvailability,
     });
     res.status(200).json({ status: 200, message: "success", data: newBarber });
   } catch (err) {
@@ -598,6 +586,23 @@ const updateAvailability = async (req, res) => {
     const newValues = { $set: { availability: availability } };
     const result = await db.collection("admin").updateOne(query, newValues);
     res.status(200).json({ status: 200, data: result });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    client.close();
+  }
+};
+
+const updateDailyAvailability = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+  const { _id, dailyAvailability } = req.body;
+  try {
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+    const query = { _id: _id };
+    const newValues = { $set: { dailyAvailability: dailyAvailability } };
+    await db.collection("admin").updateOne(query, newValues);
+    res.status(200).json({ status: 200, data: dailyAvailability });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {
@@ -767,6 +772,7 @@ module.exports = {
   getClientByName,
   deleteClient,
   deleteService,
+  updateDailyAvailability,
 };
 
 // availability: PATCH REQUEST

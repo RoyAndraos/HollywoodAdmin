@@ -106,7 +106,7 @@ const AddReservation = ({
         slot: selectedSlot,
         service: selectedService,
         fname: clientName.split(" ")[0],
-        lname: clientName.split(" ")[1],
+        lname: clientName.split(" ")[1] || "",
         email: clientEmail,
         number: clientNumber,
       };
@@ -136,6 +136,7 @@ const AddReservation = ({
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 200) {
+          console.log(data);
           reservation._id = data.res_id;
           reservation.client_id = data.client_id;
           setReservations([...reservations, reservation]);
@@ -253,6 +254,13 @@ const AddReservation = ({
               ></StyledInput>
               {existingClient.length && (
                 <ExistingClientSelect>
+                  <StyledClose
+                    onClick={() => {
+                      setExistingClient([]);
+                    }}
+                  >
+                    X
+                  </StyledClose>
                   {existingClient.map((client) => {
                     return (
                       <Client
@@ -268,6 +276,8 @@ const AddReservation = ({
                       >
                         {client.fname} {client.lname} <br />
                         {client.email}
+                        <br />
+                        {client.number}
                       </Client>
                     );
                   })}
@@ -540,7 +550,7 @@ const ErrorMessage = styled.span`
 `;
 const ExistingClientSelect = styled.div`
   position: absolute;
-  bottom: -6vh;
+  top: 100%;
   left: 0;
   width: 100%;
   background-color: #035e3f;
@@ -554,6 +564,22 @@ const Client = styled.div`
   transition: 0.3s ease-in-out;
   &:hover {
     background-color: #049f6a;
+    cursor: pointer;
+  }
+`;
+const StyledClose = styled.button`
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  padding: 5px 8px;
+  transition: 0.3s ease-in-out;
+  border: 2px solid transparent;
+  background-color: #035e3f;
+  color: whitesmoke;
+  border-radius: 50%;
+  &:hover {
+    background-color: #049f6a;
+    border: 2px solid white;
     cursor: pointer;
   }
 `;

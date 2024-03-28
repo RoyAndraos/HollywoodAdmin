@@ -99,6 +99,7 @@ const AddReservation = ({
     };
     e.preventDefault();
     let reservation = {};
+    const formattedClientNumber = clientNumber.replace(/\D/g, "");
     if (selectedService.duration === 1) {
       reservation = {
         barber: selectedBarberForm.given_name,
@@ -108,9 +109,9 @@ const AddReservation = ({
         fname: clientName.split(" ")[0],
         lname: clientName.split(" ")[1] || "",
         email: clientEmail,
-        number: clientNumber,
+        number: formattedClientNumber,
       };
-    } else {
+    } else if (selectedService.duration === 2) {
       const newSlotArray = [...selectedSlot, selectNextSlot(selectedSlot[0])];
       reservation = {
         barber: selectedBarberForm.given_name,
@@ -120,7 +121,40 @@ const AddReservation = ({
         fname: clientName.split(" ")[0],
         lname: clientName.split(" ")[1] || "",
         email: clientEmail,
-        number: clientNumber,
+        number: formattedClientNumber,
+      };
+    } else if (selectedService.duration === 3) {
+      const newSlotArray = [
+        ...selectedSlot,
+        selectNextSlot(selectedSlot[0]),
+        selectNextSlot(selectNextSlot(selectedSlot[0])),
+      ];
+      reservation = {
+        barber: selectedBarberForm.given_name,
+        date: selectedDate.toDateString(),
+        slot: newSlotArray,
+        service: selectedService,
+        fname: clientName.split(" ")[0],
+        lname: clientName.split(" ")[1] || "",
+        email: clientEmail,
+        number: formattedClientNumber,
+      };
+    } else if (selectedService.duration === 4) {
+      const newSlotArray = [
+        ...selectedSlot,
+        selectNextSlot(selectedSlot[0]),
+        selectNextSlot(selectNextSlot(selectedSlot[0])),
+        selectNextSlot(selectNextSlot(selectNextSlot(selectedSlot[0]))),
+      ];
+      reservation = {
+        barber: selectedBarberForm.given_name,
+        date: selectedDate.toDateString(),
+        slot: newSlotArray,
+        service: selectedService,
+        fname: clientName.split(" ")[0],
+        lname: clientName.split(" ")[1] || "",
+        email: clientEmail,
+        number: formattedClientNumber,
       };
     }
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
@@ -136,7 +170,6 @@ const AddReservation = ({
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 200) {
-          console.log(data);
           reservation._id = data.res_id;
           reservation.client_id = data.client_id;
           setReservations([...reservations, reservation]);
@@ -188,7 +221,21 @@ const AddReservation = ({
         }
         break;
       case "number":
-        setClientNumber(e.target.value);
+        const inputNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+        let formattedNumber = "";
+        if (inputNumber.length <= 3) {
+          formattedNumber = `(${inputNumber}`;
+        } else if (inputNumber.length <= 6) {
+          formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
+            3
+          )}`;
+        } else {
+          formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
+            3,
+            6
+          )}-${inputNumber.slice(6, 10)}`;
+        }
+        setClientNumber(formattedNumber);
         //check number
         if (e.target.value.length === 0) {
           setNumberError("");
@@ -308,7 +355,7 @@ const AddReservation = ({
                 type="text"
                 placeholder="5144304287 (Optional)"
                 name="number"
-                defaultValue={clientNumber}
+                value={clientNumber}
                 onChange={(e) => {
                   handleChange(e, e.target.name);
                 }}

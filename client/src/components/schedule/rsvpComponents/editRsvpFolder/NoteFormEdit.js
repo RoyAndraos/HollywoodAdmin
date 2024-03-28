@@ -4,12 +4,14 @@ import { StyledInput } from "./EmailFormEdit";
 
 const NoteFormEdit = ({ note, handleChange, initialNote, setNote }) => {
   const [noteEdit, setNoteEdit] = useState("false");
+  console.log(initialNote);
+  console.log(note);
   return (
     <LabelInfoWrapper>
       <StyledLabel>Note</StyledLabel>
       {noteEdit === "false" ? (
-        note !== "" ? (
-          <span>{note}</span>
+        initialNote !== "" ? (
+          <span>{initialNote}</span>
         ) : (
           <span>No Note</span>
         )

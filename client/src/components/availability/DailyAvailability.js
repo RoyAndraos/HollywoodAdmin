@@ -29,7 +29,7 @@ const Slot = styled.div`
   border: 1px solid black;
   cursor: pointer;
   width: 15vw;
-  height: 3.5vh;
+  height: 3vh;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -553,5 +553,5 @@ const batchImport = async (data) => {
   client.close();
 };
 
-batchImport(dailyAvailability);
+// batchImport(dailyAvailability);
 module.exports = { dailyAvailability };

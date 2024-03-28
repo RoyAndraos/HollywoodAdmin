@@ -29,6 +29,9 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
     const client_id = reservations.filter(
       (reservation) => reservation._id === params
     )[0].client_id;
+    const clientNumber = reservations.filter(
+      (reservation) => reservation._id === params
+    )[0].number;
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
@@ -36,7 +39,11 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
     e.preventDefault();
     fetch(`https://hollywood-fairmount-admin.onrender.com/deleteReservation`, {
       method: "DELETE",
-      body: JSON.stringify({ res_id: params, client_id: client_id }),
+      body: JSON.stringify({
+        res_id: params,
+        client_id: client_id,
+        clientNumber: clientNumber,
+      }),
       headers: {
         "Content-Type": "application/json",
         ...headers,

@@ -122,6 +122,7 @@ const getClients = async (req, res) => {
 const getClientNotes = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.params.client_id;
+  console.log(_id);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -248,13 +249,22 @@ const addReservation = async (req, res) => {
 
     // send message to client
     await twilioClient.messages.create({
-      body: `Hello ${reservation.fname} ${
+      body: `Bonjour ${reservation.fname} ${
+        reservation.lname
+      }, votre réservation au Hollywood Barbershop est confirmée pour ${
+        reservation.date
+      } à ${reservation.slot[0].split("-")[1]}. Vous recevrez un ${
+        reservation.service.name
+      } pour ${reservation.service.price} CAD. ~${reservation.barber}
+      
+      Hello ${reservation.fname} ${
         reservation.lname
       }, your reservation at Hollywood Barbershop is confirmed for ${
         reservation.date
       } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
         reservation.service.name
-      } for ${reservation.service.price} CAD. ~${reservation.barber}`,
+      } for ${reservation.service.price} CAD. ~${reservation.barber}
+      `,
       messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
       to: reservation.number,
     });
@@ -304,7 +314,7 @@ const addReservation = async (req, res) => {
         .updateOne({ _id: isClient._id }, { $push: { reservations: _id } });
       const reservationToSend = {
         _id: _id,
-        client_id: isClient.client_id,
+        client_id: isClient._id,
         fname: reservation.fname.toLowerCase(),
         lname: reservation.lname.toLowerCase(),
         email: reservation.email.toLowerCase(),
@@ -539,6 +549,7 @@ const deleteReservation = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.body.res_id;
   const client_id = req.body.client_id;
+  const clientNumber = req.body.clientNumber;
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
@@ -546,6 +557,15 @@ const deleteReservation = async (req, res) => {
     await db
       .collection("Clients")
       .updateOne({ _id: client_id }, { $pull: { reservations: _id } });
+    // send message to client
+    await twilioClient.messages.create({
+      body: `Bonjour, votre réservation a été annulée. ~Hollywood Barbershop
+      
+      Hello, your reservation has been cancelled. ~Hollywood Barbershop
+      `,
+      messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+      to: clientNumber,
+    });
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });

@@ -113,10 +113,7 @@ const TimeSelect = () => {
     let updatedUserInfo = [...userInfo];
     if (dailyAvailabilityToggle) {
       updatedUserInfo[adminToBeUpdated].dailyAvailability = selectedDailyCells;
-      console.log({
-        _id: selectedAdminInfo._id,
-        dailyAvailability: selectedDailyCells,
-      });
+
       fetch(
         "https://hollywood-fairmount-admin.onrender.com/updateDailyAvailability",
         {

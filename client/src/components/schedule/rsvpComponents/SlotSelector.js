@@ -65,8 +65,21 @@ const SlotSelector = ({
         return !todayReservations.some((reservation) => {
           if (reservation.slot.length === 1) {
             return reservation.slot[0] === slot;
-          } else {
+          } else if (reservation.slot.length === 2) {
             return reservation.slot[0] === slot || reservation.slot[1] === slot;
+          } else if (reservation.slot.length === 3) {
+            return (
+              reservation.slot[0] === slot ||
+              reservation.slot[1] === slot ||
+              reservation.slot[2] === slot
+            );
+          } else {
+            return (
+              reservation.slot[0] === slot ||
+              reservation.slot[1] === slot ||
+              reservation.slot[2] === slot ||
+              reservation.slot[3] === slot
+            );
           }
         });
       });

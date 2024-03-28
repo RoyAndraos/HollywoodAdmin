@@ -139,13 +139,14 @@ const AddReservation = ({
         email: clientEmail,
         number: formattedClientNumber,
       };
-    } else if (selectedService.duration === 4) {
+    } else if (selectedService.duration === "4") {
       const newSlotArray = [
         ...selectedSlot,
         selectNextSlot(selectedSlot[0]),
         selectNextSlot(selectNextSlot(selectedSlot[0])),
         selectNextSlot(selectNextSlot(selectNextSlot(selectedSlot[0]))),
       ];
+
       reservation = {
         barber: selectedBarberForm.given_name,
         date: selectedDate.toDateString(),
@@ -240,7 +241,7 @@ const AddReservation = ({
         if (e.target.value.length === 0) {
           setNumberError("");
         } else {
-          if (isNaN(e.target.value) || e.target.value.length !== 10) {
+          if (e.target.value.length !== 14) {
             setNumberError("invalid phone number");
             setError(true);
           } else {

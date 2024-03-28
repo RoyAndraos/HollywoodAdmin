@@ -73,8 +73,21 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
         return !todayReservations.some((reservation) => {
           if (reservation.slot.length === 1) {
             return reservation.slot[0] === slot;
-          } else {
+          } else if (reservation.slot.length === 2) {
             return reservation.slot[0] === slot || reservation.slot[1] === slot;
+          } else if (reservation.slot.length === 3) {
+            return (
+              reservation.slot[0] === slot ||
+              reservation.slot[1] === slot ||
+              reservation.slot[2] === slot
+            );
+          } else {
+            return (
+              reservation.slot[0] === slot ||
+              reservation.slot[1] === slot ||
+              reservation.slot[2] === slot ||
+              reservation.slot[3] === slot
+            );
           }
         });
       });
@@ -111,7 +124,13 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
   const handleEditClick = () => {
     if (timeEdit === "Edit") {
       setTimeEdit("Show more");
-      handleChange("slot", [reservation.slot[0]]);
+      if (formData.slot.length === 2) {
+        handleChange("slot", [reservation.slot[0]]);
+      } else if (formData.slot.length === 3) {
+        handleChange("slot", [reservation.slot[0], reservation.slot[1]]);
+      } else if (formData.slot.length === 4) {
+        handleChange("slot", [reservation.slot[0], reservation.slot[1]]);
+      }
     } else if (timeEdit === "Show more") {
       setTimeEdit("Cancel");
     } else {
@@ -120,11 +139,23 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
     }
   };
   const startTime = formData.slot[0].split("-")[1];
-  let endTime = "";
-  if (formData.slot.length === 2) {
-    const endTimeStart = formData.slot[1].split("-")[1];
-    endTime = getEndTimeEditRsvp(endTimeStart);
-  }
+  const [endTime, setEndTime] = useState("");
+
+  useEffect(() => {
+    console.log(formData.slot, endTime);
+    let endTimeValue = "";
+    if (formData.slot.length === 2) {
+      const endTimeStart = formData.slot[1].split("-")[1];
+      endTimeValue = getEndTimeEditRsvp(endTimeStart);
+    } else if (formData.slot.length === 3) {
+      const endTimeStart = formData.slot[2].split("-")[1];
+      endTimeValue = getEndTimeEditRsvp(endTimeStart);
+    } else if (formData.slot.length === 4) {
+      const endTimeStart = formData.slot[3].split("-")[1];
+      endTimeValue = getEndTimeEditRsvp(endTimeStart);
+    }
+    setEndTime(endTimeValue);
+  }, [formData.slot, endTime]);
 
   return (
     <LabelInfoWrapper>
@@ -144,9 +175,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
           </span>
         ) : (
           <span key={formData.slot[0]}>
-            {formData.slot[0].split("-")[1] +
-              " - " +
-              getEndTimeEditRsvp(startTime)}
+            {formData.slot[0].split("-")[1] + " - " + endTime}
           </span>
         ))}
       {timeEdit === "Cancel" && (

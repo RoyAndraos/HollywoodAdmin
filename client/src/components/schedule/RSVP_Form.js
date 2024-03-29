@@ -185,6 +185,7 @@ const AddReservation = ({
     setClientNumber("");
     setSelectedService("");
     setError(true);
+    document.getElementById("clientname").value = "";
   };
 
   //saves input data to state and checks for errors
@@ -241,7 +242,7 @@ const AddReservation = ({
         if (e.target.value.length === 0) {
           setNumberError("");
         } else {
-          if (e.target.value.length !== 14) {
+          if (e.target.value.length !== 14 && e.target.value.length !== 10) {
             setNumberError("invalid phone number");
             setError(true);
           } else {

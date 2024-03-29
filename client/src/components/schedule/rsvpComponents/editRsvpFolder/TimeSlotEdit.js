@@ -142,7 +142,6 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
   const [endTime, setEndTime] = useState("");
 
   useEffect(() => {
-    console.log(formData.slot, endTime);
     let endTimeValue = "";
     if (formData.slot.length === 2) {
       const endTimeStart = formData.slot[1].split("-")[1];

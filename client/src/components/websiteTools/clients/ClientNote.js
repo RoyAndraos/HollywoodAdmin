@@ -47,6 +47,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
               key={`edit-note-${client._id}`}
               onClick={(e) => {
                 handleEditToggle(client._id, "note", e);
+                setEditedNote("");
               }}
             />
           </LabelInputEditWrapper>
@@ -68,7 +69,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
               setEditedNote(initialNote);
             }}
           />
-          {initialNote !== editedNote && client.edit.note && (
+          {initialNote !== editedNote && (
             <SaveChanges
               onClick={(e) => {
                 handleSaveChange(client._id, "note", editedNote);
@@ -84,6 +85,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
             key={`edit-note-${client._id}`}
             onClick={(e) => {
               handleEditToggle(client._id, "note", e);
+              setEditedNote("");
             }}
           />
         </LabelInputEditWrapper>

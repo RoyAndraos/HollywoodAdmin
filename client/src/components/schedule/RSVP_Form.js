@@ -100,7 +100,7 @@ const AddReservation = ({
     e.preventDefault();
     let reservation = {};
     const formattedClientNumber = clientNumber.replace(/\D/g, "");
-    if (selectedService.duration === 1) {
+    if (selectedService.duration === "1") {
       reservation = {
         barber: selectedBarberForm.given_name,
         date: selectedDate.toDateString(),
@@ -111,7 +111,7 @@ const AddReservation = ({
         email: clientEmail,
         number: formattedClientNumber,
       };
-    } else if (selectedService.duration === 2) {
+    } else if (selectedService.duration === "2") {
       const newSlotArray = [...selectedSlot, selectNextSlot(selectedSlot[0])];
       reservation = {
         barber: selectedBarberForm.given_name,
@@ -123,7 +123,7 @@ const AddReservation = ({
         email: clientEmail,
         number: formattedClientNumber,
       };
-    } else if (selectedService.duration === 3) {
+    } else if (selectedService.duration === "3") {
       const newSlotArray = [
         ...selectedSlot,
         selectNextSlot(selectedSlot[0]),

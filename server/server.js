@@ -122,7 +122,6 @@ const getClients = async (req, res) => {
 const getClientNotes = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.params.client_id;
-  console.log(_id);
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");

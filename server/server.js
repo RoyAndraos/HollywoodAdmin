@@ -205,11 +205,19 @@ const login = async (req, res) => {
     const correctUsername =
       process.env.LOGIN_USERNAME.toLowerCase() === username.toLowerCase();
     const correctPassword = process.env.LOGIN_PASSWORD === password;
+    const correctEmployeeUsername =
+      process.env.EMPLOYEE_USERNAME.toLowerCase() === username.toLowerCase();
+    const correctEmployeePassword = process.env.EMPLOYEE_PASSWORD === password;
     if (correctPassword && correctUsername) {
       const token = jwt.sign({ userId: "admin" }, JWT_TOKEN_KEY, {
         expiresIn: "13h",
       });
-      res.status(200).json({ status: 200, token: token });
+      res.status(200).json({ status: 200, token: token, role: "admin" });
+    } else if (correctEmployeeUsername && correctEmployeePassword) {
+      const token = jwt.sign({ userId: "employee" }, JWT_TOKEN_KEY, {
+        expiresIn: "13h",
+      });
+      res.status(200).json({ status: 200, token: token, role: "employee" });
     } else {
       res
         .status(401)

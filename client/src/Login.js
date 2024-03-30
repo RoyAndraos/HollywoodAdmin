@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import back from "./components/assets/back.png";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { LoginRoleContext } from "./components/contexts/LoginRoleContext";
 const Login = () => {
   const [isUsernameFocused, setUsernameFocused] = useState("false");
   const [isPasswordFocused, setPasswordFocused] = useState("false");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { setRole } = useContext(LoginRoleContext);
   const navigate = useNavigate();
   useEffect(() => {
     const token = Cookies.get("token");
@@ -33,6 +35,7 @@ const Login = () => {
       .then((data) => {
         if (data.status === 200) {
           Cookies.set("token", data.token, { expires: 1 / 13 });
+          setRole(data.role);
           navigate("/schedule");
         } else {
           alert("Incorrect username or password");

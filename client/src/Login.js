@@ -35,6 +35,7 @@ const Login = () => {
       .then((data) => {
         if (data.status === 200) {
           Cookies.set("token", data.token, { expires: 1 / 13 });
+          Cookies.set("role", data.role, { expires: 1 / 13 });
           setRole(data.role);
           navigate("/schedule");
         } else {

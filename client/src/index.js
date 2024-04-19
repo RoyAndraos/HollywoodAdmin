@@ -10,29 +10,31 @@ import { ImageProvider } from "./components/contexts/ImageContext";
 import { NotificationProvider } from "./components/contexts/NotficationContext";
 import { NotificationLogsProvider } from "./components/contexts/NotificationLogsContext";
 import { IsMobileProvider } from "./components/contexts/IsMobileContext";
-
+import { LoginRoleProvider } from "./components/contexts/LoginRoleContext";
 const root = createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
     <UserProvider>
-      <ImageProvider>
-        <TextProvider>
-          <ReservationProvider>
-            <ServicesProvider>
-              <NotificationProvider>
-                <NotificationLogsProvider>
-                  <IsMobileProvider>
-                    <BrowserRouter basename="/">
-                      <App />
-                    </BrowserRouter>
-                  </IsMobileProvider>
-                </NotificationLogsProvider>
-              </NotificationProvider>
-            </ServicesProvider>
-          </ReservationProvider>
-        </TextProvider>
-      </ImageProvider>
+      <LoginRoleProvider>
+        <ImageProvider>
+          <TextProvider>
+            <ReservationProvider>
+              <ServicesProvider>
+                <NotificationProvider>
+                  <NotificationLogsProvider>
+                    <IsMobileProvider>
+                      <BrowserRouter basename="/">
+                        <App />
+                      </BrowserRouter>
+                    </IsMobileProvider>
+                  </NotificationLogsProvider>
+                </NotificationProvider>
+              </ServicesProvider>
+            </ReservationProvider>
+          </TextProvider>
+        </ImageProvider>
+      </LoginRoleProvider>
     </UserProvider>
   </React.StrictMode>
 );

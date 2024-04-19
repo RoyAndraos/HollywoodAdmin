@@ -144,7 +144,8 @@
 /* EVENTS */
 
 .rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event {
-    width: 98% !important;
+    width: 20px !important;
+    height: 20px !important;
     left: 1%;
     position: relative;
     background-color: #035e3f !important;
@@ -153,6 +154,10 @@
     align-items: center !important;
     opacity: 0.3;
     transition: 0.2s ease-in-out;
+    border-radius: 50%;
+  }
+  .rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment{
+    z-index: -1;
   }
   .rbc-month-row .rbc-row-content .rbc-row .rbc-row-segment .rbc-event:hover{
     opacity: 1 ;

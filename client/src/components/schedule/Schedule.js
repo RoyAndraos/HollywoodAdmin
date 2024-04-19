@@ -9,17 +9,20 @@ import { ServicesContext } from "../contexts/ServicesContext";
 import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
+import { LoginRoleContext } from "../contexts/LoginRoleContext";
 const Schedule = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
   const { setImages, images } = useContext(ImageContext);
   const { setText, text } = useContext(TextContext);
+  const { setRole } = useContext(LoginRoleContext);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
+      const role = Cookies.get("role");
       if (!token) {
         return;
       } else {
@@ -36,10 +39,19 @@ const Schedule = () => {
             setServices(result.services);
             setImages(result.images);
             setText(result.text);
+            setRole(role);
           });
       }
     }
-  }, [setReservations, setServices, setUserInfo, setImages, setText, userInfo]);
+  }, [
+    setReservations,
+    setServices,
+    setUserInfo,
+    setImages,
+    setText,
+    userInfo,
+    setRole,
+  ]);
   if (!userInfo || !reservations || !services || !images || !text)
     return <Loader />;
   return (

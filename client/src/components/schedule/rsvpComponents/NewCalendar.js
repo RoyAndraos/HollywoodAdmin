@@ -59,7 +59,7 @@ const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
       ".rbc-day-slot .rbc-events-container .rbc-event"
     );
     dayViewElements.forEach((element) => {
-      if (element.innerHTML.includes("Ralf")) {
+      if (element.innerHTML.includes("Ralph")) {
         element.style.left = "50%";
         element.style.zIndex = "100";
       } else {
@@ -84,11 +84,13 @@ const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
       ".rbc-day-slot .rbc-events-container .rbc-event"
     );
     dayViewElements.forEach((element) => {
-      if (element.innerHTML.includes("Ralf")) {
-        element.style.left = "50%";
+      if (element.innerHTML.includes("Ralph")) {
+        element.style.width = "50%";
         element.style.zIndex = "100";
-      } else {
         element.style.left = "0%";
+      } else {
+        element.style.width = "50%";
+        element.style.left = "50%";
         element.style.zIndex = "100";
       }
     });
@@ -183,7 +185,13 @@ const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
         className="event-content-div"
         style={{ zIndex: "101" }}
       >
-        <span>{event.client}</span> <span>{eventTime}</span>
+        {currentView !== "month" && (
+          <span>
+            <span>{event.client}</span>
+            <span style={{ opacity: "0" }}>{event.title}</span>{" "}
+            <span>{eventTime}</span>
+          </span>
+        )}
       </div>
     );
   };

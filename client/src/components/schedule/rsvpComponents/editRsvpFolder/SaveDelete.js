@@ -5,10 +5,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../../../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { isEqual } from "../../../helpers";
+import { NotificationLogsContext } from "../../../contexts/NotificationLogsContext";
 const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
   // useContext: notification, reservations
   const { setNotification } = useContext(NotificationContext);
   const { reservations, setReservations } = useContext(ReservationContext);
+  const { setNotificationLogs, notificationLogs } = useContext(
+    NotificationLogsContext
+  );
   const [hasNoteChanged, setHasNoteChanged] = useState(initialNote !== note);
 
   const [isFormDataDifferent, setIsFormDataDifferent] = useState(
@@ -58,6 +62,12 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
           setReservations(
             reservations.filter((reservation) => reservation._id !== params)
           );
+          console.log(notificationLogs);
+          //remove the reservation from the notification logs
+          setNotificationLogs((prev) => [
+            ...prev.filter((log) => log._id !== params),
+          ]);
+
           navigate("/schedule");
         }
       })

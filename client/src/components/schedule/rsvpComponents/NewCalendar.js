@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { IsMobileContext } from "../../contexts/IsMobileContext";
 
 const localizer = momentLocalizer(moment);
-const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
+const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const [currentView, setCurrentView] = useState("month");
   const [currentDay, setCurrentDay] = useState(false);
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
   minTime.setHours(9, 0, 0);
 
   const maxTime = new Date();
-  maxTime.setHours(21, 0, 0);
+  maxTime.setHours(19, 0, 0);
 
   const handleEventClick = (event) => {
     navigate(`/schedule/${event._id}`);
@@ -126,41 +126,44 @@ const NewCalendar = ({ selectedDate, setSelectedDate, setSelectedSlot }) => {
       );
       agendaDate[0].innerHTML = `${formattedFirstDate} - ${formattedLastDate}`;
     }
+  }, [currentView]);
+  useEffect(() => {
     const dayViewSlots = document.querySelectorAll(
       ".rbc-day-slot .rbc-timeslot-group .rbc-time-slot"
     );
-    if (dayViewSlots.length === 0) {
-      return;
-    }
+
+    const handleClick = (slot) => {
+      console.log("clicked");
+      const formattedSlot = moment(slot).format("ddd-h:mma");
+      setSelectedDate(slot);
+      const todayReservations = reservations.filter((reservation) => {
+        return reservation.date === moment(slot).format("ddd MMM DD YYYY");
+      });
+      const slotTaken = todayReservations.some((reservation) => {
+        return reservation.slot[0] === formattedSlot;
+      });
+      if (!slotTaken) {
+        setSlotBeforeCheck([formattedSlot]);
+        const form = document.getElementById("rsvp");
+        form.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
     dayViewSlots.forEach((slot) => {
       slot.style.zIndex = "10";
       const slotDateAndTimeObject =
         Object.values(slot)[0].return.memoizedProps.value;
-      slot.addEventListener("click", () => {
-        const formattedSlot = moment(slotDateAndTimeObject).format("ddd-h:mma");
-        setSelectedDate(slotDateAndTimeObject);
-        const slotTaken = reservations.findIndex((reservation) => {
-          return reservation.slot[0] === formattedSlot;
-        });
-        if (slotTaken !== -1) {
-          return;
-        }
-        setSelectedSlot([formattedSlot]);
-        const form = document.getElementById("rsvp");
-        form.scrollIntoView({ behavior: "smooth" });
-
-        //set scroll behavior to smooth then scroll to the bottom of the page
-      });
+      slot.removeEventListener("click", handleClick); // Remove previous event listeners
+      slot.addEventListener("click", () => handleClick(slotDateAndTimeObject));
     });
-  }, [
-    currentView,
-    currentDay,
-    isMobile,
-    selectedDate,
-    setSelectedSlot,
-    setSelectedDate,
-    reservations,
-  ]);
+
+    return () => {
+      // Cleanup: remove event listeners when component unmounts
+      dayViewSlots.forEach((slot) => {
+        slot.removeEventListener("click", handleClick);
+      });
+    };
+  }, [reservations, setSelectedDate, setSlotBeforeCheck]);
 
   const CustomEventComponent = ({ event }) => {
     if (currentView === "month" && isMobile) {

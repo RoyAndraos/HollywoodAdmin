@@ -7,14 +7,17 @@ import { BarberSlot } from "./BarberSelect";
 import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
-import { filterSlotBeforeFor2Duration } from "../../helpers";
+import { removeSlotsForOverLapping, selectNextSlot } from "../../helpers";
 import moment from "moment";
 const SlotSelector = ({
-  selectedSlot,
   selectedBarberForm,
   selectedService,
   selectedDate,
   setSelectedSlot,
+  slotBeforeCheck,
+  setSlotBeforeCheck,
+  overLappingError,
+  setOverLappingError,
 }) => {
   const { reservations } = useContext(ReservationContext);
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -83,47 +86,46 @@ const SlotSelector = ({
           }
         });
       });
-      // if the service needs 2 slots, check if the slot after is available
-      if (selectedService.duration === "2") {
-        const removedBeforeSlotsFor2Duration = todayReservations.map(
-          (reservation) => {
-            return filterSlotBeforeFor2Duration(reservation.slot[0]);
-          }
-        );
-        //filter out the dailyAvailability slots
-        if (isToday) {
-          const dailyAvailabilityFilteredSlots =
-            selectedBarberForm.dailyAvailability
-              .filter((slot) => {
-                return slot.available === false;
-              })
-              .map((slot) => {
-                return slot.slot;
-              });
-          setAvailableSlots(
-            filteredSlots
-              .filter((slot) => {
-                return slot !== "";
-              })
-              .filter((item) => !removedBeforeSlotsFor2Duration.includes(item))
-              .filter((item) => {
-                return !dailyAvailabilityFilteredSlots.some((slot) =>
-                  item.includes(slot)
-                );
-              })
-          );
-        } else {
-          setAvailableSlots(
-            filteredSlots
-              .filter((slot) => {
-                return slot !== "";
-              })
-              .filter((item) => !removedBeforeSlotsFor2Duration.includes(item))
-          );
+      const todayReservedStartingSlots = todayReservations.map(
+        (reservation) => {
+          return reservation.slot[0].split("-")[1];
         }
+      );
+      const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
+        selectedService.duration,
+        todayReservedStartingSlots
+      );
+      const filteredForOverlappingSlots = filteredSlots.filter((slot) => {
+        // Extract the time portion of the slot (e.g., "2:30pm")
+        const time = slot.split("-")[1];
+        // Check if the time is not included in slotsToRemoveForOverlapping
+        return !slotsToRemoveForOverlapping.includes(time);
+      });
+      //filter out the dailyAvailability slots
+      if (isToday) {
+        const dailyAvailabilityFilteredSlots =
+          selectedBarberForm.dailyAvailability
+            .filter((slot) => {
+              return slot.available === false;
+            })
+            .map((slot) => {
+              return slot.slot;
+            });
+
+        setAvailableSlots(
+          filteredForOverlappingSlots
+            .filter((slot) => {
+              return slot !== "";
+            })
+            .filter((item) => {
+              return !dailyAvailabilityFilteredSlots.some((slot) =>
+                item.includes(slot)
+              );
+            })
+        );
       } else {
         setAvailableSlots(
-          filteredSlots.filter((slot) => {
+          filteredForOverlappingSlots.filter((slot) => {
             return slot !== "";
           })
         );
@@ -138,19 +140,80 @@ const SlotSelector = ({
     isToday,
   ]);
 
+  //check if selected slot will overlap with the reserved slots
+  useEffect(() => {
+    const selectedServiceDuration = selectedService.duration;
+    let newSlotArray = [];
+    if (slotBeforeCheck.length === 0) {
+      return;
+    } else {
+      if (selectedServiceDuration === "1") {
+      } else if (selectedServiceDuration === "2") {
+        newSlotArray = [...slotBeforeCheck, selectNextSlot(slotBeforeCheck[0])];
+      } else if (selectedServiceDuration === "3") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+        ];
+      } else if (selectedServiceDuration === "4") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+        ];
+      }
+      const todayReservations = reservations.filter((reservation) => {
+        const today =
+          formatDate(new Date(reservation.date)) === formatDate(selectedDate);
+        return selectedBarberForm.given_name === reservation.barber && today;
+      });
+      const todayReservedStartingSlots = todayReservations.map(
+        (reservation) => {
+          return reservation.slot[0].split("-")[1];
+        }
+      );
+      const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
+        selectedServiceDuration,
+        todayReservedStartingSlots
+      );
+      const newSlotArrayStartTime = newSlotArray.slice(0, 1);
+      const filteredForOverlappingSlots = newSlotArrayStartTime.filter(
+        (slot) => {
+          // Extract the time portion of the slot (e.g., "2:30pm")
+          const time = slot.split("-")[1];
+          // Check if the time is not included in slotsToRemoveForOverlapping
+          return slotsToRemoveForOverlapping.includes(time);
+        }
+      );
+      if (filteredForOverlappingSlots.length !== 0) {
+        setOverLappingError(true);
+      } else {
+        setSelectedSlot(newSlotArray);
+        setOverLappingError(false);
+      }
+    }
+  }, [
+    selectedService,
+    slotBeforeCheck,
+    selectedBarberForm,
+    selectedDate,
+    reservations,
+    setSelectedSlot,
+    setOverLappingError,
+  ]);
+
   const handleFormatDateForSlots = (date) => {
     const options = { weekday: "short" };
     return date.toLocaleDateString(undefined, options);
   };
-
-  /* if service is not selected dont display slots */
-
   return (
     <LabelInputWrapper>
       <StyledLabel>Time Slot</StyledLabel>
       {selectedService.length !== 0 ? (
         <SlotContainer>
-          {selectedSlot.length === 0 ? (
+          {slotBeforeCheck.length === 0 ? (
             <SlotContainer>
               {availableSlots.length !== 0 && !barberIsOff ? (
                 availableSlots.map((slot) => {
@@ -158,7 +221,7 @@ const SlotSelector = ({
                     <Slot
                       key={slot}
                       onClick={() => {
-                        setSelectedSlot([slot]);
+                        setSlotBeforeCheck([slot]);
                       }}
                     >
                       {slot.split("-")[1]}
@@ -175,6 +238,8 @@ const SlotSelector = ({
             <SelectedSlotContainer>
               <SelectedSlot
                 onClick={() => {
+                  setSlotBeforeCheck([]);
+                  setOverLappingError(false);
                   setSelectedSlot([]);
                 }}
                 style={{
@@ -183,7 +248,7 @@ const SlotSelector = ({
                   color: "whitesmoke",
                 }}
               >
-                {selectedSlot[0].split("-")[1]}
+                {slotBeforeCheck[0].split("-")[1]}
               </SelectedSlot>
             </SelectedSlotContainer>
           )}
@@ -197,6 +262,11 @@ const SlotSelector = ({
               : ""}
           </BarberSlot>
         </SelectedSlotContainer>
+      )}
+      {overLappingError && (
+        <OverlapError>
+          Time slot chosen will overlap with another reservation
+        </OverlapError>
       )}
     </LabelInputWrapper>
   );
@@ -245,6 +315,14 @@ export const Slot = styled.div`
   @media (max-width: 768px) {
     width: 20vw;
     font-size: 16px;
+  }
+`;
+const OverlapError = styled.div`
+  color: red;
+  font-size: 16px;
+  margin-top: 5px;
+  @media (max-width: 768px) {
+    font-size: 14px;
   }
 `;
 export default SlotSelector;

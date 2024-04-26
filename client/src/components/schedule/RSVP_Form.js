@@ -13,6 +13,8 @@ const AddReservation = ({
   setSelectedDate,
   selectedSlot,
   setSelectedSlot,
+  slotBeforeCheck,
+  setSlotBeforeCheck,
 }) => {
   const { reservations, setReservations } = useContext(ReservationContext);
   const { setNotification } = useContext(NotificationContext);
@@ -28,6 +30,8 @@ const AddReservation = ({
   const [existingClient, setExistingClient] = useState([]);
   const [barberError, setBarberError] = useState(false);
   const [serviceError, setServiceError] = useState(false);
+  const [overLappingError, setOverLappingError] = useState(false);
+
   useEffect(() => {
     // Update input fields when existing client is selected
     if (existingClient.length > 0) {
@@ -69,27 +73,6 @@ const AddReservation = ({
       setNotification("Something went wrong");
     }
   };
-  // when a service has a duration of 2 (meaning 2 slots), this function will select the next slot aka the slot that
-  //was clicked and the one that comes after it
-  const selectNextSlot = (slot) => {
-    const day = slot.split("-")[0];
-    const timeToEdit = slot.split("-")[1].split(":")[1].slice(0, -2);
-    const hour = slot.split("-")[1].split(":")[0];
-    let AMPM = slot.slice(-2);
-    let newTimeMinute = parseInt(timeToEdit) + 15;
-    if (newTimeMinute === 60) {
-      newTimeMinute = "00";
-      const newHour = parseInt(slot.split("-")[1].split(":")[0]) + 1;
-      if (newHour === 12) {
-        AMPM = "pm";
-        return `${day}-${newHour}:${newTimeMinute}${AMPM}`;
-      } else {
-        return `${day}-${newHour}:${newTimeMinute}${AMPM}`;
-      }
-    } else {
-      return `${day}-${hour}:${newTimeMinute}${AMPM}`;
-    }
-  };
 
   //submit reservation
   const handleSubmit = (e) => {
@@ -98,66 +81,18 @@ const AddReservation = ({
       authorization: token,
     };
     e.preventDefault();
-    let reservation = {};
     const formattedClientNumber = clientNumber.replace(/\D/g, "");
-    if (selectedService.duration === "1") {
-      reservation = {
-        barber: selectedBarberForm.given_name,
-        date: selectedDate.toDateString(),
-        slot: selectedSlot,
-        service: selectedService,
-        fname: clientName.split(" ")[0],
-        lname: clientName.split(" ")[1] || "",
-        email: clientEmail,
-        number: formattedClientNumber,
-      };
-    } else if (selectedService.duration === "2") {
-      const newSlotArray = [...selectedSlot, selectNextSlot(selectedSlot[0])];
-      reservation = {
-        barber: selectedBarberForm.given_name,
-        date: selectedDate.toDateString(),
-        slot: newSlotArray,
-        service: selectedService,
-        fname: clientName.split(" ")[0],
-        lname: clientName.split(" ")[1] || "",
-        email: clientEmail,
-        number: formattedClientNumber,
-      };
-    } else if (selectedService.duration === "3") {
-      const newSlotArray = [
-        ...selectedSlot,
-        selectNextSlot(selectedSlot[0]),
-        selectNextSlot(selectNextSlot(selectedSlot[0])),
-      ];
-      reservation = {
-        barber: selectedBarberForm.given_name,
-        date: selectedDate.toDateString(),
-        slot: newSlotArray,
-        service: selectedService,
-        fname: clientName.split(" ")[0],
-        lname: clientName.split(" ")[1] || "",
-        email: clientEmail,
-        number: formattedClientNumber,
-      };
-    } else if (selectedService.duration === "4") {
-      const newSlotArray = [
-        ...selectedSlot,
-        selectNextSlot(selectedSlot[0]),
-        selectNextSlot(selectNextSlot(selectedSlot[0])),
-        selectNextSlot(selectNextSlot(selectNextSlot(selectedSlot[0]))),
-      ];
+    const reservation = {
+      barber: selectedBarberForm.given_name,
+      date: selectedDate.toDateString(),
+      slot: selectedSlot,
+      service: selectedService,
+      fname: clientName.split(" ")[0],
+      lname: clientName.split(" ")[1] || "",
+      email: clientEmail,
+      number: formattedClientNumber,
+    };
 
-      reservation = {
-        barber: selectedBarberForm.given_name,
-        date: selectedDate.toDateString(),
-        slot: newSlotArray,
-        service: selectedService,
-        fname: clientName.split(" ")[0],
-        lname: clientName.split(" ")[1] || "",
-        email: clientEmail,
-        number: formattedClientNumber,
-      };
-    }
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {
@@ -179,6 +114,7 @@ const AddReservation = ({
       })
       .catch(() => setNotification("Something went wrong"));
     setSelectedSlot("");
+    setSlotBeforeCheck("");
     setBarber({});
     setClientName("");
     setClientEmail("");
@@ -278,6 +214,7 @@ const AddReservation = ({
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setSelectedSlot("");
+    setSlotBeforeCheck("");
   };
   return (
     <Wrapper>
@@ -398,8 +335,15 @@ const AddReservation = ({
             selectedService={selectedService}
             selectedDate={selectedDate}
             setSelectedSlot={setSelectedSlot}
+            setSlotBeforeCheck={setSlotBeforeCheck}
+            slotBeforeCheck={slotBeforeCheck}
+            overLappingError={overLappingError}
+            setOverLappingError={setOverLappingError}
           />
-          <Book type="submit" disabled={error || barberError || serviceError}>
+          <Book
+            type="submit"
+            disabled={error || barberError || serviceError || overLappingError}
+          >
             Book
           </Book>
         </div>

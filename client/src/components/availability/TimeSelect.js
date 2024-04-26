@@ -34,7 +34,6 @@ const TimeSelect = () => {
   const { setText, text } = useContext(TextContext);
   const { isMobile } = useContext(IsMobileContext);
   const navigate = useNavigate();
-  // const [selectedDailyCells, setSelectedDailyCells] = useState(selectedAdminInfo !== null ? selectedAdminInfo.dailyAvailability : null);
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
@@ -179,7 +178,6 @@ const TimeSelect = () => {
     "4pm",
     "5pm",
     "6pm",
-    "7pm",
   ];
 
   // function: handleCellClick toggles the availability of the selected cell

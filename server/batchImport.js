@@ -485,22 +485,6 @@ const dailyAvailability = [
     slot: "6:45pm",
     available: true,
   },
-  {
-    slot: "7:00pm",
-    available: true,
-  },
-  {
-    slot: "7:15pm",
-    available: true,
-  },
-  {
-    slot: "7:30pm",
-    available: true,
-  },
-  {
-    slot: "7:45pm",
-    available: true,
-  },
 ];
 
 const services = [

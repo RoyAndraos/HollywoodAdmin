@@ -14,6 +14,8 @@ import NoteFormEdit from "./NoteFormEdit";
 import LastNameFormEdit from "./LastNameFormEdit";
 const EditRsvp = () => {
   const { reservations } = useContext(ReservationContext);
+  const [timeEdit, setTimeEdit] = useState("Edit");
+
   const params = useParams()._id;
   const navigate = useNavigate();
   const thisReservation = reservations.filter(
@@ -76,6 +78,9 @@ const EditRsvp = () => {
           reservation={thisReservation[0]}
           handleChange={handleChange}
           formData={formData}
+          timeEdit={timeEdit}
+          setTimeEdit={setTimeEdit}
+          setFormData={setFormData}
         />
         <NumberFormEdit
           handleChange={handleChange}

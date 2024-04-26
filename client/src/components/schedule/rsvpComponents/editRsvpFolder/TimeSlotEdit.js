@@ -2,22 +2,30 @@ import { useState, useEffect, useContext } from "react";
 import { LabelInfoWrapper, StyledLabel } from "./EditRsvp";
 import {
   getEndTimeEditRsvp,
-  filterSlotBeforeFor2Duration,
+  removeSlotsForOverLapping,
+  selectNextSlot,
 } from "../../.././helpers";
 import { UserContext } from "../../../contexts/UserContext";
 import styled from "styled-components";
 import moment from "moment";
 import { ReservationContext } from "../../../contexts/ReservationContext";
 
-const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
+const TimeSlotEdit = ({
+  reservation,
+  handleChange,
+  formData,
+  timeEdit,
+  setTimeEdit,
+  setFormData,
+}) => {
   // useState/useContext: timeEdit for inner text of button, barberIsOff, availableSlots, reservations, userInfo(selectedBarber)
-  const [timeEdit, setTimeEdit] = useState("Edit");
   const [barberIsOff, setBarberIsOff] = useState(false);
   const [availableSlots, setAvailableSlots] = useState([]);
   const { reservations } = useContext(ReservationContext);
   const { userInfo } = useContext(UserContext);
   const selectedService = reservation.service;
-
+  const startTime = formData.slot[0].split("-")[1];
+  const [endTime, setEndTime] = useState("");
   // function: format date to "Mon Jan 1"
   const formatDate = (date) => {
     const dateObj = new Date(date);
@@ -91,27 +99,28 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
           }
         });
       });
-      // if the selected service is 2 (2x15 minutes), filter out the slots that are before the first slot of the reservation
-      if (selectedService.duration === "2") {
-        const removedBeforeSlotsFor2Duration = todayReservations.map(
-          (reservation) => {
-            return filterSlotBeforeFor2Duration(reservation.slot[0]);
-          }
-        );
-        setAvailableSlots(
-          filteredSlots
-            .filter((slot) => {
-              return slot !== "";
-            })
-            .filter((item) => !removedBeforeSlotsFor2Duration.includes(item))
-        );
-      } else {
-        setAvailableSlots(
-          filteredSlots.filter((slot) => {
-            return slot !== "";
-          })
-        );
-      }
+      const todayReservationStartingSlots = todayReservations.map(
+        (reservation) => {
+          return reservation.slot[0];
+        }
+      );
+      const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
+        formData.service.duration,
+        todayReservationStartingSlots
+      );
+      console.log("slotsToRemoveForOverlapping", slotsToRemoveForOverlapping);
+      const filteredForOverlappingSlots = filteredSlots.filter((slot) => {
+        // Extract the time portion of the slot (e.g., "2:30pm")
+        const time = slot.split("-")[1];
+        // Check if the time is not included in slotsToRemoveForOverlapping
+        return !slotsToRemoveForOverlapping.includes(time);
+      });
+
+      setAvailableSlots(
+        filteredForOverlappingSlots.filter((slot) => {
+          return slot !== "";
+        })
+      );
     }
   }, [
     selectedBarberForm,
@@ -119,6 +128,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
     selectedDate,
     selectedService,
     barberIsOff,
+    formData.service.duration,
   ]);
   // function: edit inner html of button
   const handleEditClick = () => {
@@ -134,12 +144,50 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
     } else if (timeEdit === "Show more") {
       setTimeEdit("Cancel");
     } else {
-      handleChange("slot", reservation.slot);
+      setFormData({
+        ...formData,
+        slot: reservation.slot,
+      });
       setTimeEdit("Edit");
     }
   };
-  const startTime = formData.slot[0].split("-")[1];
-  const [endTime, setEndTime] = useState("");
+  const selectSlot = (slot) => {
+    switch (formData.service.duration) {
+      case "2":
+        setFormData({
+          ...formData,
+          slot: [slot, selectNextSlot(slot)],
+        });
+        break;
+      case "3":
+        setFormData({
+          ...formData,
+          slot: [
+            slot,
+            selectNextSlot(slot),
+            selectNextSlot(selectNextSlot(slot)),
+          ],
+        });
+        break;
+      case "4":
+        setFormData({
+          ...formData,
+          slot: [
+            slot,
+            selectNextSlot(slot),
+            selectNextSlot(selectNextSlot(slot)),
+            selectNextSlot(selectNextSlot(selectNextSlot(slot))),
+          ],
+        });
+        break;
+      default:
+        setFormData({
+          ...formData,
+          slot: [slot],
+        });
+        break;
+    }
+  };
 
   useEffect(() => {
     let endTimeValue = "";
@@ -185,7 +233,7 @@ const TimeSlotEdit = ({ reservation, handleChange, formData }) => {
                 name="time"
                 key={slot}
                 onClick={() => {
-                  handleChange("slot", [slot]);
+                  selectSlot(slot);
                   setTimeEdit("Edit");
                 }}
               >

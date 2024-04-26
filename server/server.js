@@ -254,28 +254,6 @@ const addReservation = async (req, res) => {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
 
-    // send message to client
-    await twilioClient.messages.create({
-      body: `Bonjour ${reservation.fname} ${
-        reservation.lname !== "" && reservation.lname
-      }, votre réservation au Hollywood Barbershop est confirmée pour ${
-        reservation.date
-      } à ${reservation.slot[0].split("-")[1]}. Vous recevrez un ${
-        reservation.service.name
-      } pour ${reservation.service.price} CAD. ~${reservation.barber}
-      
-      Hello ${reservation.fname} ${
-        reservation.lname !== "" && reservation.lname
-      }, your reservation at Hollywood Barbershop is confirmed for ${
-        reservation.date
-      } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
-        reservation.service.name
-      } for ${reservation.service.price} CAD. ~${reservation.barber}
-      `,
-      messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-      to: reservation.number,
-    });
-
     //check if client exists
     const isClient = await db
       .collection("Clients")
@@ -308,6 +286,31 @@ const addReservation = async (req, res) => {
 
       //add reservation to db
       await db.collection("reservations").insertOne(reservationToSend);
+
+      // send message to client
+      await twilioClient.messages.create({
+        body: `Bonjour ${reservation.fname} ${
+          reservation.lname !== "" && reservation.lname
+        }, votre réservation au Hollywood Barbershop est confirmée pour ${
+          reservation.date
+        } à ${reservation.slot[0].split("-")[1]}. Vous recevrez une ${
+          reservation.service.name
+        } pour ${reservation.service.price} CAD. ~${reservation.barber}
+  
+  Hello ${reservation.fname} ${
+          reservation.lname !== "" && reservation.lname
+        }, your reservation at Hollywood Barbershop is confirmed for ${
+          reservation.date
+        } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
+          reservation.service.name
+        } for ${reservation.service.price} CAD. ~${reservation.barber}
+
+  ID: ${_id}
+  `,
+        messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+        to: reservation.number,
+      });
+
       res.status(200).json({
         status: 200,
         message: "success",
@@ -334,6 +337,31 @@ const addReservation = async (req, res) => {
 
       //add reservation to db
       await db.collection("reservations").insertOne(reservationToSend);
+
+      // send message to client
+      await twilioClient.messages.create({
+        body: `Bonjour ${reservation.fname} ${
+          reservation.lname !== "" && reservation.lname
+        }, votre réservation au Hollywood Barbershop est confirmée pour ${
+          reservation.date
+        } à ${reservation.slot[0].split("-")[1]}. Vous recevrez une ${
+          reservation.service.name
+        } pour ${reservation.service.price} CAD. ~${reservation.barber}
+  
+  Hello ${reservation.fname} ${
+          reservation.lname !== "" && reservation.lname
+        }, your reservation at Hollywood Barbershop is confirmed for ${
+          reservation.date
+        } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
+          reservation.service.name
+        } for ${reservation.service.price} CAD. ~${reservation.barber}
+
+  ID: ${_id}
+  `,
+        messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+        to: reservation.number,
+      });
+
       res.status(200).json({
         status: 200,
         message: "success",

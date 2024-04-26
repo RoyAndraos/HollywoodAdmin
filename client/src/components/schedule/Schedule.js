@@ -19,6 +19,8 @@ const Schedule = () => {
   const { setRole } = useContext(LoginRoleContext);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [slotBeforeCheck, setSlotBeforeCheck] = useState([]);
+
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
@@ -62,6 +64,8 @@ const Schedule = () => {
           setSelectedDate={setSelectedDate}
           selectedSlot={selectedSlot}
           setSelectedSlot={setSelectedSlot}
+          slotBeforeCheck={slotBeforeCheck}
+          setSlotBeforeCheck={setSlotBeforeCheck}
         />
       </Wrapper>
       <Wrapper key={"rsvp"} style={{ height: "fit-content" }} id="rsvp">
@@ -70,6 +74,8 @@ const Schedule = () => {
           setSelectedDate={setSelectedDate}
           selectedSlot={selectedSlot}
           setSelectedSlot={setSelectedSlot}
+          slotBeforeCheck={slotBeforeCheck}
+          setSlotBeforeCheck={setSlotBeforeCheck}
         />
       </Wrapper>
     </div>

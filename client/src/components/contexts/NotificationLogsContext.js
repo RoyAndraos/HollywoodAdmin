@@ -10,9 +10,7 @@ export const NotificationLogsProvider = ({ children }) => {
   const { setReservations } = useContext(ReservationContext);
   useEffect(() => {
     const socket = io("https://hollywood-fairmount-admin.onrender.com");
-    socket.on("connect", () => {
-      console.log("connected");
-    });
+    socket.on("connect", () => {});
     // Set up Socket.IO listeners for reservation updates
     socket.on("reservationChange", (change) => {
       if (change.operationType === "insert") {
@@ -37,7 +35,6 @@ export const NotificationLogsProvider = ({ children }) => {
     socket.on("connect_error", (err) => {});
 
     return () => {
-      console.log("disconnecting");
       socket.disconnect();
     };
   }, [setReservations]);

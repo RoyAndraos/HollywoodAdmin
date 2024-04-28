@@ -518,7 +518,6 @@ export const filterSlotBeforeFor2Duration = (slot) => {
     const newMinute = "45";
     const hourToEdit = slot.slice(0, -2).split(":")[0];
     if (hourToEdit !== "12") {
-      console.log(slot);
       const newHour = parseInt(slot.slice(0, -2).split(":")[0]) - 1;
       if (newHour.toString().length === 2) {
         return newHour.toString() + ":" + newMinute + slot.slice(-2);

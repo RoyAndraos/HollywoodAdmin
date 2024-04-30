@@ -1,10 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import SService from "./SService";
 import { WrapperInner } from "./SService";
 import styled from "styled-components";
+import { UserContext } from "../../contexts/UserContext";
+import { EmployeeServicesContext } from "../../contexts/EmployeeServicesContext";
 const Services = () => {
   const { services } = useContext(ServicesContext);
+  const { userInfo } = useContext(UserContext);
+  const [toggle, setToggle] = useState(false);
+  const { servicesEmp } = useContext(EmployeeServicesContext);
 
   return (
     <Wrapper>
@@ -13,10 +18,24 @@ const Services = () => {
         <Info>English</Info>
         <Info>Price</Info>
         <Info>Duration (1=15minutes)</Info>
+        {userInfo.length > 1 && (
+          <Info
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setToggle(!toggle);
+            }}
+          >
+            {toggle ? userInfo[1].given_name : userInfo[0].given_name}
+          </Info>
+        )}
       </WrapperInner>
-      {services.map((service) => {
-        return <SService service={service} key={service._id} />;
-      })}
+      {toggle
+        ? servicesEmp.map((service) => {
+            return <SService service={service} key={service._id} />;
+          })
+        : services.map((service) => {
+            return <SService service={service} key={service._id} />;
+          })}
     </Wrapper>
   );
 };

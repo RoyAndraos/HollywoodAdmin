@@ -11,6 +11,7 @@ import { NotificationProvider } from "./components/contexts/NotficationContext";
 import { NotificationLogsProvider } from "./components/contexts/NotificationLogsContext";
 import { IsMobileProvider } from "./components/contexts/IsMobileContext";
 import { LoginRoleProvider } from "./components/contexts/LoginRoleContext";
+import { EmployeeServicesProvider } from "./components/contexts/EmployeeServicesContext";
 const root = createRoot(document.getElementById("root"));
 
 root.render(
@@ -21,15 +22,17 @@ root.render(
           <TextProvider>
             <ReservationProvider>
               <ServicesProvider>
-                <NotificationProvider>
-                  <NotificationLogsProvider>
-                    <IsMobileProvider>
-                      <BrowserRouter basename="/">
-                        <App />
-                      </BrowserRouter>
-                    </IsMobileProvider>
-                  </NotificationLogsProvider>
-                </NotificationProvider>
+                <EmployeeServicesProvider>
+                  <NotificationProvider>
+                    <NotificationLogsProvider>
+                      <IsMobileProvider>
+                        <BrowserRouter basename="/">
+                          <App />
+                        </BrowserRouter>
+                      </IsMobileProvider>
+                    </NotificationLogsProvider>
+                  </NotificationProvider>
+                </EmployeeServicesProvider>
               </ServicesProvider>
             </ReservationProvider>
           </TextProvider>

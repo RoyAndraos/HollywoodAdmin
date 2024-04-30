@@ -38,7 +38,7 @@ const Schedule = () => {
           .then((result) => {
             setUserInfo(result.userInfo);
             setReservations(result.reservations);
-            setServices(result.services);
+            setServices([result.services]);
             setImages(result.images);
             setText(result.text);
             setRole(role);

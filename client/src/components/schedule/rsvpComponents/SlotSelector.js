@@ -8,6 +8,8 @@ import { useContext, useEffect, useState } from "react";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import styled from "styled-components";
 import { removeSlotsForOverLapping, selectNextSlot } from "../../helpers";
+import { ServicesContext } from "../../contexts/ServicesContext";
+import { EmployeeServicesContext } from "../../contexts/EmployeeServicesContext";
 import moment from "moment";
 const SlotSelector = ({
   selectedBarberForm,
@@ -18,11 +20,15 @@ const SlotSelector = ({
   setSlotBeforeCheck,
   overLappingError,
   setOverLappingError,
+  setSelectedService,
 }) => {
   const { reservations } = useContext(ReservationContext);
+  const { services } = useContext(ServicesContext);
+  const { servicesEmp } = useContext(EmployeeServicesContext);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [barberIsOff, setBarberIsOff] = useState(false);
   const todayDate = new Date();
+
   // format date for Wed Mar 27 2024
   const formattedDate = moment(todayDate).format("ddd MMM DD YYYY").toString();
 
@@ -91,6 +97,16 @@ const SlotSelector = ({
           return reservation.slot[0].split("-")[1];
         }
       );
+
+      //select the right services array based on the selected Barber
+      const selectedServiceArray =
+        selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
+      setSelectedService(
+        selectedServiceArray.find((service) => {
+          return service._id === selectedService._id;
+        })
+      );
+
       const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
         selectedService.duration,
         todayReservedStartingSlots
@@ -136,17 +152,27 @@ const SlotSelector = ({
     reservations,
     selectedDate,
     selectedService,
+    setSelectedService,
     barberIsOff,
     isToday,
+    services,
+    servicesEmp,
   ]);
 
   //check if selected slot will overlap with the reserved slots
   useEffect(() => {
-    const selectedServiceDuration = selectedService.duration;
+    //select right service depending on the selected barber
     let newSlotArray = [];
     if (slotBeforeCheck.length === 0) {
       return;
     } else {
+      const selectedServiceArray =
+        selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
+      const finalSelectedService = selectedServiceArray.find((service) => {
+        return service._id === selectedService._id;
+      });
+      const selectedServiceDuration = finalSelectedService.duration;
+
       if (selectedServiceDuration === "1") {
       } else if (selectedServiceDuration === "2") {
         newSlotArray = [...slotBeforeCheck, selectNextSlot(slotBeforeCheck[0])];
@@ -202,6 +228,8 @@ const SlotSelector = ({
     reservations,
     setSelectedSlot,
     setOverLappingError,
+    services,
+    servicesEmp,
   ]);
 
   const handleFormatDateForSlots = (date) => {

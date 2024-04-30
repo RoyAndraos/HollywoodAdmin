@@ -1,13 +1,11 @@
 import SlideShowImages from "./SlideShowImages";
 import AboutImage from "./AboutImage";
 import { styled } from "styled-components";
-import MenuImg from "./MenuImg";
 const Upload = () => {
   return (
     <Container>
       <SlideShowImages />
       <AboutImage />
-      <MenuImg />
     </Container>
   );
 };

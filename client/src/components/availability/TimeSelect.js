@@ -70,7 +70,17 @@ const TimeSelect = () => {
     selectedAdminInfo,
     userInfo,
   ]);
-  // useEffect: link the available cells to the selected barber's availability (set them) everytime the selected barber changes
+  const handleSelectNextBarber = () => {
+    if (userInfo.length === 1) return;
+    const currentBarberIndex = userInfo.findIndex(
+      (barber) => barber.given_name === selectedAdminInfo.given_name
+    );
+    if (currentBarberIndex === userInfo.length - 1) {
+      setSelectedAdminInfo(userInfo[0]);
+    } else {
+      setSelectedAdminInfo(userInfo[currentBarberIndex + 1]);
+    }
+  };
 
   if (!userInfo || !reservations || !services || !images || !text)
     return <Loader />;
@@ -251,25 +261,41 @@ const TimeSelect = () => {
             </Reset>
           )}
         </AvailButtons>
-        <BarberContainer>
-          <AdminName onClick={() => setShowBarbers(!showBarbers)}>
-            {showBarbers ? "X" : selectedAdminInfo.given_name}
-          </AdminName>
-          {showBarbers ? (
-            <>
-              {userInfo.map((barber) => {
-                return (
-                  <AdminName
-                    key={barber.given_name}
-                    onClick={(e) => selectBarber(e, barber)}
-                  >
-                    {barber.given_name}
-                  </AdminName>
-                );
-              })}
-            </>
-          ) : null}
-        </BarberContainer>
+        {isMobile ? (
+          <BarberContainer>
+            <AdminName
+              key={"mobileAdminClick"}
+              onClick={() => {
+                handleSelectNextBarber();
+              }}
+            >
+              {selectedAdminInfo.given_name}
+            </AdminName>
+          </BarberContainer>
+        ) : (
+          <BarberContainer>
+            <AdminName
+              key={"noMobileAdminClick"}
+              onClick={() => setShowBarbers(!showBarbers)}
+            >
+              {showBarbers ? "X" : selectedAdminInfo.given_name}
+            </AdminName>
+            {showBarbers ? (
+              <>
+                {userInfo.map((barber) => {
+                  return (
+                    <AdminName
+                      key={barber.given_name}
+                      onClick={(e) => selectBarber(e, barber)}
+                    >
+                      {barber.given_name}
+                    </AdminName>
+                  );
+                })}
+              </>
+            ) : null}
+          </BarberContainer>
+        )}
       </ControlPanel>
 
       {!isMobile && !dailyAvailabilityToggle ? (

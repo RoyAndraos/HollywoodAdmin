@@ -8,6 +8,7 @@ import ServiceSelector from "./rsvpComponents/ServiceSelector";
 import SlotSelector from "./rsvpComponents/SlotSelector";
 import { NotificationContext } from "../contexts/NotficationContext";
 import Cookies from "js-cookie";
+import { IsMobileContext } from "../contexts/IsMobileContext";
 const AddReservation = ({
   selectedDate,
   setSelectedDate,
@@ -31,7 +32,7 @@ const AddReservation = ({
   const [barberError, setBarberError] = useState(false);
   const [serviceError, setServiceError] = useState(false);
   const [overLappingError, setOverLappingError] = useState(false);
-
+  const { isMobile } = useContext(IsMobileContext);
   useEffect(() => {
     // Update input fields when existing client is selected
     if (existingClient.length > 0) {
@@ -195,10 +196,12 @@ const AddReservation = ({
           // If the entered name has more than 3 letters, fetch client data
           fetchClientData(e.target.value);
         }
-        if (e.target.value.length <= 2) {
+        if (e.target.value.length <= 2 && e.target.value.length !== 0) {
           setNameError("Name is required");
           setError(true);
           fetchClientData(e.target.value);
+        } else if (e.target.value.length === 0) {
+          setNameError("");
         } else {
           setNameError("");
           if (emailError === "" && numberError === "") {
@@ -239,7 +242,7 @@ const AddReservation = ({
                 }}
               ></StyledInput>
               {existingClient.length && (
-                <ExistingClientSelect>
+                <ExistingClientSelect $isMobile={isMobile}>
                   <StyledClose
                     onClick={() => {
                       setExistingClient([]);
@@ -339,6 +342,7 @@ const AddReservation = ({
             slotBeforeCheck={slotBeforeCheck}
             overLappingError={overLappingError}
             setOverLappingError={setOverLappingError}
+            setSelectedService={setSelectedService}
           />
           <Book
             type="submit"
@@ -538,6 +542,7 @@ const Book = styled.button`
 const ErrorMessage = styled.span`
   color: red;
   position: absolute;
+  width: 90vw;
   left: 0;
   bottom: -30%;
 `;
@@ -545,7 +550,9 @@ const ExistingClientSelect = styled.div`
   position: absolute;
   top: 100%;
   left: 0;
-  width: 100%;
+  transform: ${(props) =>
+    props.$isMobile ? "translateX(-31.5%)" : "translateY(0%)"};
+  width: ${(props) => (props.$isMobile ? "80.5vw" : "100%")};
   background-color: #035e3f;
   color: white;
   padding: 10px 0;

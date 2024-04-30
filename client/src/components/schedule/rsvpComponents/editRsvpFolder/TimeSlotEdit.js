@@ -101,14 +101,13 @@ const TimeSlotEdit = ({
       });
       const todayReservationStartingSlots = todayReservations.map(
         (reservation) => {
-          return reservation.slot[0];
+          return reservation.slot[0].split("-")[1];
         }
       );
       const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
         formData.service.duration,
         todayReservationStartingSlots
       );
-      console.log("slotsToRemoveForOverlapping", slotsToRemoveForOverlapping);
       const filteredForOverlappingSlots = filteredSlots.filter((slot) => {
         // Extract the time portion of the slot (e.g., "2:30pm")
         const time = slot.split("-")[1];

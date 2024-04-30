@@ -4,12 +4,13 @@ import { ServicesContext } from "../../contexts/ServicesContext";
 import { useContext } from "react";
 const ServiceSelector = ({ selectedService, setSelectedService }) => {
   const { services } = useContext(ServicesContext);
+  console.log(services);
   return (
     <LabelInputWrapper>
       <StyledLabel>Service</StyledLabel>
       {selectedService === "" ? (
         <div>
-          {services.map((service) => {
+          {services[0].map((service) => {
             return (
               <BarberSlot
                 key={service._id}

@@ -178,6 +178,10 @@ const getUserInfo = async (req, res) => {
     const services = await db.collection("services").find().toArray();
     const images = await db.collection("Images").find().toArray();
     const text = await db.collection("web_text").find().toArray();
+    const employeeServices = await db
+      .collection("servicesEmp")
+      .find()
+      .toArray();
     res.status(200).json({
       status: 200,
       userInfo: userInfo,
@@ -185,6 +189,7 @@ const getUserInfo = async (req, res) => {
       services: services,
       images: images,
       text: text,
+      employeeServices: employeeServices,
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -483,17 +488,7 @@ const addBarber = async (req, res) => {
       availability: barberInfo.availability,
       dailyAvailability: dailyAvailability,
     };
-    await db.collection("admin").insertOne({
-      _id: _id,
-      given_name: barberInfo.given_name,
-      family_name: barberInfo.family_name,
-      email: barberInfo.email,
-      picture: "",
-      description: barberInfo.description,
-      time_off: [],
-      availability: barberInfo.availability,
-      dailyAvailability: dailyAvailability,
-    });
+    await db.collection("admin").insertOne(newBarber);
     res.status(200).json({ status: 200, message: "success", data: newBarber });
   } catch (err) {
     console.error("Error adding barber:", err);

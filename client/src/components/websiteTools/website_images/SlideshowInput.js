@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { ImageContext } from "../../contexts/ImageContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";
+import { UserContext } from "../../contexts/UserContext";
 const ImageInput = ({ filename, height, initialImage }) => {
   const { images, setImages } = useContext(ImageContext);
   const { setNotification } = useContext(NotificationContext);
   const [previewSource, setPreviewSource] = useState("");
   const [imageHeight, setImageHeight] = useState("");
+  const { setUserInfo } = useContext(UserContext);
   useEffect(() => {
     if (height) {
       setImageHeight(height);
@@ -46,13 +48,24 @@ const ImageInput = ({ filename, height, initialImage }) => {
       })
         .then((res) => res.json())
         .then((result) => {
+          console.log(result);
           if (result.imageInfo.filename === "slideShow") {
             setImages((prev) => [...prev, result.imageInfo]);
-          } else {
+          } else if (result.imageInfo.filename === "about") {
             const removedAbout = images.filter(
               (image) => image.filename !== "about"
             );
             setImages([...removedAbout, result.imageInfo]);
+          } else {
+            // barberToEdit.image = result.imageInfo.src;
+            setUserInfo((prevUserInfo) => {
+              return prevUserInfo.map((user) => {
+                if (user._id === result.imageInfo.filename) {
+                  return { ...user, image: result.imageInfo.src };
+                }
+                return user;
+              });
+            });
           }
           setNotification("Image uploaded successfully");
         });

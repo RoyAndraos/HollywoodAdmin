@@ -227,8 +227,8 @@ export const BarberWrapper = styled.div`
 
 const BarberImage = styled.img`
   width: 200px;
-  height: 200px;
-  box-shadow: 0 0 10px black;
+  height: auto;
+  object-fit: contain;
 `;
 
 const AddBarber = styled.p`
@@ -310,6 +310,7 @@ const Description = styled.p`
   margin-top: 20px;
   border: 2px solid rgba(0, 0, 0, 0.4);
   border-radius: 0.5rem;
+  width: 80%;
   padding: 0.5rem 1rem 10vh 1rem;
 `;
 const DisplayWrapper = styled.div`

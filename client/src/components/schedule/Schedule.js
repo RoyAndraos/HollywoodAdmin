@@ -10,10 +10,12 @@ import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
+import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 const Schedule = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
+  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setImages, images } = useContext(ImageContext);
   const { setText, text } = useContext(TextContext);
   const { setRole } = useContext(LoginRoleContext);
@@ -38,9 +40,10 @@ const Schedule = () => {
           .then((result) => {
             setUserInfo(result.userInfo);
             setReservations(result.reservations);
-            setServices([result.services]);
+            setServices(result.services);
             setImages(result.images);
             setText(result.text);
+            setServicesEmp(result.employeeServices);
             setRole(role);
           });
       }
@@ -53,8 +56,17 @@ const Schedule = () => {
     setText,
     userInfo,
     setRole,
+    setServicesEmp,
   ]);
-  if (!userInfo || !reservations || !services || !images || !text)
+  console.log(servicesEmp);
+  if (
+    !userInfo ||
+    !reservations ||
+    !services ||
+    !images ||
+    !text ||
+    !servicesEmp
+  )
     return <Loader />;
   return (
     <div>

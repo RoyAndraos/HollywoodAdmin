@@ -58,7 +58,6 @@ const Schedule = () => {
     setRole,
     setServicesEmp,
   ]);
-  console.log(servicesEmp);
   if (
     !userInfo ||
     !reservations ||

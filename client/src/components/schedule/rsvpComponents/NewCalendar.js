@@ -133,7 +133,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     );
 
     const handleClick = (slot) => {
-      console.log("clicked");
       const formattedSlot = moment(slot).format("ddd-h:mma");
       setSelectedDate(slot);
       const todayReservations = reservations.filter((reservation) => {
@@ -163,7 +162,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         slot.removeEventListener("click", handleClick);
       });
     };
-  }, [reservations, setSelectedDate, setSlotBeforeCheck]);
+  }, [reservations, setSelectedDate, setSlotBeforeCheck, currentView]);
 
   const CustomEventComponent = ({ event }) => {
     if (currentView === "month" && isMobile) {

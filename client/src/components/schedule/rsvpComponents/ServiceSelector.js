@@ -3,7 +3,6 @@ import { BarberSlot } from "./BarberSelect";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import { useContext } from "react";
 const ServiceSelector = ({ selectedService, setSelectedService }) => {
-  console.log(selectedService);
   const { services } = useContext(ServicesContext);
   return (
     <LabelInputWrapper>

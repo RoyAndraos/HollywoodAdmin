@@ -4,11 +4,15 @@ import Cookies from "js-cookie";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import { objectsAreEqual } from "../../helpers";
-const SService = ({ service }) => {
+import { EmployeeServicesContext } from "../../contexts/EmployeeServicesContext";
+import { LoginRoleContext } from "../../contexts/LoginRoleContext";
+const SService = ({ service, serviceId }) => {
   const { setNotification } = useContext(NotificationContext);
   const { setServices } = useContext(ServicesContext);
+  const { setServicesEmp } = useContext(EmployeeServicesContext);
   const [serviceEdit, setServiceEdit] = useState(service);
   const [initialService] = useState(service);
+  const { role } = useContext(LoginRoleContext);
   const handleChange = (key, value) => {
     setServiceEdit({ ...serviceEdit, [key]: value });
   };
@@ -19,7 +23,7 @@ const SService = ({ service }) => {
     };
     fetch(`https://hollywood-fairmount-admin.onrender.com/updateServices`, {
       method: "PATCH",
-      body: JSON.stringify(serviceEdit),
+      body: JSON.stringify([role, serviceEdit]),
       headers: {
         "Content-Type": "application/json",
         ...headers,
@@ -28,15 +32,27 @@ const SService = ({ service }) => {
       .then((res) => res.json())
       .then((result) => {
         setNotification("Service updated successfully");
-        setServices((prevServices) => {
-          return prevServices.map((service) => {
-            if (service._id === result.data._id) {
-              return result.data;
-            } else {
-              return service;
-            }
+        if (role === "admin") {
+          setServices((prevServices) => {
+            return prevServices.map((service) => {
+              if (service._id === result.data._id) {
+                return result.data;
+              } else {
+                return service;
+              }
+            });
           });
-        });
+        } else {
+          setServicesEmp((prevServices) => {
+            return prevServices.map((service) => {
+              if (service._id === result.data._id) {
+                return result.data;
+              } else {
+                return service;
+              }
+            });
+          });
+        }
       })
       .catch((err) => setNotification("Something went wrong"));
   };

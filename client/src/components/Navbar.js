@@ -4,11 +4,9 @@ import NotifLogs from "./NotifLogs";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { LoginRoleContext } from "./contexts/LoginRoleContext";
 import { IsMobileContext } from "./contexts/IsMobileContext";
 
 const NavBar = () => {
-  const { role } = useContext(LoginRoleContext);
   const navigate = useNavigate();
   const { isMobile } = useContext(IsMobileContext);
   const handleLogout = () => {
@@ -26,9 +24,7 @@ const NavBar = () => {
     <Wrapper>
       <StyledNavLink to="/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/availability">Availability</StyledNavLink>
-      {!isMobile && role === "admin" && (
-        <StyledNavLink to="/websiteTools">Tools</StyledNavLink>
-      )}
+      {!isMobile && <StyledNavLink to="/websiteTools">Tools</StyledNavLink>}
       <StyledNavLink to="/">
         <Logout
           onClick={() => {

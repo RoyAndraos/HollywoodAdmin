@@ -5,12 +5,14 @@ import EditProfileForm from "./EditProfileForm";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { initialAvailability } from "../../helpers";
+import { LoginRoleContext } from "../../contexts/LoginRoleContext";
 const BarberProfiles = () => {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
   const [editModes, setEditModes] = useState({});
   const [barberInfo, setBarberInfo] = useState({});
   const [newBarber, setNewBarber] = useState({});
+  const { role } = useContext(LoginRoleContext);
   const handleChange = (key, value) => {
     setBarberInfo((prevInfo) => ({ ...prevInfo, [key]: value }));
   };
@@ -132,75 +134,136 @@ const BarberProfiles = () => {
         setNotification("Something went wrong");
       });
   };
+  let isEditMode;
   return (
     <Wrapper>
-      {userInfo.map((barber) => {
-        const isEditMode = editModes[barber._id];
-        return (
-          <BarberWrapper key={barber._id}>
-            {isEditMode ? (
-              // Render Edit Form with inputs and Save/Cancel buttons
-              // Display barber's information in input fields
-              <EditProfileForm
-                handleChange={handleChange}
-                handleSave={handleSave}
-                handleToggleEditMode={handleToggleEditMode}
-                barber={barber}
-                key={"edit" + barber._id}
-              />
-            ) : (
-              // Render Display Mode
-              <div
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-evenly",
-                  width: "80%",
-                }}
-              >
-                <DisplayWrapper>
-                  <Name>
-                    {barber.given_name} {barber.family_name}
-                  </Name>
-                  <Email>{barber.email}</Email>
-                  {barber.description && barber.description !== "" && (
-                    <Description>{barber.description}</Description>
+      {role === "admin" ? (
+        userInfo.map((barber) => {
+          isEditMode = editModes[barber._id];
+          return (
+            <BarberWrapper key={barber._id}>
+              {isEditMode ? (
+                // Render Edit Form with inputs and Save/Cancel buttons
+                // Display barber's information in input fields
+                <EditProfileForm
+                  handleChange={handleChange}
+                  handleSave={handleSave}
+                  handleToggleEditMode={handleToggleEditMode}
+                  barber={barber}
+                  key={"edit" + barber._id}
+                />
+              ) : (
+                // Render Display Mode
+                <div
+                  style={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                    width: "80%",
+                  }}
+                >
+                  <DisplayWrapper>
+                    <Name>
+                      {barber.given_name} {barber.family_name}
+                    </Name>
+                    <Email>{barber.email}</Email>
+                    {barber.description && barber.description !== "" && (
+                      <Description>{barber.description}</Description>
+                    )}
+                  </DisplayWrapper>
+                  {barber.picture !== "" && (
+                    <BarberImage src={barber.picture} />
                   )}
-                </DisplayWrapper>
-                {barber.picture !== "" && <BarberImage src={barber.picture} />}
-                <ButtonWrapper key={"notEdit" + barber._id}>
-                  <EditButton onClick={() => handleToggleEditMode(barber._id)}>
-                    Edit
-                  </EditButton>
-                  <CancelButton
-                    key={"cancel" + barber._id}
-                    onClick={() => handleDelete(barber._id)}
-                  >
-                    Delete
-                  </CancelButton>
-                </ButtonWrapper>
-              </div>
-            )}
-          </BarberWrapper>
-        );
-      })}
-      <BarberWrapper>
-        <AddBarber>Add Barber</AddBarber>
-        <EditProfileForm
-          handleChange={handleChangeNewBarber}
-          handleSave={handleAddBarber}
-          barber={{
-            description: "",
-            email: "",
-            family_name: "",
-            given_name: "",
-            picture: "",
-          }}
-          newBarber={newBarber}
-          key={"add"}
-        />
-      </BarberWrapper>
+                  <ButtonWrapper key={"notEdit" + barber._id}>
+                    <EditButton
+                      onClick={() => handleToggleEditMode(barber._id)}
+                    >
+                      Edit
+                    </EditButton>
+                    <CancelButton
+                      key={"cancel" + barber._id}
+                      onClick={() => handleDelete(barber._id)}
+                    >
+                      Delete
+                    </CancelButton>
+                  </ButtonWrapper>
+                </div>
+              )}
+            </BarberWrapper>
+          );
+        })
+      ) : (
+        <BarberWrapper key={userInfo[1]._id}>
+          {(isEditMode = editModes[userInfo[1]._id])}
+          {isEditMode ? (
+            // Render Edit Form with inputs and Save/Cancel buttons
+            // Display barber's information in input fields
+            <EditProfileForm
+              handleChange={handleChange}
+              handleSave={handleSave}
+              handleToggleEditMode={handleToggleEditMode}
+              barber={userInfo[1]}
+              key={"edit" + userInfo[1]._id}
+            />
+          ) : (
+            // Render Display Mode
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                width: "80%",
+              }}
+            >
+              <DisplayWrapper>
+                <Name>
+                  {userInfo[1].given_name} {userInfo[1].family_name}
+                </Name>
+                <Email>{userInfo[1].email}</Email>
+                {userInfo[1].description && userInfo[1].description !== "" && (
+                  <Description>{userInfo[1].description}</Description>
+                )}
+              </DisplayWrapper>
+              {userInfo[1].picture !== "" && (
+                <BarberImage src={userInfo[1].picture} />
+              )}
+              <ButtonWrapper key={"notEdit" + userInfo[1]._id}>
+                <EditButton
+                  onClick={() => handleToggleEditMode(userInfo[1]._id)}
+                >
+                  Edit
+                </EditButton>
+                <CancelButton
+                  key={"cancel" + userInfo[1]._id}
+                  onClick={() => handleDelete(userInfo[1]._id)}
+                >
+                  Delete
+                </CancelButton>
+              </ButtonWrapper>
+            </div>
+          )}
+        </BarberWrapper>
+      )}
+      {role === "admin" && (
+        <BarberWrapper>
+          <AddBarber>Add Barber</AddBarber>
+          <EditProfileForm
+            handleChange={handleChangeNewBarber}
+            handleSave={handleAddBarber}
+            barber={{
+              description: "",
+              email: "",
+              family_name: "",
+              given_name: "",
+              picture: "",
+            }}
+            newBarber={newBarber}
+            key={"add"}
+          />
+        </BarberWrapper>
+      )}
     </Wrapper>
   );
 };

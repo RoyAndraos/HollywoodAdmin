@@ -9,6 +9,8 @@ import { UserContext } from "../../../contexts/UserContext";
 import styled from "styled-components";
 import moment from "moment";
 import { ReservationContext } from "../../../contexts/ReservationContext";
+import { ServicesContext } from "../../../contexts/ServicesContext";
+import { EmployeeServicesContext } from "../../../contexts/EmployeeServicesContext";
 
 const TimeSlotEdit = ({
   reservation,
@@ -23,6 +25,8 @@ const TimeSlotEdit = ({
   const [availableSlots, setAvailableSlots] = useState([]);
   const { reservations } = useContext(ReservationContext);
   const { userInfo } = useContext(UserContext);
+  const { services } = useContext(ServicesContext);
+  const { servicesEmp } = useContext(EmployeeServicesContext);
   const selectedService = reservation.service;
   const startTime = formData.slot[0].split("-")[1];
   const [endTime, setEndTime] = useState("");
@@ -104,8 +108,14 @@ const TimeSlotEdit = ({
           return reservation.slot[0].split("-")[1];
         }
       );
+      const selectedServiceArray =
+        selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
+      const newFormDataService = selectedServiceArray.find((service) => {
+        return service._id === selectedService._id;
+      });
+
       const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
-        formData.service.duration,
+        newFormDataService.duration,
         todayReservationStartingSlots
       );
       const filteredForOverlappingSlots = filteredSlots.filter((slot) => {
@@ -128,6 +138,8 @@ const TimeSlotEdit = ({
     selectedService,
     barberIsOff,
     formData.service.duration,
+    services,
+    servicesEmp,
   ]);
   // function: edit inner html of button
   const handleEditClick = () => {

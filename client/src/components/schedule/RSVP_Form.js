@@ -32,6 +32,7 @@ const AddReservation = ({
   const [barberError, setBarberError] = useState(false);
   const [serviceError, setServiceError] = useState(false);
   const [overLappingError, setOverLappingError] = useState(false);
+  const [sendSMS, setSendSMS] = useState(false);
   const { isMobile } = useContext(IsMobileContext);
   useEffect(() => {
     // Update input fields when existing client is selected
@@ -92,6 +93,7 @@ const AddReservation = ({
       lname: clientName.split(" ")[1] || "",
       email: clientEmail,
       number: formattedClientNumber,
+      sendSMS: sendSMS,
     };
 
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
@@ -344,6 +346,15 @@ const AddReservation = ({
             setOverLappingError={setOverLappingError}
             setSelectedService={setSelectedService}
           />
+          <CheckboxWrapper>
+            <input
+              type="checkbox"
+              onClick={() => {
+                setSendSMS(!sendSMS);
+              }}
+            />
+            <label>Send SMS</label>
+          </CheckboxWrapper>
           <Book
             type="submit"
             disabled={error || barberError || serviceError || overLappingError}
@@ -355,7 +366,14 @@ const AddReservation = ({
     </Wrapper>
   );
 };
-
+const CheckboxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 20px 0;
+  color: whitesmoke;
+  width: 7vw;
+`;
 const fadeIn = keyframes`
   from {
     opacity: 0;

@@ -28,7 +28,6 @@ const SlotSelector = ({
   const [availableSlots, setAvailableSlots] = useState([]);
   const [barberIsOff, setBarberIsOff] = useState(false);
   const todayDate = new Date();
-  console.log(services, servicesEmp);
   // format date for Wed Mar 27 2024
   const formattedDate = moment(todayDate).format("ddd MMM DD YYYY").toString();
 
@@ -100,10 +99,8 @@ const SlotSelector = ({
 
       //select the right services array based on the selected Barber
       if (selectedService !== "") {
-        console.log(selectedBarberForm.given_name);
         const selectedServiceArray =
           selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
-        console.log(selectedServiceArray);
         setSelectedService(
           selectedServiceArray.find((service) => {
             return service._id === selectedService._id;
@@ -167,7 +164,7 @@ const SlotSelector = ({
   useEffect(() => {
     //select right service depending on the selected barber
     let newSlotArray = [];
-    if (slotBeforeCheck.length === 0) {
+    if (slotBeforeCheck.length === 0 || selectedService === "") {
       return;
     } else {
       const selectedServiceArray =

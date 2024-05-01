@@ -48,7 +48,6 @@ const ImageInput = ({ filename, height, initialImage }) => {
       })
         .then((res) => res.json())
         .then((result) => {
-          console.log(result);
           if (result.imageInfo.filename === "slideShow") {
             setImages((prev) => [...prev, result.imageInfo]);
           } else if (result.imageInfo.filename === "about") {

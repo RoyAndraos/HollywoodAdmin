@@ -62,7 +62,6 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
           setReservations(
             reservations.filter((reservation) => reservation._id !== params)
           );
-          console.log(notificationLogs);
           //remove the reservation from the notification logs
           setNotificationLogs((prev) => [
             ...prev.filter((log) => log._id !== params),

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
+import { LoginRoleContext } from "../contexts/LoginRoleContext";
 const ToolBar = ({ selectedOption, setSelectedOption }) => {
   const [isScrolled, setIsScrolled] = useState("false");
-
+  const { role } = useContext(LoginRoleContext);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
@@ -27,27 +28,33 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
       >
         Barber Profiles
       </StyledNavButton>
-      <StyledNavButton
-        key={"websiteText"}
-        onClick={() => setSelectedOption("websiteText")}
-        isselected={selectedOption === "websiteText" ? "true" : "false"}
-      >
-        Website Text
-      </StyledNavButton>
-      <StyledNavButton
-        key={"images"}
-        onClick={() => setSelectedOption("images")}
-        isselected={selectedOption === "images" ? "true" : "false"}
-      >
-        Images
-      </StyledNavButton>
-      <StyledNavButton
-        key={"Clients"}
-        onClick={() => setSelectedOption("clients")}
-        isselected={selectedOption === "clients" ? "true" : "false"}
-      >
-        Clients
-      </StyledNavButton>
+      {role === "admin" && (
+        <StyledNavButton
+          key={"websiteText"}
+          onClick={() => setSelectedOption("websiteText")}
+          isselected={selectedOption === "websiteText" ? "true" : "false"}
+        >
+          Website Text
+        </StyledNavButton>
+      )}
+      {role === "admin" && (
+        <StyledNavButton
+          key={"images"}
+          onClick={() => setSelectedOption("images")}
+          isselected={selectedOption === "images" ? "true" : "false"}
+        >
+          Images
+        </StyledNavButton>
+      )}
+      {role === "admin" && (
+        <StyledNavButton
+          key={"Clients"}
+          onClick={() => setSelectedOption("clients")}
+          isselected={selectedOption === "clients" ? "true" : "false"}
+        >
+          Clients
+        </StyledNavButton>
+      )}
       <StyledNavButton
         key={"services"}
         onClick={() => setSelectedOption("services")}

@@ -138,29 +138,37 @@ const getClientNotes = async (req, res) => {
 const getSearchResults = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const searchTerm = req.params.searchTerm;
+  const page = parseInt(req.query.page) || 1; // Current page number, default to 1
+  const limit = parseInt(req.query.limit) || 10; // Number of items per page, default to 10
+  const skip = (page - 1) * limit; // Calculate skip value
+
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    if (searchTerm === "all") {
-      const clients = await db.collection("Clients").find().toArray();
-      res.status(200).json({ status: 200, data: clients });
-      return;
-    } else {
-      const searchResults = await db
-        .collection("Clients")
-        .find({
-          $or: [
-            { fname: { $regex: searchTerm, $options: "i" } },
-            { lname: { $regex: searchTerm, $options: "i" } },
-            { email: { $regex: searchTerm, $options: "i" } },
-            { number: { $regex: searchTerm, $options: "i" } },
-            { note: { $regex: searchTerm, $options: "i" } },
-            { reservations: { $regex: searchTerm, $options: "i" } },
-          ],
-        })
-        .toArray();
-      res.status(200).json({ status: 200, data: searchResults });
+    let query = {};
+
+    // If searchTerm is provided and not 'all', construct search query
+    if (searchTerm && searchTerm !== "all") {
+      query = {
+        $or: [
+          { fname: { $regex: searchTerm, $options: "i" } },
+          { lname: { $regex: searchTerm, $options: "i" } },
+          { email: { $regex: searchTerm, $options: "i" } },
+          { number: { $regex: searchTerm, $options: "i" } },
+          { note: { $regex: searchTerm, $options: "i" } },
+        ],
+      };
     }
+
+    // Fetch clients based on query and pagination parameters
+    const clients = await db
+      .collection("Clients")
+      .find(query)
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    res.status(200).json({ status: 200, data: clients });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {

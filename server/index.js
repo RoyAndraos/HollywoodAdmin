@@ -62,13 +62,13 @@ app.get("/", (req, res) => {
   res.send("Welcome to my server");
 });
 app.get("/getUserInfo", verifyToken, getUserInfo);
-app.get("/search/:searchTerm", verifyToken, getSearchResults); //
+app.get("/search/:searchTerm", getSearchResults); //
 app.get("/clients", verifyToken, getClients); //
-app.get("/getClientNote/:client_id", getClientNotes); //
-app.get("/clientByName/:name", getClientByName); //
+app.get("/getClientNote/:client_id", verifyToken, getClientNotes); //
+app.get("/clientByName/:name", verifyToken, getClientByName); //
 app.post("/logout", logout);
 app.post("/login", login);
-app.post("/addReservation", addReservation); //
+app.post("/addReservation", verifyToken, addReservation); //
 app.post("/addBarber", verifyToken, addBarber); //
 app.patch("/updateClient", verifyToken, updateClient); //
 app.patch("/upload", verifyToken, uploadImage); //
@@ -78,13 +78,13 @@ app.patch("/updateReservation", verifyToken, updateReservation); //
 app.patch("/updateBarberProfile", verifyToken, updateBarberProfile); //
 app.patch("/updateText", verifyToken, updateText); //
 app.patch("/updateServices", verifyToken, updateServices); //
-app.patch("/updateClientNote", updateClientNote); //
-app.patch("/updateDailyAvailability", updateDailyAvailability); //
+app.patch("/updateClientNote", verifyToken, updateClientNote); //
+app.patch("/updateDailyAvailability", verifyToken, updateDailyAvailability); //
 app.delete("/images/:_id", verifyToken, deleteImage);
 app.delete("/deleteTimeOff", verifyToken, deleteTimeOff); //
 app.delete("/deleteReservation", verifyToken, deleteReservation); //
 app.delete("/deleteBarberProfile", verifyToken, deleteBarberProfile); //
-app.delete("/deleteClient/:_id", deleteClient); //
+app.delete("/deleteClient/:_id", verifyToken, deleteClient); //
 app.delete("/deleteService/:_id", verifyToken, deleteService); //
 
 const server = http.createServer(app); // Create an HTTP server

@@ -7,6 +7,9 @@ import Cookies from "js-cookie";
 const Clients = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1); // Define page state
+  const [limit, setLimit] = useState(3); // Define limit state
   const token = Cookies.get("token");
   //   const [searchType, setSearchType] = useState("name");
   const handleSearchClick = () => {
@@ -14,7 +17,7 @@ const Clients = () => {
       authorization: token,
     };
     fetch(
-      `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}`,
+      `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${page}&limit=${limit}`,
       { headers }
     )
       .then((res) => res.json())

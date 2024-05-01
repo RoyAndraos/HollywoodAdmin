@@ -20,11 +20,11 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
     };
   }, []);
   return (
-    <Wrapper isscrolled={isScrolled}>
+    <Wrapper $isscrolled={isScrolled}>
       <StyledNavButton
         key={"barberProfiles"}
         onClick={() => setSelectedOption("barberProfiles")}
-        isselected={selectedOption === "barberProfiles" ? "true" : "false"}
+        $isselected={selectedOption === "barberProfiles" ? "true" : "false"}
       >
         Barber Profiles
       </StyledNavButton>
@@ -32,7 +32,7 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
         <StyledNavButton
           key={"websiteText"}
           onClick={() => setSelectedOption("websiteText")}
-          isselected={selectedOption === "websiteText" ? "true" : "false"}
+          $isselected={selectedOption === "websiteText" ? "true" : "false"}
         >
           Website Text
         </StyledNavButton>
@@ -41,7 +41,7 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
         <StyledNavButton
           key={"images"}
           onClick={() => setSelectedOption("images")}
-          isselected={selectedOption === "images" ? "true" : "false"}
+          $isselected={selectedOption === "images" ? "true" : "false"}
         >
           Images
         </StyledNavButton>
@@ -50,7 +50,7 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
         <StyledNavButton
           key={"Clients"}
           onClick={() => setSelectedOption("clients")}
-          isselected={selectedOption === "clients" ? "true" : "false"}
+          $isselected={selectedOption === "clients" ? "true" : "false"}
         >
           Clients
         </StyledNavButton>
@@ -58,7 +58,7 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
       <StyledNavButton
         key={"services"}
         onClick={() => setSelectedOption("services")}
-        isselected={selectedOption === "services" ? "true" : "false"}
+        $isselected={selectedOption === "services" ? "true" : "false"}
       >
         Services
       </StyledNavButton>
@@ -67,7 +67,7 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
 };
 
 const Wrapper = styled.div`
-  height: ${(props) => (props.isscrolled === "true" ? "100vh" : "90vh")};
+  height: ${(props) => (props.$isscrolled === "true" ? "100vh" : "90vh")};
   width: 20%;
   display: flex;
   flex-direction: column;
@@ -75,14 +75,14 @@ const Wrapper = styled.div`
   align-items: center;
   position: fixed;
   border: none;
-  top: ${(props) => (props.isscrolled === "true" ? "0" : "9vh")};
+  top: ${(props) => (props.$isscrolled === "true" ? "0" : "9vh")};
   transition: 0.3s ease-in-out;
 `;
 const StyledNavButton = styled.button`
   background-color: ${(props) =>
-    props.isselected === "true" ? "#035e3f" : "#011c13"};
+    props.$isselected === "true" ? "#035e3f" : "#011c13"};
   transform: ${(props) =>
-    props.isselected === "true" ? "scale(0.98) translateX(-1%)" : "scale(1)"};
+    props.$isselected === "true" ? "scale(0.98) translateX(-1%)" : "scale(1)"};
   box-shadow: 0 0 10px black;
   transition: all 0.3s ease-in-out;
   color: whitesmoke;

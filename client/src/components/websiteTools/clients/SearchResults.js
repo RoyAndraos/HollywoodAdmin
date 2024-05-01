@@ -28,7 +28,7 @@ const SearchResults = ({ searchResults }) => {
     const headers = {
       authorization: token,
     };
-    fetch("https://hollywood-fairmount-admin.onrender.com/clients", {
+    fetch(`https://hollywood-fairmount-admin.onrender.com/clients`, {
       headers,
     })
       .then((res) => res.json())
@@ -133,7 +133,9 @@ const SearchResults = ({ searchResults }) => {
         }
       });
   };
-  if (!clients && searchResults.length === 0) return <Loader></Loader>;
+
+  if (clients.length === 0 && searchResults.length === 0)
+    return <Loader></Loader>;
   if (searchResults.length === 0 && clients)
     return (
       <Wrapper key={"noSearch"}>
@@ -209,7 +211,7 @@ const SearchResults = ({ searchResults }) => {
     );
   else {
     if (searchResults.length === 0) {
-      return <div>...loading</div>;
+      return <Loader />;
     } else {
       return (
         <Wrapper key={"search"}>

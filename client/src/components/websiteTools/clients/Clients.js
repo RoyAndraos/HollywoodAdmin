@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import styled from "styled-components";
 import SearchResults from "./SearchResults";
@@ -9,21 +9,20 @@ const Clients = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1); // Define page state
-  const [limit, setLimit] = useState(3); // Define limit state
+  const [pageSearch, setPageSearch] = useState(1); // Define page state
   const [totalNumberOfPagesSearch, setTotalNumberOfPagesSearch] = useState(0); // Define totalNumberOfPages state
   const token = Cookies.get("token");
 
-  const handleNextPage = () => {
-    setLoading(true);
+  useEffect(() => {
     const headers = {
       authorization: token,
     };
-    setPage(page + 1);
+    if (searchTerm === "") return;
+    setLoading(true);
     fetch(
       `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${
-        page + 1
-      }&limit=${limit}`,
+        pageSearch + 1
+      }&limit=3`,
       { headers }
     )
       .then((res) => res.json())
@@ -39,40 +38,11 @@ const Clients = () => {
           },
         }));
         setTotalNumberOfPagesSearch(data.numberOfPages);
+        console.log(data.numberOfPages);
         setLoading(false);
         setSearchResults(newClientsArray);
       });
-  };
-
-  const handlePreviousPage = () => {
-    setPage(Math.max(page - 1, 1)); // Ensure page is not less than 1
-    const headers = {
-      authorization: token,
-    };
-    setLoading(true);
-
-    fetch(
-      `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${
-        page - 1
-      }&limit=${limit}`,
-      { headers }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const newClientsArray = data.data.map((client) => ({
-          ...client,
-          edit: {
-            fname: false,
-            lname: false,
-            email: false,
-            number: false,
-            note: false,
-          },
-        }));
-        setLoading(false);
-        setSearchResults(newClientsArray);
-      });
-  };
+  }, [pageSearch, token]);
 
   //   const [searchType, setSearchType] = useState("name");
   const handleSearchClick = () => {
@@ -81,7 +51,7 @@ const Clients = () => {
     };
     setLoading(true);
     fetch(
-      `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${page}&limit=${limit}`,
+      `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${pageSearch}&limit=3`,
       { headers }
     )
       .then((res) => res.json())
@@ -97,6 +67,7 @@ const Clients = () => {
           },
         }));
         setLoading(false);
+        setTotalNumberOfPagesSearch(data.numberOfPages);
         setSearchResults(newClientsArray);
       });
   };
@@ -108,13 +79,16 @@ const Clients = () => {
         handleSearchClick={handleSearchClick}
       />
       {loading ? (
-        <Loader />
+        <div>
+          <Loader />
+        </div>
       ) : (
         <SearchResults
           searchResults={searchResults}
           setSearchResults={setSearchResults}
-          handleNextPage={handleNextPage}
-          handlePreviousPage={handlePreviousPage}
+          totalNumberOfPagesSearch={totalNumberOfPagesSearch}
+          pageSearch={pageSearch}
+          setPageSearch={setPageSearch}
         />
       )}
     </Wrapper>

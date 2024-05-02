@@ -42,7 +42,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
           </LabelInputEditWrapper>
         ) : (
           <LabelInputEditWrapper>
-            <Info style={{ fontSize: "1rem" }}>No note</Info>
+            <Info>No note</Info>
             <ToggleEdit
               key={`edit-note-${client._id}`}
               onClick={(e) => {

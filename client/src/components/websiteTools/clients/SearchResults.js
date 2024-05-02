@@ -13,8 +13,9 @@ import { NotificationContext } from "../../contexts/NotficationContext";
 import Loader from "../../Loader";
 const SearchResults = ({
   searchResults,
-  handleNextPage,
-  handlePreviousPage,
+  totalNumberOfPagesSearch,
+  pageSearch,
+  setPageSearch,
 }) => {
   const [clients, setClients] = useState([]);
   const { setNotification } = useContext(NotificationContext);
@@ -29,68 +30,7 @@ const SearchResults = ({
       };
     })
   );
-  const handleNextPageForNoSearch = () => {
-    const token = Cookies.get("token");
-    setLoading(true);
-    const headers = {
-      authorization: token,
-    };
-    setPage(page + 1);
-    fetch(
-      `https://hollywood-fairmount-admin.onrender.com/client?page=${
-        page + 1
-      }&limit=3`,
-      { headers }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const newClientsArray = data.data.map((client) => ({
-          ...client,
-          edit: {
-            fname: false,
-            lname: false,
-            email: false,
-            number: false,
-            note: false,
-          },
-        }));
-        setTotalNumberOfPagesAllClients(data.numberOfPages);
-        setLoading(false);
-        setClients(newClientsArray);
-      });
-  };
-  const handlePreviousPageForNoSearch = () => {
-    const token = Cookies.get("token");
 
-    setPage(Math.max(page - 1, 1)); // Ensure page is not less than 1
-    const headers = {
-      authorization: token,
-    };
-    setLoading(true);
-    fetch(
-      `https://hollywood-fairmount-admin.onrender.com/client?page=${
-        page - 1
-      }&limit=3`,
-      { headers }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const newClientsArray = data.data.map((client) => ({
-          ...client,
-          edit: {
-            fname: false,
-            lname: false,
-            email: false,
-            number: false,
-            note: false,
-          },
-        }));
-        setTotalNumberOfPagesAllClients(data.numberOfPages);
-        setLoading(false);
-        setClients(newClientsArray);
-      });
-  };
-  //get all clients
   useEffect(() => {
     const token = Cookies.get("token");
     const headers = {
@@ -99,28 +39,25 @@ const SearchResults = ({
     setLoading(true);
     fetch(
       `https://hollywood-fairmount-admin.onrender.com/clients?page=${page}&limit=3`,
-      {
-        headers,
-      }
+      { headers }
     )
       .then((res) => res.json())
       .then((data) => {
-        setClients(
-          data.data.map((client) => ({
-            ...client,
-            edit: {
-              fname: false,
-              lname: false,
-              email: false,
-              number: false,
-              note: false,
-            },
-          }))
-        );
+        const newClientsArray = data.data.map((client) => ({
+          ...client,
+          edit: {
+            fname: false,
+            lname: false,
+            email: false,
+            number: false,
+            note: false,
+          },
+        }));
         setTotalNumberOfPagesAllClients(data.numberOfPages);
         setLoading(false);
+        setClients(newClientsArray);
       });
-  }, []);
+  }, [page]);
 
   // Function to toggle the edit state for a specific client
   const handleEditToggle = (clientId, field, e) => {
@@ -207,108 +144,71 @@ const SearchResults = ({
         }
       });
   };
-
   if (clients.length === 0 && searchResults.length === 0)
-    return <Loader></Loader>;
-  if (loading) return <Loader></Loader>;
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  if (loading)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   if (searchResults.length === 0 && clients)
     return (
       <Wrapper key={"noSearch"}>
-        {clients.map((client) => {
-          return (
-            <ClientWrapper key={client._id}>
-              <StyledLabel>First Name</StyledLabel>
-              <ClientName
-                client={client}
-                handleSaveChange={handleSaveChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Last Name</StyledLabel>
-              <ClientLastName
-                client={client}
-                handleSaveChange={handleSaveChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Email</StyledLabel>
-              <ClientEmail
-                client={client}
-                handleSaveChange={handleSaveChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Number</StyledLabel>
-              <ClientNumber
-                client={client}
-                handleSaveChange={handleSaveChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Note</StyledLabel>
-              <ClientNote
-                client={client}
-                handleSaveChange={handleSaveChange}
-                handleEditToggle={handleEditToggle}
-              />
-              <StyledLabel>Last Reservation</StyledLabel>
-              <ClientReservation client={client} />
-              <DeleteClient
-                client={client}
-                onClick={() => {
-                  setAreYouSure({
-                    ...areYouSure,
-                    [client._id]: !areYouSure[client._id],
-                  });
-                }}
-              >
-                Delete Client
-              </DeleteClient>
-              {areYouSure[client._id] && (
-                <div>
-                  <p>Are you sure you want to delete this client?</p>
-                  <Yes
+        <PaginationWrapper>
+          <PageNumber
+            onClick={() => {
+              setPage(page - 1);
+            }}
+            disabled={page === 1 || totalNumberOfPagesAllClients === 1}
+          >
+            {"<"}
+          </PageNumber>
+          {totalNumberOfPagesAllClients > 1 &&
+            Array(totalNumberOfPagesAllClients)
+              .fill(0)
+              .map((_, index) => index + 1)
+              .map((pageNumber) => {
+                return (
+                  <PageNumber
+                    key={pageNumber}
                     onClick={() => {
-                      handleDeleteClient(client._id);
+                      setPage(pageNumber);
                     }}
+                    $selectedPage={pageNumber === page}
                   >
-                    Yes
-                  </Yes>
-                  <No
-                    onClick={() => {
-                      setAreYouSure(!areYouSure);
-                    }}
-                  >
-                    No
-                  </No>
-                </div>
-              )}
-            </ClientWrapper>
-          );
-        })}
-        <button
-          onClick={() => {
-            handleNextPageForNoSearch();
-          }}
-        >
-          Next
-        </button>
-        <button
-          onClick={() => {
-            handlePreviousPageForNoSearch();
-          }}
-        >
-          Previous
-        </button>
-      </Wrapper>
-    );
-  else {
-    if (searchResults.length === 0) {
-      return <Loader />;
-    } else {
-      return (
-        <Wrapper key={"search"}>
-          {searchResults.map((client) => {
+                    {pageNumber}
+                  </PageNumber>
+                );
+              })}{" "}
+          <PageNumber
+            onClick={() => {
+              setPage(page + 1);
+            }}
+            disabled={
+              page === totalNumberOfPagesAllClients ||
+              totalNumberOfPagesAllClients === 1
+            }
+          >
+            {">"}
+          </PageNumber>
+        </PaginationWrapper>
+        <AllClientsWrapper>
+          {clients.map((client) => {
             return (
-              <ClientWrapper key={client._id + "searchRes"}>
-                <StyledLabel>Name</StyledLabel>
+              <ClientWrapper key={client._id}>
+                <StyledLabel>First Name</StyledLabel>
                 <ClientName
+                  client={client}
+                  handleSaveChange={handleSaveChange}
+                  handleEditToggle={handleEditToggle}
+                />
+                <StyledLabel>Last Name</StyledLabel>
+                <ClientLastName
                   client={client}
                   handleSaveChange={handleSaveChange}
                   handleEditToggle={handleEditToggle}
@@ -336,7 +236,10 @@ const SearchResults = ({
                 <DeleteClient
                   client={client}
                   onClick={() => {
-                    setAreYouSure({ ...areYouSure, [client._id]: !areYouSure });
+                    setAreYouSure({
+                      ...areYouSure,
+                      [client._id]: !areYouSure[client._id],
+                    });
                   }}
                 >
                   Delete Client
@@ -363,35 +266,159 @@ const SearchResults = ({
               </ClientWrapper>
             );
           })}
-          <button
-            onClick={() => {
-              handleNextPage();
-            }}
-          >
-            Next
-          </button>
-          <button
-            onClick={() => {
-              handlePreviousPage();
-            }}
-          >
-            Previous
-          </button>
+        </AllClientsWrapper>
+      </Wrapper>
+    );
+  else {
+    if (searchResults.length === 0) {
+      return (
+        <div>
+          <Loader />
+        </div>
+      );
+    } else {
+      return (
+        <Wrapper key={"search"}>
+          <PaginationWrapper>
+            <PageNumber
+              onClick={() => {
+                setPage(pageSearch - 1);
+              }}
+              disabled={pageSearch === 1}
+            >
+              {"<"}
+            </PageNumber>
+            {totalNumberOfPagesSearch > 1 &&
+              Array(totalNumberOfPagesSearch)
+                .fill(0)
+                .map((_, index) => index + 1)
+                .map((pageNumber) => {
+                  return (
+                    <PageNumber
+                      key={pageNumber}
+                      onClick={() => {
+                        setPageSearch(pageNumber);
+                      }}
+                      $selectedPage={pageNumber === pageSearch}
+                    >
+                      {pageNumber}
+                    </PageNumber>
+                  );
+                })}{" "}
+            <PageNumber
+              onClick={() => {
+                setPageSearch(pageSearch + 1);
+              }}
+              disabled={
+                pageSearch === totalNumberOfPagesSearch ||
+                totalNumberOfPagesSearch === 1
+              }
+            >
+              {">"}
+            </PageNumber>
+          </PaginationWrapper>
+          <AllClientsWrapper>
+            {searchResults.map((client) => {
+              return (
+                <ClientWrapper key={client._id + "searchRes"}>
+                  <StyledLabel>Name</StyledLabel>
+                  <ClientName
+                    client={client}
+                    handleSaveChange={handleSaveChange}
+                    handleEditToggle={handleEditToggle}
+                  />
+                  <StyledLabel>Email</StyledLabel>
+                  <ClientEmail
+                    client={client}
+                    handleSaveChange={handleSaveChange}
+                    handleEditToggle={handleEditToggle}
+                  />
+                  <StyledLabel>Number</StyledLabel>
+                  <ClientNumber
+                    client={client}
+                    handleSaveChange={handleSaveChange}
+                    handleEditToggle={handleEditToggle}
+                  />
+                  <StyledLabel>Note</StyledLabel>
+                  <ClientNote
+                    client={client}
+                    handleSaveChange={handleSaveChange}
+                    handleEditToggle={handleEditToggle}
+                  />
+                  <StyledLabel>Last Reservation</StyledLabel>
+                  <ClientReservation client={client} />
+                  <DeleteClient
+                    client={client}
+                    onClick={() => {
+                      setAreYouSure({
+                        ...areYouSure,
+                        [client._id]: !areYouSure,
+                      });
+                    }}
+                  >
+                    Delete Client
+                  </DeleteClient>
+                  {areYouSure[client._id] && (
+                    <div>
+                      <p>Are you sure you want to delete this client?</p>
+                      <Yes
+                        onClick={() => {
+                          handleDeleteClient(client._id);
+                        }}
+                      >
+                        Yes
+                      </Yes>
+                      <No
+                        onClick={() => {
+                          setAreYouSure(!areYouSure);
+                        }}
+                      >
+                        No
+                      </No>
+                    </div>
+                  )}
+                </ClientWrapper>
+              );
+            })}
+          </AllClientsWrapper>
         </Wrapper>
       );
     }
   }
 };
+const PaginationWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+`;
+const AllClientsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-around;
+`;
+
+const PageNumber = styled.button`
+  background-color: ${(props) => (props.$selectedPage ? "black" : "white")};
+  color: ${(props) => (props.$selectedPage ? "white" : "black")};
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-evenly;
+  flex-direction: column;
+  justify-content: space-around;
   padding: 2vw;
-  width: 100%;
   flex-wrap: wrap;
-  height: 100%;
+  width: 100%;
 `;
 const ClientWrapper = styled.div`
   display: flex;

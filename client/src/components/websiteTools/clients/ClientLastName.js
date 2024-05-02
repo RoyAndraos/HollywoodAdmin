@@ -15,19 +15,23 @@ const ClientLastName = ({ handleSaveChange, handleEditToggle, client }) => {
   return (
     <Container>
       <LabelInputEditWrapper>
-        {client.edit.lname ? (
-          <LabelInputEditWrapper>
-            <StyledInput
-              type="text"
-              autoFocus
-              placeholder={client.lname}
-              onChange={(e) => {
-                setEditedName(e.target.value);
-              }}
-            />
-          </LabelInputEditWrapper>
+        {client.lname.length !== 0 ? (
+          client.edit.lname ? (
+            <LabelInputEditWrapper>
+              <StyledInput
+                type="text"
+                autoFocus
+                placeholder={client.lname}
+                onChange={(e) => {
+                  setEditedName(e.target.value);
+                }}
+              />
+            </LabelInputEditWrapper>
+          ) : (
+            <Info>{client.lname}</Info>
+          )
         ) : (
-          <Info>{client.lname}</Info>
+          <Info>Not Provided</Info>
         )}
         {client.edit.lname ? (
           <Cancel

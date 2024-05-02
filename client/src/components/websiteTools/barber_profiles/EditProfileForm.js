@@ -17,7 +17,7 @@ const EditProfileForm = ({
   }, [barber.given_name]);
   return (
     <EditProfileWrapper>
-      <InputField props={(barber.given_name === "").toString()}>
+      <InputField $props={(barber.given_name === "").toString()}>
         <SectionTitle>{text} Profile Information</SectionTitle>
         <StyledInput
           type="text"
@@ -136,7 +136,7 @@ const InputField = styled.div`
   width: 30%;
   height: 100%;
   position: relative;
-  top: ${(props) => (props.top === "true" ? "0" : "30px")};
+  top: ${(props) => (props.$props === "true" ? "0" : "30px")};
 `;
 const StyledInput = styled.input`
   width: 100%;

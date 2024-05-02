@@ -11,9 +11,17 @@ import ClientLastName from "./ClientLastName";
 import Cookies from "js-cookie";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Loader from "../../Loader";
-const SearchResults = ({ searchResults }) => {
+const SearchResults = ({
+  searchResults,
+  handleNextPage,
+  handlePreviousPage,
+}) => {
   const [clients, setClients] = useState([]);
   const { setNotification } = useContext(NotificationContext);
+  const [page, setPage] = useState(1); // Define page state
+  const [loading, setLoading] = useState(false);
+  const [totalNumberOfPagesAllClients, setTotalNumberOfPagesAllClients] =
+    useState(0); // Define totalNumberOfPages state
   const [areYouSure, setAreYouSure] = useState(
     clients.map((client) => {
       return {
@@ -21,16 +29,80 @@ const SearchResults = ({ searchResults }) => {
       };
     })
   );
+  const handleNextPageForNoSearch = () => {
+    const token = Cookies.get("token");
+    setLoading(true);
+    const headers = {
+      authorization: token,
+    };
+    setPage(page + 1);
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/client?page=${
+        page + 1
+      }&limit=3`,
+      { headers }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const newClientsArray = data.data.map((client) => ({
+          ...client,
+          edit: {
+            fname: false,
+            lname: false,
+            email: false,
+            number: false,
+            note: false,
+          },
+        }));
+        setTotalNumberOfPagesAllClients(data.numberOfPages);
+        setLoading(false);
+        setClients(newClientsArray);
+      });
+  };
+  const handlePreviousPageForNoSearch = () => {
+    const token = Cookies.get("token");
 
+    setPage(Math.max(page - 1, 1)); // Ensure page is not less than 1
+    const headers = {
+      authorization: token,
+    };
+    setLoading(true);
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/client?page=${
+        page - 1
+      }&limit=3`,
+      { headers }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const newClientsArray = data.data.map((client) => ({
+          ...client,
+          edit: {
+            fname: false,
+            lname: false,
+            email: false,
+            number: false,
+            note: false,
+          },
+        }));
+        setTotalNumberOfPagesAllClients(data.numberOfPages);
+        setLoading(false);
+        setClients(newClientsArray);
+      });
+  };
   //get all clients
   useEffect(() => {
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
     };
-    fetch(`https://hollywood-fairmount-admin.onrender.com/clients`, {
-      headers,
-    })
+    setLoading(true);
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/clients?page=${page}&limit=3`,
+      {
+        headers,
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setClients(
@@ -45,6 +117,8 @@ const SearchResults = ({ searchResults }) => {
             },
           }))
         );
+        setTotalNumberOfPagesAllClients(data.numberOfPages);
+        setLoading(false);
       });
   }, []);
 
@@ -136,6 +210,7 @@ const SearchResults = ({ searchResults }) => {
 
   if (clients.length === 0 && searchResults.length === 0)
     return <Loader></Loader>;
+  if (loading) return <Loader></Loader>;
   if (searchResults.length === 0 && clients)
     return (
       <Wrapper key={"noSearch"}>
@@ -207,6 +282,20 @@ const SearchResults = ({ searchResults }) => {
             </ClientWrapper>
           );
         })}
+        <button
+          onClick={() => {
+            handleNextPageForNoSearch();
+          }}
+        >
+          Next
+        </button>
+        <button
+          onClick={() => {
+            handlePreviousPageForNoSearch();
+          }}
+        >
+          Previous
+        </button>
       </Wrapper>
     );
   else {
@@ -274,6 +363,20 @@ const SearchResults = ({ searchResults }) => {
               </ClientWrapper>
             );
           })}
+          <button
+            onClick={() => {
+              handleNextPage();
+            }}
+          >
+            Next
+          </button>
+          <button
+            onClick={() => {
+              handlePreviousPage();
+            }}
+          >
+            Previous
+          </button>
         </Wrapper>
       );
     }

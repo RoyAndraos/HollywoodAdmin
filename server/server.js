@@ -106,11 +106,24 @@ const getClientByName = async (req, res) => {
 
 const getClients = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
+  const page = parseInt(req.query.page); // Current page number, default to 1
+  const limit = parseInt(req.query.limit); // Number of items per page, default to 10
+  const skip = (page - 1) * limit; // Calculate skip value
   try {
     await client.connect();
     const db = client.db("HollywoodBarberShop");
-    const clients = await db.collection("Clients").find().toArray();
-    res.status(200).json({ status: 200, data: clients });
+    const clients = await db
+      .collection("Clients")
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+    const total = await db.collection("Clients").countDocuments();
+    const numberOfPages = Math.ceil(total / limit);
+    res;
+    res
+      .status(200)
+      .json({ status: 200, data: clients, numberOfPages: numberOfPages });
   } catch (err) {
     console.error("Error getting clients:", err);
     res.status(500).json({ status: 500, message: err.message });
@@ -138,8 +151,8 @@ const getClientNotes = async (req, res) => {
 const getSearchResults = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const searchTerm = req.params.searchTerm;
-  const page = parseInt(req.query.page) || 1; // Current page number, default to 1
-  const limit = parseInt(req.query.limit) || 10; // Number of items per page, default to 10
+  const page = parseInt(req.query.page); // Current page number, default to 1
+  const limit = parseInt(req.query.limit); // Number of items per page, default to 10
   const skip = (page - 1) * limit; // Calculate skip value
 
   try {
@@ -167,8 +180,11 @@ const getSearchResults = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .toArray();
-
-    res.status(200).json({ status: 200, data: clients });
+    const total = await db.collection("Clients").countDocuments(query);
+    const numberOfPages = Math.ceil(total / limit);
+    res
+      .status(200)
+      .json({ status: 200, data: clients, numberOfPages: numberOfPages });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {

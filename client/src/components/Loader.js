@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   position: fixed;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
 `;
 const StyledRazor = styled(GiRazor)`
   font-size: 5rem;

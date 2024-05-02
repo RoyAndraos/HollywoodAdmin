@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
 });
 app.get("/getUserInfo", verifyToken, getUserInfo);
 app.get("/search/:searchTerm", getSearchResults); //
-app.get("/clients", verifyToken, getClients); //
+app.get("/clients", getClients); //
 app.get("/getClientNote/:client_id", verifyToken, getClientNotes); //
 app.get("/clientByName/:name", verifyToken, getClientByName); //
 app.post("/logout", logout);

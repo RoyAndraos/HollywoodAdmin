@@ -62,10 +62,17 @@ const AddReservation = ({
       setExistingClient([]);
       return;
     }
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
 
     try {
       const response = await fetch(
-        `https://hollywood-fairmount-admin.onrender.com/clientByName/${name}`
+        `https://hollywood-fairmount-admin.onrender.com/clientByName/${name}`,
+        {
+          headers,
+        }
       );
       const data = await response.json();
       if (data.data) {

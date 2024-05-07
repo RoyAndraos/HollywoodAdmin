@@ -32,7 +32,7 @@ const AddReservation = ({
   const [barberError, setBarberError] = useState(false);
   const [serviceError, setServiceError] = useState(false);
   const [overLappingError, setOverLappingError] = useState(false);
-  const [sendSMS, setSendSMS] = useState(false);
+  const [sendSMS, setSendSMS] = useState(true);
   const { isMobile } = useContext(IsMobileContext);
   useEffect(() => {
     // Update input fields when existing client is selected
@@ -356,6 +356,7 @@ const AddReservation = ({
           <CheckboxWrapper>
             <input
               type="checkbox"
+              defaultChecked={sendSMS}
               onClick={() => {
                 setSendSMS(!sendSMS);
               }}

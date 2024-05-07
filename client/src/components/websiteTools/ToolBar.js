@@ -34,7 +34,7 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
           onClick={() => setSelectedOption("websiteText")}
           $isselected={selectedOption === "websiteText" ? "true" : "false"}
         >
-          Website Text
+          Text
         </StyledNavButton>
       )}
       {role === "admin" && (

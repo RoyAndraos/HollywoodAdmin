@@ -83,7 +83,7 @@ export const Title = styled.h1`
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   color: #035e3f;
-  letter-spacing: 0.2rem;
+  letter-spacing: 0.1rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid #035e3f;
 `;

@@ -12,6 +12,7 @@ import NumberFormEdit from "./NumberFormEdit";
 import EmailFormEdit from "./EmailFormEdit";
 import NoteFormEdit from "./NoteFormEdit";
 import LastNameFormEdit from "./LastNameFormEdit";
+import Cookies from "js-cookie";
 const EditRsvp = () => {
   const { reservations } = useContext(ReservationContext);
   const [timeEdit, setTimeEdit] = useState("Edit");
@@ -28,8 +29,19 @@ const EditRsvp = () => {
     setNote(e.target.value);
   };
   useEffect(() => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
     fetch(
-      `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation[0].client_id}`
+      `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation[0].client_id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+      }
     )
       .then((res) => res.json())
       .then((result) => {

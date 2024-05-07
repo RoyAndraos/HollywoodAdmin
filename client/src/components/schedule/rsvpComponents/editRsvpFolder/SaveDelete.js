@@ -12,7 +12,7 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
   const { reservations, setReservations } = useContext(ReservationContext);
   const { setNotificationLogs } = useContext(NotificationLogsContext);
   const [hasNoteChanged, setHasNoteChanged] = useState(initialNote !== note);
-  const [sendSMS, setSendSMS] = useState(false);
+  const [sendSMS, setSendSMS] = useState(true);
   const [isFormDataDifferent, setIsFormDataDifferent] = useState(
     !isEqual(formData, initialFormData)
   );
@@ -131,6 +131,7 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
       <CheckboxWrapper>
         <input
           type="checkbox"
+          defaultChecked={sendSMS}
           onClick={() => {
             setSendSMS(!sendSMS);
           }}

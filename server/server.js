@@ -463,10 +463,46 @@ const uploadImage = async (req, res) => {
         }
       );
       res.status(202).json({ status: 200, imageInfo: imageInfo });
-    } else if (filename === "menu") {
+    } else if (filename === "menuBackground") {
       await db.collection("Images").updateOne(
         {
-          filename: "menu",
+          filename: "menuBackground",
+        },
+        {
+          $set: {
+            src: fileSrc,
+          },
+        }
+      );
+      res.status(202).json({ status: 200, imageInfo: imageInfo });
+    } else if (filename === "aboutBackground") {
+      await db.collection("Images").updateOne(
+        {
+          filename: "aboutBackground",
+        },
+        {
+          $set: {
+            src: fileSrc,
+          },
+        }
+      );
+      res.status(202).json({ status: 200, imageInfo: imageInfo });
+    } else if (filename === "barbersBackground") {
+      await db.collection("Images").updateOne(
+        {
+          filename: "barbersBackground",
+        },
+        {
+          $set: {
+            src: fileSrc,
+          },
+        }
+      );
+      res.status(202).json({ status: 200, imageInfo: imageInfo });
+    } else if (filename === "homepageBackground") {
+      await db.collection("Images").updateOne(
+        {
+          filename: "homepageBackground",
         },
         {
           $set: {

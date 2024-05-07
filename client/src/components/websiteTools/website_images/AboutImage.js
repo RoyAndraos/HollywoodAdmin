@@ -13,7 +13,6 @@ const AboutImage = () => {
     );
     setAboutImage(updatedAboutImage);
   }, [images]);
-
   if (aboutImage.length === 0) return <p>loading...</p>;
   else
     return (

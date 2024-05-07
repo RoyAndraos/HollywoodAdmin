@@ -12,7 +12,7 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
   const { reservations, setReservations } = useContext(ReservationContext);
   const { setNotificationLogs } = useContext(NotificationLogsContext);
   const [hasNoteChanged, setHasNoteChanged] = useState(initialNote !== note);
-
+  const [sendSMS, setSendSMS] = useState(false);
   const [isFormDataDifferent, setIsFormDataDifferent] = useState(
     !isEqual(formData, initialFormData)
   );
@@ -39,12 +39,14 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
       authorization: token,
     };
     e.preventDefault();
+
     fetch(`https://hollywood-fairmount-admin.onrender.com/deleteReservation`, {
       method: "DELETE",
       body: JSON.stringify({
         res_id: params,
         client_id: client_id,
         clientNumber: clientNumber,
+        sendSMS: sendSMS,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -126,6 +128,15 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
   };
   return (
     <ButtonWrapper>
+      <CheckboxWrapper>
+        <input
+          type="checkbox"
+          onClick={() => {
+            setSendSMS(!sendSMS);
+          }}
+        />
+        <label>Send SMS</label>
+      </CheckboxWrapper>
       <Delete onClick={(e) => handleDeleteReservation(e)}>Delete</Delete>
       <SaveChanges
         onClick={(e) => handleSaveReservationEdit(e)}
@@ -186,5 +197,14 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-evenly;
   width: 80%;
+`;
+
+const CheckboxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 20px 0;
+  color: #035e3f;
+  width: 7vw;
 `;
 export default SaveDelete;

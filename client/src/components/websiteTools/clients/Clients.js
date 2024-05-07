@@ -38,10 +38,10 @@ const Clients = () => {
           },
         }));
         setTotalNumberOfPagesSearch(data.numberOfPages);
-        console.log(data.numberOfPages);
         setLoading(false);
         setSearchResults(newClientsArray);
       });
+    // eslint-disable-next-line
   }, [pageSearch, token]);
 
   //   const [searchType, setSearchType] = useState("name");

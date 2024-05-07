@@ -10,9 +10,7 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
   // useContext: notification, reservations
   const { setNotification } = useContext(NotificationContext);
   const { reservations, setReservations } = useContext(ReservationContext);
-  const { setNotificationLogs, notificationLogs } = useContext(
-    NotificationLogsContext
-  );
+  const { setNotificationLogs } = useContext(NotificationLogsContext);
   const [hasNoteChanged, setHasNoteChanged] = useState(initialNote !== note);
 
   const [isFormDataDifferent, setIsFormDataDifferent] = useState(

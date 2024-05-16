@@ -144,6 +144,27 @@ const SearchResults = ({
         }
       });
   };
+  const getPagination = (totalPages, currentPage) => {
+    const visiblePages = 3;
+    let pages = [];
+
+    if (totalPages <= visiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= visiblePages - 1) {
+        pages = [1, 2, 3, "...", totalPages];
+      } else if (currentPage >= totalPages - 1) {
+        pages = [1, "...", totalPages - 2, totalPages - 1, totalPages];
+      } else {
+        pages = [1, "...", currentPage, "...", totalPages];
+      }
+    }
+
+    return pages;
+  };
+
   if (clients.length === 0 && searchResults.length === 0)
     return (
       <div>
@@ -180,7 +201,7 @@ const SearchResults = ({
             {"<"}
           </PageNumber>
           {totalNumberOfPagesAllClients > 1 &&
-            Array(3)
+            Array(totalNumberOfPagesAllClients)
               .fill(0)
               .map((_, index) => index + 1)
               .map((pageNumber) => {

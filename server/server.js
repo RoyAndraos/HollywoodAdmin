@@ -42,7 +42,7 @@ const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
 const verifyToken = async (req, res, next) => {
   const token = req.headers.authorization;
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
+    const client = await connectToMongo();
     await client.connect();
     const db = client.db("HollywoodBarberShop");
     const isRevoked = await db.collection("revoked").findOne({ token: token });

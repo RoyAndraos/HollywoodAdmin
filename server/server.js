@@ -4,36 +4,7 @@ const { v4: uuid } = require("uuid");
 // const { initialAvailability } = require("./helpers");
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-//TOKEN STUFF
-//-------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------
-const jwt = require("jsonwebtoken");
-const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
-const verifyToken = async (req, res, next) => {
-  const token = req.headers.authorization;
-  const client = new MongoClient(MONGO_URI_RALF);
-  try {
-    client.connect();
-    const db = client.db("HollywoodBarberShop");
-    const isRevoked = await db.collection("revoked").findOne({ token: token });
-    if (isRevoked) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-  } catch (err) {
-    console.error("Error verifying token:", err);
-  }
-  if (!token) {
-    return res.status(401).json({ message: "Token is missing" });
-  }
-  jwt.verify(token, JWT_TOKEN_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-    // Token is valid; user identification is available in decoded.userId
-    req.userId = decoded.userId;
-    next();
-  });
-};
+
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 //MONGO STUFF
@@ -73,7 +44,34 @@ const startChangeStream = (io) => {
 };
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-
+//TOKEN STUFF
+//-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
+const jwt = require("jsonwebtoken");
+const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
+const verifyToken = async (req, res, next) => {
+  const token = req.headers.authorization;
+  try {
+    const db = client.db("HollywoodBarberShop");
+    const isRevoked = await db.collection("revoked").findOne({ token: token });
+    if (isRevoked) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+  } catch (err) {
+    console.error("Error verifying token:", err);
+  }
+  if (!token) {
+    return res.status(401).json({ message: "Token is missing" });
+  }
+  jwt.verify(token, JWT_TOKEN_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    // Token is valid; user identification is available in decoded.userId
+    req.userId = decoded.userId;
+    next();
+  });
+};
 //TWILIO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
@@ -88,10 +86,8 @@ const twilioClient = require("twilio")(accountSid, authToken);
 //-------------------------------------------------------------------------------------------------------------
 
 const getClientByName = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const name = req.params.name.toLowerCase();
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = { fname: { $regex: name.toLowerCase(), $options: "i" } };
     const clients = await db.collection("Clients").find(query).toArray();
@@ -105,12 +101,10 @@ const getClientByName = async (req, res) => {
 };
 
 const getClients = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const page = parseInt(req.query.page); // Current page number, default to 1
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
   const skip = (page - 1) * limit; // Calculate skip value
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const clients = await db
       .collection("Clients")
@@ -133,10 +127,8 @@ const getClients = async (req, res) => {
 };
 
 const getClientNotes = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.params.client_id;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const clientData = await db.collection("Clients").findOne({ _id: _id });
     res.status(200).json({ status: 200, data: clientData.note });
@@ -149,14 +141,12 @@ const getClientNotes = async (req, res) => {
 };
 
 const getSearchResults = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const searchTerm = req.params.searchTerm;
   const page = parseInt(req.query.page); // Current page number, default to 1
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
   const skip = (page - 1) * limit; // Calculate skip value
 
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     let query = {};
 
@@ -193,9 +183,7 @@ const getSearchResults = async (req, res) => {
 };
 
 const getUserInfo = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const userInfo = await db.collection("admin").find().toArray();
     const reservations = await db.collection("reservations").find().toArray();
@@ -260,9 +248,8 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   const body = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("revoked").insertOne(body);
     res.status(200).json({ status: 200, message: "success" });
@@ -275,12 +262,10 @@ const logout = async (req, res) => {
 };
 
 const addReservation = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const reservation = req.body.reservation;
   const _id = uuid();
   const client_id = uuid();
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
 
     //check if client exists
@@ -408,10 +393,8 @@ ID: ${_id}
 };
 
 const addTimeOff = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { startDate, endDate, _id } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").updateOne(
       {
@@ -437,7 +420,7 @@ const addTimeOff = async (req, res) => {
 
 const uploadImage = async (req, res) => {
   const _id = uuid();
-  const client = new MongoClient(MONGO_URI_RALF);
+
   const fileSrc = req.body.src;
   const filename = req.body.filename;
   const imageInfo = {
@@ -446,7 +429,6 @@ const uploadImage = async (req, res) => {
     src: fileSrc,
   };
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     if (filename === "slideShow") {
       await db.collection("Images").insertOne(imageInfo);
@@ -533,11 +515,9 @@ const uploadImage = async (req, res) => {
 };
 
 const addBarber = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const barberInfo = req.body.barberInfo;
   const _id = uuid();
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const newBarber = {
       _id: _id,
@@ -567,9 +547,8 @@ const addBarber = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 const deleteService = async (req, res) => {
   const { _id } = req.params;
-  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("services").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
@@ -581,10 +560,8 @@ const deleteService = async (req, res) => {
 };
 
 const deleteBarberProfile = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { barberId } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").deleteOne({ _id: barberId });
     res.status(200).json({ status: 200, message: "success" });
@@ -597,9 +574,7 @@ const deleteBarberProfile = async (req, res) => {
 };
 
 const deleteImage = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = { _id: req.params._id };
     await db.collection("Images").deleteOne(query);
@@ -612,10 +587,8 @@ const deleteImage = async (req, res) => {
 };
 
 const deleteTimeOff = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { _id, startDate, endDate } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = {
       _id: _id,
@@ -638,13 +611,11 @@ const deleteTimeOff = async (req, res) => {
 };
 
 const deleteReservation = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.body.res_id;
   const client_id = req.body.client_id;
   const clientNumber = req.body.clientNumber;
   const sendSMS = req.body.sendSMS;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("reservations").deleteOne({ _id: _id });
     await db
@@ -671,10 +642,8 @@ const deleteReservation = async (req, res) => {
 };
 
 const deleteClient = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.params._id;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db.collection("Clients").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
@@ -693,10 +662,8 @@ const deleteClient = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 
 const updateAvailability = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { _id, availability } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { availability: availability } };
@@ -710,10 +677,8 @@ const updateAvailability = async (req, res) => {
 };
 
 const updateDailyAvailability = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { _id, dailyAvailability } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { dailyAvailability: dailyAvailability } };
@@ -727,10 +692,8 @@ const updateDailyAvailability = async (req, res) => {
 };
 
 const updateReservation = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const reservation = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = { _id: reservation._id };
     const newValues = {
@@ -755,10 +718,8 @@ const updateReservation = async (req, res) => {
 };
 
 const updateBarberProfile = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { barberId, barberInfo } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = { _id: barberId };
     const newValues = {
@@ -781,10 +742,8 @@ const updateBarberProfile = async (req, res) => {
 };
 
 const updateText = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { textId, content, french } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db
       .collection("web_text")
@@ -802,12 +761,10 @@ const updateText = async (req, res) => {
 };
 
 const updateClient = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const _id = req.body[1];
   const field = Object.keys(req.body[0])[0];
   const value = Object.values(req.body[0])[0];
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { [field]: value } };
@@ -822,11 +779,9 @@ const updateClient = async (req, res) => {
 };
 
 const updateServices = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const serviceEdit = req.body[1];
   const role = req.body[0];
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     if (role === "admin") {
       await db
@@ -850,10 +805,8 @@ const updateServices = async (req, res) => {
 };
 
 const updateClientNote = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   const { client_id, note } = req.body;
   try {
-    await client.connect();
     const db = client.db("HollywoodBarberShop");
     await db
       .collection("Clients")

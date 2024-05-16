@@ -27,6 +27,11 @@ const Clients = () => {
     )
       .then((res) => res.json())
       .then((data) => {
+        if (data.data.length === 0) {
+          setLoading(false);
+          setSearchResults("No results found");
+          return;
+        }
         const newClientsArray = data.data.map((client) => ({
           ...client,
           edit: {
@@ -37,6 +42,7 @@ const Clients = () => {
             note: false,
           },
         }));
+
         setTotalNumberOfPagesSearch(data.numberOfPages);
         setLoading(false);
         setSearchResults(newClientsArray);
@@ -56,6 +62,11 @@ const Clients = () => {
     )
       .then((res) => res.json())
       .then((data) => {
+        if (data.data.length === 0) {
+          setLoading(false);
+          setSearchResults("No results found");
+          return;
+        }
         const newClientsArray = data.data.map((client) => ({
           ...client,
           edit: {

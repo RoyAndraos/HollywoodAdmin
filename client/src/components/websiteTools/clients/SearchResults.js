@@ -144,14 +144,6 @@ const SearchResults = ({
         }
       });
   };
-
-  let currentArrayOfPageNumbers = Array(3).fill(0);
-  let j = 0;
-  for (let i = 1; i > -2; i--) {
-    currentArrayOfPageNumbers[j] = page - i;
-    j++;
-  }
-
   if (clients.length === 0 && searchResults.length === 0)
     return (
       <div>
@@ -187,24 +179,23 @@ const SearchResults = ({
           >
             {"<"}
           </PageNumber>
-          {totalNumberOfPagesAllClients > 2 &&
-            currentArrayOfPageNumbers.map((pageNumber) => {
-              if (pageNumber < 1 || pageNumber > totalNumberOfPagesAllClients) {
-                return <></>;
-              }
-
-              return (
-                <PageNumber
-                  key={pageNumber}
-                  onClick={() => {
-                    setPage(pageNumber);
-                  }}
-                  $selectedPage={pageNumber === page}
-                >
-                  {pageNumber}
-                </PageNumber>
-              );
-            })}{" "}
+          {totalNumberOfPagesAllClients > 1 &&
+            Array(3)
+              .fill(0)
+              .map((_, index) => index + 1)
+              .map((pageNumber) => {
+                return (
+                  <PageNumber
+                    key={pageNumber}
+                    onClick={() => {
+                      setPage(pageNumber);
+                    }}
+                    $selectedPage={pageNumber === page}
+                  >
+                    {pageNumber}
+                  </PageNumber>
+                );
+              })}{" "}
           <PageNumber
             onClick={() => {
               setPage(page + 1);

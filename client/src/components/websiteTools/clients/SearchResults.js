@@ -43,6 +43,7 @@ const SearchResults = ({
     )
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         const newClientsArray = data.data.map((client) => ({
           ...client,
           edit: {

@@ -10,10 +10,9 @@ const { v4: uuid } = require("uuid");
 //MONGO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-const { connectToMongo } = require("./mongodb");
 // Define a function to start the Change Stream
 const startChangeStream = async (io) => {
-  const client = await connectToMongo();
+  const client = new MongoClient(MONGO_URI_RALF);
   const db = client.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
 
@@ -42,7 +41,7 @@ const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
 const verifyToken = async (req, res, next) => {
   const token = req.headers.authorization;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     await client.connect();
     const db = client.db("HollywoodBarberShop");
     const isRevoked = await db.collection("revoked").findOne({ token: token });
@@ -82,7 +81,7 @@ const twilioClient = require("twilio")(accountSid, authToken);
 const getClientByName = async (req, res) => {
   const name = req.params.name.toLowerCase();
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { fname: { $regex: name.toLowerCase(), $options: "i" } };
     const clients = await db.collection("Clients").find(query).toArray();
@@ -90,6 +89,8 @@ const getClientByName = async (req, res) => {
     res.status(200).json({ status: 200, data: clients });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -98,7 +99,7 @@ const getClients = async (req, res) => {
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
   const skip = (page - 1) * limit; // Calculate skip value
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const clients = await db
       .collection("Clients")
@@ -115,19 +116,23 @@ const getClients = async (req, res) => {
   } catch (err) {
     console.error("Error getting clients:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const getClientNotes = async (req, res) => {
   const _id = req.params.client_id;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const clientData = await db.collection("Clients").findOne({ _id: _id });
     res.status(200).json({ status: 200, data: clientData.note });
   } catch (err) {
     console.error("Error getting client notes:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -138,7 +143,7 @@ const getSearchResults = async (req, res) => {
   const skip = (page - 1) * limit; // Calculate skip value
 
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     let query = {};
 
@@ -169,12 +174,14 @@ const getSearchResults = async (req, res) => {
       .json({ status: 200, data: clients, numberOfPages: numberOfPages });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const getUserInfo = async (req, res) => {
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const userInfo = await db.collection("admin").find().toArray();
     const reservations = await db.collection("reservations").find().toArray();
@@ -196,6 +203,8 @@ const getUserInfo = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 //-------------------------------------------------------------------------------------------------------------
@@ -232,6 +241,8 @@ const login = async (req, res) => {
   } catch (err) {
     console.error("Error logging in:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -239,13 +250,15 @@ const logout = async (req, res) => {
   const body = req.body;
 
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("revoked").insertOne(body);
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     console.error("Error logging out:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -254,7 +267,7 @@ const addReservation = async (req, res) => {
   const _id = uuid();
   const client_id = uuid();
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
 
     //check if client exists
@@ -376,13 +389,15 @@ ID: ${_id}
     }
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const addTimeOff = async (req, res) => {
   const { startDate, endDate, _id } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").updateOne(
       {
@@ -400,6 +415,8 @@ const addTimeOff = async (req, res) => {
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -414,7 +431,7 @@ const uploadImage = async (req, res) => {
     src: fileSrc,
   };
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     if (filename === "slideShow") {
       await db.collection("Images").insertOne(imageInfo);
@@ -495,6 +512,8 @@ const uploadImage = async (req, res) => {
   } catch (err) {
     console.error("Error updating image:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -502,7 +521,7 @@ const addBarber = async (req, res) => {
   const barberInfo = req.body.barberInfo;
   const _id = uuid();
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const newBarber = {
       _id: _id,
@@ -520,6 +539,8 @@ const addBarber = async (req, res) => {
   } catch (err) {
     console.error("Error adding barber:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 //-------------------------------------------------------------------------------------------------------------
@@ -532,44 +553,50 @@ const deleteService = async (req, res) => {
   const { _id } = req.params;
 
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("services").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
   } catch {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const deleteBarberProfile = async (req, res) => {
   const { barberId } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").deleteOne({ _id: barberId });
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     console.error("Error deleting barber profile:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const deleteImage = async (req, res) => {
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: req.params._id };
     await db.collection("Images").deleteOne(query);
     res.status(200).json({ status: 200, data: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const deleteTimeOff = async (req, res) => {
   const { _id, startDate, endDate } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = {
       _id: _id,
@@ -586,6 +613,8 @@ const deleteTimeOff = async (req, res) => {
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -595,7 +624,7 @@ const deleteReservation = async (req, res) => {
   const clientNumber = req.body.clientNumber;
   const sendSMS = req.body.sendSMS;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("reservations").deleteOne({ _id: _id });
     await db
@@ -616,18 +645,22 @@ const deleteReservation = async (req, res) => {
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const deleteClient = async (req, res) => {
   const _id = req.params._id;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("Clients").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -641,7 +674,7 @@ const deleteClient = async (req, res) => {
 const updateAvailability = async (req, res) => {
   const { _id, availability } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { availability: availability } };
@@ -649,13 +682,15 @@ const updateAvailability = async (req, res) => {
     res.status(200).json({ status: 200, data: result });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const updateDailyAvailability = async (req, res) => {
   const { _id, dailyAvailability } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { dailyAvailability: dailyAvailability } };
@@ -663,13 +698,15 @@ const updateDailyAvailability = async (req, res) => {
     res.status(200).json({ status: 200, data: dailyAvailability });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const updateReservation = async (req, res) => {
   const reservation = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: reservation._id };
     const newValues = {
@@ -688,13 +725,15 @@ const updateReservation = async (req, res) => {
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const updateBarberProfile = async (req, res) => {
   const { barberId, barberInfo } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: barberId };
     const newValues = {
@@ -711,13 +750,15 @@ const updateBarberProfile = async (req, res) => {
   } catch (err) {
     console.error("Error updating barber profile:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const updateText = async (req, res) => {
   const { textId, content, french } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db
       .collection("web_text")
@@ -729,6 +770,8 @@ const updateText = async (req, res) => {
   } catch (err) {
     console.error("Error updating text:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -737,7 +780,7 @@ const updateClient = async (req, res) => {
   const field = Object.keys(req.body[0])[0];
   const value = Object.values(req.body[0])[0];
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { [field]: value } };
@@ -746,6 +789,8 @@ const updateClient = async (req, res) => {
   } catch (err) {
     console.error("Error updating client:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -753,7 +798,7 @@ const updateServices = async (req, res) => {
   const serviceEdit = req.body[1];
   const role = req.body[0];
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     if (role === "admin") {
       await db
@@ -771,13 +816,15 @@ const updateServices = async (req, res) => {
   } catch (err) {
     console.error("Error updating services:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
 const updateClientNote = async (req, res) => {
   const { client_id, note } = req.body;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db
       .collection("Clients")
@@ -786,6 +833,8 @@ const updateClientNote = async (req, res) => {
   } catch (err) {
     console.error("Error updating client note:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 //-------------------------------------------------------------------------------------------------------------

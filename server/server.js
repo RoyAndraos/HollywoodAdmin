@@ -11,7 +11,6 @@ const { v4: uuid } = require("uuid");
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 const { connectToMongo } = require("./mongodb");
-
 // Define a function to start the Change Stream
 const startChangeStream = async (io) => {
   const client = await connectToMongo();
@@ -43,12 +42,15 @@ const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
 const verifyToken = async (req, res, next) => {
   const token = req.headers.authorization;
   try {
-    const client = await connectToMongo();
+    const client = new MongoClient(MONGO_URI_RALF);
+    await client.connect();
     const db = client.db("HollywoodBarberShop");
     const isRevoked = await db.collection("revoked").findOne({ token: token });
     if (isRevoked) {
+      await client.close();
       return res.status(401).json({ message: "Invalid credentials" });
     }
+    await client.close(); // Close connection after checking token
   } catch (err) {
     console.error("Error verifying token:", err);
   }

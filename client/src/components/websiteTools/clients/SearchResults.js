@@ -166,6 +166,12 @@ const SearchResults = ({
     return pages;
   };
 
+  const paginationAllClients = getPagination(
+    totalNumberOfPagesAllClients,
+    page
+  );
+  const paginationSearch = getPagination(totalNumberOfPagesSearch, pageSearch);
+
   if (clients.length === 0 && searchResults.length === 0)
     return (
       <div>
@@ -201,23 +207,22 @@ const SearchResults = ({
           >
             {"<"}
           </PageNumber>
-          {totalNumberOfPagesAllClients > 1 &&
-            Array(totalNumberOfPagesAllClients)
-              .fill(0)
-              .map((_, index) => index + 1)
-              .map((pageNumber) => {
-                return (
-                  <PageNumber
-                    key={pageNumber}
-                    onClick={() => {
-                      setPage(pageNumber);
-                    }}
-                    $selectedPage={pageNumber === page}
-                  >
-                    {pageNumber}
-                  </PageNumber>
-                );
-              })}{" "}
+          {paginationAllClients.map((pageNumber, index) => {
+            if (pageNumber === "...") {
+              return <PageNumber key={index}>...</PageNumber>;
+            }
+            return (
+              <PageNumber
+                key={pageNumber}
+                onClick={() => {
+                  setPage(pageNumber);
+                }}
+                $selectedPage={pageNumber === page}
+              >
+                {pageNumber}
+              </PageNumber>
+            );
+          })}
           <PageNumber
             onClick={() => {
               setPage(page + 1);
@@ -315,29 +320,28 @@ const SearchResults = ({
           <PaginationWrapper>
             <PageNumber
               onClick={() => {
-                setPage(pageSearch - 1);
+                setPageSearch(pageSearch - 1);
               }}
               disabled={pageSearch === 1}
             >
               {"<"}
             </PageNumber>
-            {totalNumberOfPagesSearch > 1 &&
-              Array(totalNumberOfPagesSearch)
-                .fill(0)
-                .map((_, index) => index + 1)
-                .map((pageNumber) => {
-                  return (
-                    <PageNumber
-                      key={pageNumber}
-                      onClick={() => {
-                        setPageSearch(pageNumber);
-                      }}
-                      $selectedPage={pageNumber === pageSearch}
-                    >
-                      {pageNumber}
-                    </PageNumber>
-                  );
-                })}{" "}
+            {paginationSearch.map((pageNumber, index) => {
+              if (pageNumber === "...") {
+                return <PageNumber key={index}>...</PageNumber>;
+              }
+              return (
+                <PageNumber
+                  key={pageNumber}
+                  onClick={() => {
+                    setPageSearch(pageNumber);
+                  }}
+                  $selectedPage={pageNumber === pageSearch}
+                >
+                  {pageNumber}
+                </PageNumber>
+              );
+            })}
             <PageNumber
               onClick={() => {
                 setPageSearch(pageSearch + 1);

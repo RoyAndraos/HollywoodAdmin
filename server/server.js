@@ -83,8 +83,9 @@ const twilioClient = require("twilio")(accountSid, authToken);
 
 const getClientByName = async (req, res) => {
   const name = req.params.name.toLowerCase();
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { fname: { $regex: name.toLowerCase(), $options: "i" } };
     const clients = await db.collection("Clients").find(query).toArray();
@@ -101,8 +102,9 @@ const getClients = async (req, res) => {
   const page = parseInt(req.query.page); // Current page number, default to 1
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
   const skip = (page - 1) * limit; // Calculate skip value
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const clients = await db
       .collection("Clients")
@@ -126,8 +128,9 @@ const getClients = async (req, res) => {
 
 const getClientNotes = async (req, res) => {
   const _id = req.params.client_id;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const clientData = await db.collection("Clients").findOne({ _id: _id });
     res.status(200).json({ status: 200, data: clientData.note });
@@ -144,9 +147,9 @@ const getSearchResults = async (req, res) => {
   const page = parseInt(req.query.page); // Current page number, default to 1
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
   const skip = (page - 1) * limit; // Calculate skip value
+  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     let query = {};
 
@@ -183,8 +186,8 @@ const getSearchResults = async (req, res) => {
 };
 
 const getUserInfo = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const userInfo = await db.collection("admin").find().toArray();
     const reservations = await db.collection("reservations").find().toArray();
@@ -244,16 +247,14 @@ const login = async (req, res) => {
   } catch (err) {
     console.error("Error logging in:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const logout = async (req, res) => {
   const body = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("revoked").insertOne(body);
     res.status(200).json({ status: 200, message: "success" });
@@ -268,9 +269,9 @@ const logout = async (req, res) => {
 const addReservation = async (req, res) => {
   const reservation = req.body.reservation;
   const _id = uuid();
+  const client = new MongoClient(MONGO_URI_RALF);
   const client_id = uuid();
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
 
     //check if client exists
@@ -399,8 +400,9 @@ ID: ${_id}
 
 const addTimeOff = async (req, res) => {
   const { startDate, endDate, _id } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").updateOne(
       {
@@ -433,8 +435,9 @@ const uploadImage = async (req, res) => {
     filename: filename,
     src: fileSrc,
   };
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     if (filename === "slideShow") {
       await db.collection("Images").insertOne(imageInfo);
@@ -523,8 +526,9 @@ const uploadImage = async (req, res) => {
 const addBarber = async (req, res) => {
   const barberInfo = req.body.barberInfo;
   const _id = uuid();
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const newBarber = {
       _id: _id,
@@ -554,9 +558,9 @@ const addBarber = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 const deleteService = async (req, res) => {
   const { _id } = req.params;
+  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("services").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
@@ -569,8 +573,9 @@ const deleteService = async (req, res) => {
 
 const deleteBarberProfile = async (req, res) => {
   const { barberId } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").deleteOne({ _id: barberId });
     res.status(200).json({ status: 200, message: "success" });
@@ -583,8 +588,9 @@ const deleteBarberProfile = async (req, res) => {
 };
 
 const deleteImage = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: req.params._id };
     await db.collection("Images").deleteOne(query);
@@ -598,8 +604,9 @@ const deleteImage = async (req, res) => {
 
 const deleteTimeOff = async (req, res) => {
   const { _id, startDate, endDate } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = {
       _id: _id,
@@ -625,9 +632,10 @@ const deleteReservation = async (req, res) => {
   const _id = req.body.res_id;
   const client_id = req.body.client_id;
   const clientNumber = req.body.clientNumber;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   const sendSMS = req.body.sendSMS;
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("reservations").deleteOne({ _id: _id });
     await db
@@ -655,8 +663,9 @@ const deleteReservation = async (req, res) => {
 
 const deleteClient = async (req, res) => {
   const _id = req.params._id;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db.collection("Clients").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
@@ -676,8 +685,9 @@ const deleteClient = async (req, res) => {
 
 const updateAvailability = async (req, res) => {
   const { _id, availability } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { availability: availability } };
@@ -692,8 +702,9 @@ const updateAvailability = async (req, res) => {
 
 const updateDailyAvailability = async (req, res) => {
   const { _id, dailyAvailability } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { dailyAvailability: dailyAvailability } };
@@ -708,8 +719,9 @@ const updateDailyAvailability = async (req, res) => {
 
 const updateReservation = async (req, res) => {
   const reservation = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: reservation._id };
     const newValues = {
@@ -735,8 +747,9 @@ const updateReservation = async (req, res) => {
 
 const updateBarberProfile = async (req, res) => {
   const { barberId, barberInfo } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: barberId };
     const newValues = {
@@ -760,8 +773,9 @@ const updateBarberProfile = async (req, res) => {
 
 const updateText = async (req, res) => {
   const { textId, content, french } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db
       .collection("web_text")
@@ -782,8 +796,9 @@ const updateClient = async (req, res) => {
   const _id = req.body[1];
   const field = Object.keys(req.body[0])[0];
   const value = Object.values(req.body[0])[0];
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { [field]: value } };
@@ -800,8 +815,9 @@ const updateClient = async (req, res) => {
 const updateServices = async (req, res) => {
   const serviceEdit = req.body[1];
   const role = req.body[0];
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     if (role === "admin") {
       await db
@@ -826,8 +842,9 @@ const updateServices = async (req, res) => {
 
 const updateClientNote = async (req, res) => {
   const { client_id, note } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const client = new MongoClient(MONGO_URI_RALF);
     const db = client.db("HollywoodBarberShop");
     await db
       .collection("Clients")

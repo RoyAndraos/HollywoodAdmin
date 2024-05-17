@@ -11,7 +11,7 @@ const { v4: uuid } = require("uuid");
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 const { MongoClient } = require("mongodb");
-
+const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
 // Define a function to start the Change Stream
 
 const startChangeStream = async (io) => {

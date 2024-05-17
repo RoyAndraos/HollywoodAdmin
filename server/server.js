@@ -144,9 +144,9 @@ const getClientNotes = async (req, res) => {
 
 const getSearchResults = async (req, res) => {
   const searchTerm = req.params.searchTerm;
-  const page = parseInt(req.query.page); // Current page number, default to 1
-  const limit = parseInt(req.query.limit); // Number of items per page, default to 10
-  const skip = (page - 1) * limit; // Calculate skip value
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
+  const skip = (page - 1) * limit;
   const client = new MongoClient(MONGO_URI_RALF);
 
   try {

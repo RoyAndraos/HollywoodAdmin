@@ -43,7 +43,6 @@ const SearchResults = ({
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         const newClientsArray = data.data.map((client) => ({
           ...client,
           edit: {
@@ -154,12 +153,20 @@ const SearchResults = ({
         pages.push(i);
       }
     } else {
-      if (currentPage <= visiblePages - 1) {
+      if (currentPage <= 2) {
         pages = [1, 2, 3, "...", totalPages];
       } else if (currentPage >= totalPages - 1) {
         pages = [1, "...", totalPages - 2, totalPages - 1, totalPages];
       } else {
-        pages = [1, "...", currentPage, "...", totalPages];
+        pages = [
+          1,
+          "...",
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          "...",
+          totalPages,
+        ];
       }
     }
 
@@ -209,7 +216,14 @@ const SearchResults = ({
           </PageNumber>
           {paginationAllClients.map((pageNumber, index) => {
             if (pageNumber === "...") {
-              return <PageNumber key={index}>...</PageNumber>;
+              return (
+                <PageNumber
+                  style={{ border: "none", fontWeight: 700 }}
+                  key={index + "..."}
+                >
+                  ...
+                </PageNumber>
+              );
             }
             return (
               <PageNumber
@@ -328,7 +342,14 @@ const SearchResults = ({
             </PageNumber>
             {paginationSearch.map((pageNumber, index) => {
               if (pageNumber === "...") {
-                return <PageNumber key={index}>...</PageNumber>;
+                return (
+                  <PageNumber
+                    key={index + "..."}
+                    style={{ border: "none", fontWeight: 700 }}
+                  >
+                    ...
+                  </PageNumber>
+                );
               }
               return (
                 <PageNumber

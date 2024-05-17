@@ -26,7 +26,10 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     const editedTime = editTimeTo24(time, toEdit);
     const editedDate = editDatetoCalendarFormat(reservation.date);
     const constructedDate = `${editedDate}T${editedTime}`;
-    const endTime = getEndTime(constructedDate, reservation.service.duration);
+    const endTime = getEndTime(
+      constructedDate,
+      reservation.slot.length.toString()
+    );
     const endTimeDate = new Date(endTime);
     const startTimeDate = new Date(constructedDate);
     return {
@@ -126,7 +129,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       );
       agendaDate[0].innerHTML = `${formattedFirstDate} - ${formattedLastDate}`;
     }
-  }, [currentView]);
+  }, [currentView, currentDay]);
   useEffect(() => {
     const dayViewSlots = document.querySelectorAll(
       ".rbc-day-slot .rbc-timeslot-group .rbc-time-slot"

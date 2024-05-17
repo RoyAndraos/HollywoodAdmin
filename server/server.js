@@ -10,7 +10,10 @@ const { v4: uuid } = require("uuid");
 //MONGO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
+const { MongoClient } = require("mongodb");
+
 // Define a function to start the Change Stream
+
 const startChangeStream = async (io) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const db = client.db("HollywoodBarberShop");

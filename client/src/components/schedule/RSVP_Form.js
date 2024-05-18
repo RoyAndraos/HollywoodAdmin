@@ -102,7 +102,6 @@ const AddReservation = ({
       number: formattedClientNumber,
       sendSMS: sendSMS,
     };
-
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {
@@ -133,7 +132,6 @@ const AddReservation = ({
     setError(true);
     document.getElementById("clientname").value = "";
   };
-
   //saves input data to state and checks for errors
   const handleChange = (e, name) => {
     e.preventDefault();

@@ -385,6 +385,12 @@ const SearchResults = ({
                     handleSaveChange={handleSaveChange}
                     handleEditToggle={handleEditToggle}
                   />
+                  <StyledLabel>Last Name</StyledLabel>
+                  <ClientLastName
+                    client={client}
+                    handleSaveChange={handleSaveChange}
+                    handleEditToggle={handleEditToggle}
+                  />
                   <StyledLabel>Email</StyledLabel>
                   <ClientEmail
                     client={client}

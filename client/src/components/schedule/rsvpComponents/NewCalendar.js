@@ -129,7 +129,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       );
       agendaDate[0].innerHTML = `${formattedFirstDate} - ${formattedLastDate}`;
     }
-  }, [currentView, currentDay]);
+  }, [currentView, currentDay, reservations]);
   useEffect(() => {
     const dayViewSlots = document.querySelectorAll(
       ".rbc-day-slot .rbc-timeslot-group .rbc-time-slot"

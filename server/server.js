@@ -271,7 +271,6 @@ const addReservation = async (req, res) => {
   const _id = uuid();
   const client = new MongoClient(MONGO_URI_RALF);
   const client_id = uuid();
-  console.log("reservation:", reservation);
   try {
     const db = client.db("HollywoodBarberShop");
 

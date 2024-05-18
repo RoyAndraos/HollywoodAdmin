@@ -34,14 +34,7 @@ const AddReservation = ({
   const [overLappingError, setOverLappingError] = useState(false);
   const [sendSMS, setSendSMS] = useState(true);
   const { isMobile } = useContext(IsMobileContext);
-  useEffect(() => {
-    // Update input fields when existing client is selected
-    if (existingClient.length > 0) {
-      setClientName(existingClient.fname + " " + existingClient.lname);
-      setClientEmail(existingClient.email);
-      setClientNumber(existingClient.number);
-    }
-  }, [existingClient]);
+
   //check if barber is selected
   useEffect(() => {
     if (Object.keys(selectedBarberForm).length === 0) {
@@ -97,10 +90,10 @@ const AddReservation = ({
       slot: selectedSlot,
       service: selectedService,
       fname: clientName.split(" ")[0],
-      lname: clientName.split(" ")[1] || "",
       email: clientEmail,
       number: formattedClientNumber,
       sendSMS: sendSMS,
+      lname: clientName.split(" ")[1] || "",
     };
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
@@ -220,6 +213,7 @@ const AddReservation = ({
         break;
     }
   };
+
   //saves date to state
   const handleDateChange = (date) => {
     setSelectedDate(date);

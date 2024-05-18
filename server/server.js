@@ -392,6 +392,7 @@ ID: ${_id}
       });
     }
   } catch (err) {
+    console.log("Error adding reservation:", err);
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     await client.close();

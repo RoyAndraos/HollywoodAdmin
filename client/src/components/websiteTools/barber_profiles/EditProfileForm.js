@@ -8,6 +8,7 @@ const EditProfileForm = ({
   handleToggleEditMode,
   barber,
   newBarber,
+  setEditModes,
 }) => {
   const [text, setText] = useState("Edit");
   useEffect(() => {
@@ -91,6 +92,7 @@ const EditProfileForm = ({
             filename={barber._id}
             height={"200px"}
             initialImage={barber.picture}
+            setEditModes={setEditModes}
           />
         </div>
       )}

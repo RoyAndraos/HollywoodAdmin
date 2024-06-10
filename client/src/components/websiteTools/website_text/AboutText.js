@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import { TextContext } from "../../contexts/TextContext";
 import { Title } from "../website_images/SlideShowImages";
-import { Wrapper, SaveButton, Language, Line } from "./SlideShowText";
 import { StyledInput } from "./UnderMenuText";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";
+import styled from "styled-components";
 const AboutText = () => {
   const { text, setText } = useContext(TextContext);
   const { setNotification } = useContext(NotificationContext);
@@ -85,5 +85,57 @@ const AboutText = () => {
     </Wrapper>
   );
 };
+
+export const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  justify-content: space-evenly;
+  align-items: center;
+  min-height: 30vh;
+  margin-top: 2rem;
+`;
+
+export const SaveButton = styled.button`
+  background-color: #035e3f;
+  color: whitesmoke;
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+  width: 10rem;
+  height: 3rem;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    background-color: whitesmoke;
+    color: #035e3f;
+    border: 2px solid #035e3f;
+    cursor: pointer;
+  }
+  &:disabled {
+    background-color: grey;
+    color: whitesmoke;
+    border: 2px solid transparent;
+    cursor: default;
+  }
+`;
+
+export const Language = styled.p`
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  text-align: center;
+  color: #035e3f;
+`;
+
+export const Line = styled.div`
+  width: 60%;
+  border-bottom: 2px solid #035e3f;
+`;
 
 export default AboutText;

@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { TextContext } from "../../contexts/TextContext";
 import { Title } from "../website_images/SlideShowImages";
-import { Wrapper, SaveButton, Language, Line } from "./SlideShowText";
+import { Wrapper, SaveButton, Language, Line } from "./AboutText";
 import styled from "styled-components";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";

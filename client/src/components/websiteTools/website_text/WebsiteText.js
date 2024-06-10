@@ -2,11 +2,9 @@ import React from "react";
 import { styled } from "styled-components";
 import AboutText from "./AboutText";
 import UnderMenuText from "./UnderMenuText";
-import SlideShowText from "./SlideShowText";
 const WebsiteText = () => {
   return (
     <Wrapper>
-      <SlideShowText />
       <UnderMenuText />
       <AboutText />
     </Wrapper>

@@ -13,6 +13,7 @@ const BarberProfiles = () => {
   const [barberInfo, setBarberInfo] = useState({});
   const [newBarber, setNewBarber] = useState({});
   const { role } = useContext(LoginRoleContext);
+
   const handleChange = (key, value) => {
     setBarberInfo((prevInfo) => ({ ...prevInfo, [key]: value }));
   };
@@ -151,6 +152,7 @@ const BarberProfiles = () => {
                   handleToggleEditMode={handleToggleEditMode}
                   barber={barber}
                   key={"edit" + barber._id}
+                  setEditModes={setEditModes}
                 />
               ) : (
                 // Render Display Mode
@@ -205,6 +207,7 @@ const BarberProfiles = () => {
               handleToggleEditMode={handleToggleEditMode}
               barber={userInfo[1]}
               key={"edit" + userInfo[1]._id}
+              setEditModes={setEditModes}
             />
           ) : (
             // Render Display Mode

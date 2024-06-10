@@ -39,15 +39,6 @@ const ToolBar = ({ selectedOption, setSelectedOption }) => {
       )}
       {role === "admin" && (
         <StyledNavButton
-          key={"images"}
-          onClick={() => setSelectedOption("images")}
-          $isselected={selectedOption === "images" ? "true" : "false"}
-        >
-          Images
-        </StyledNavButton>
-      )}
-      {role === "admin" && (
-        <StyledNavButton
           key={"Clients"}
           onClick={() => setSelectedOption("clients")}
           $isselected={selectedOption === "clients" ? "true" : "false"}

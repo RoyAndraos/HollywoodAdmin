@@ -271,6 +271,7 @@ const addReservation = async (req, res) => {
   const _id = uuid();
   const client = new MongoClient(MONGO_URI_RALF);
   const client_id = uuid();
+  console.log(reservation.sendSMS);
   try {
     const db = client.db("HollywoodBarberShop");
 
@@ -306,7 +307,7 @@ const addReservation = async (req, res) => {
 
       //add reservation to db
       await db.collection("reservations").insertOne(reservationToSend);
-      if (reservation.sendSms === true) {
+      if (reservation.sendSMS === true) {
         // send message to client
         await twilioClient.messages.create({
           body: `Bonjour ${reservation.fname} ${
@@ -358,7 +359,8 @@ ID: ${_id}
 
       //add reservation to db
       await db.collection("reservations").insertOne(reservationToSend);
-      if (reservation.sendSms === true) {
+
+      if (reservation.sendSMS === true) {
         // send message to client
         await twilioClient.messages.create({
           body: `Bonjour ${reservation.fname} ${

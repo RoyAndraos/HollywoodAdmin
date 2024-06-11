@@ -370,7 +370,7 @@ ID: ${_id}
           } à ${reservation.slot[0].split("-")[1]}. Vous recevrez une ${
             reservation.service.name
           } pour ${reservation.service.price} CAD. ~${reservation.barber}
-  
+
   Hello ${reservation.fname} ${
             reservation.lname !== "" && reservation.lname
           }, your reservation at Hollywood Barbershop is confirmed for ${
@@ -380,7 +380,7 @@ ID: ${_id}
           } for ${reservation.service.price} CAD. ~${reservation.barber}
 
   ID: ${_id}
-  `,
+`,
           messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
           to: reservation.number,
         });

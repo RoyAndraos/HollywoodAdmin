@@ -44,7 +44,7 @@ const EditProfileForm = ({
           name="email"
           onChange={(e) => handleChange(e.target.name, e.target.value)}
         />
-        <StyledInput
+        <StyledTextArea
           type="text"
           key={"description" + barber._id}
           defaultValue={barber.description}
@@ -99,6 +99,15 @@ const EditProfileForm = ({
     </EditProfileWrapper>
   );
 };
+const StyledTextArea = styled.textarea`
+  width: 100%;
+  border: 2px solid #035e3f;
+  outline: none;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+`;
 
 const EditProfileWrapper = styled.div`
   display: flex;
@@ -148,9 +157,7 @@ const StyledInput = styled.input`
   font-size: 1.2rem;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
-  border-radius: 0.5rem;
   margin-bottom: 1rem;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.7);
 `;
 const SectionTitle = styled.h3`
   font-size: 1.5rem;

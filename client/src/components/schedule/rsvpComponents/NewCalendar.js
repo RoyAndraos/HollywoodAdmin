@@ -91,20 +91,22 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         element.style.width = "50%";
         element.style.zIndex = "100";
         element.style.left = "0%";
+        element.style.borderBottom = "1px solid white";
       } else {
         element.style.width = "50%";
         element.style.left = "50%";
         element.style.zIndex = "100";
+        element.style.backgroundColor = "#e539a1";
+        element.style.borderBottom = "1px solid white";
       }
     });
     const dayViewColor = document.querySelectorAll(
       ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-content .event-content-div"
     );
     dayViewColor.forEach((element) => {
-      if (element.innerHTML.includes("Ralf")) {
-        element.style.backgroundColor = "#70bd70";
+      if (element.innerHTML.includes("Ralph")) {
       } else {
-        element.style.backgroundColor = "green";
+        element.style.fontWeight = "bold";
       }
     });
 

@@ -70,7 +70,7 @@ const TimeSlotEdit = ({
           if (slot.available === true) {
             return slot.slot;
           } else {
-            return "";
+            return slot.slot;
           }
         });
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import SearchBar from "./SearchBar";
 import styled from "styled-components";
 import SearchResults from "./SearchResults";
@@ -11,8 +11,12 @@ const Clients = () => {
   const [loading, setLoading] = useState(false);
   const [pageSearch, setPageSearch] = useState(1); // Define page state
   const [totalNumberOfPagesSearch, setTotalNumberOfPagesSearch] = useState(0); // Define totalNumberOfPages state
+  const [clients, setClientsState] = useState([]);
   const token = Cookies.get("token");
-
+  // Wrap setClients with useCallback
+  const setClients = useCallback((clients) => {
+    setClientsState(clients);
+  }, []);
   useEffect(() => {
     const headers = {
       authorization: token,
@@ -80,6 +84,7 @@ const Clients = () => {
         setLoading(false);
         setTotalNumberOfPagesSearch(data.numberOfPages);
         setSearchResults(newClientsArray);
+        setClients(newClientsArray);
       });
   };
 
@@ -95,6 +100,8 @@ const Clients = () => {
         </div>
       ) : (
         <SearchResults
+          clients={clients}
+          setClients={setClients}
           searchResults={searchResults}
           setSearchResults={setSearchResults}
           totalNumberOfPagesSearch={totalNumberOfPagesSearch}

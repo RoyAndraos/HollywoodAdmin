@@ -283,18 +283,19 @@ export const BarberWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
-  border: 2px solid rgba(0, 0, 0, 0.5);
-  border-radius: 1rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+
+  border-width: 0 0 1px 0;
   margin-top: 1rem;
-  box-shadow: 0 0 10px black;
   position: relative;
+  min-height: 40vh;
   padding: 5rem 0 5rem 0;
 `;
 
 const BarberImage = styled.img`
-  width: 200px;
-  height: auto;
-  object-fit: contain;
+  width: 300px;
+  object-fit: cover;
+  border: 2px solid #035e3f;
 `;
 
 const AddBarber = styled.p`
@@ -317,7 +318,7 @@ const EditButton = styled.button`
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   border: 2px solid transparent;
-  border-radius: 0.5rem;
+  border-radius: 2px;
   padding: 0.5rem 1rem 0.5rem 1rem;
   transition: 0.3s ease-in-out;
   &:hover {
@@ -337,7 +338,7 @@ export const CancelButton = styled.button`
   font-size: 1.2rem;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
-  border-radius: 0.5rem;
+  border-radius: 2px;
   border: none;
   padding: 0.5rem 1rem 0.5rem 1rem;
   transition: 0.3s ease-in-out;

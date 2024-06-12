@@ -16,13 +16,14 @@ const SearchResults = ({
   totalNumberOfPagesSearch,
   pageSearch,
   setPageSearch,
+  clients,
+  setClients,
 }) => {
-  const [clients, setClients] = useState([]);
   const { setNotification } = useContext(NotificationContext);
-  const [page, setPage] = useState(1); // Define page state
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [totalNumberOfPagesAllClients, setTotalNumberOfPagesAllClients] =
-    useState(0); // Define totalNumberOfPages state
+    useState(0);
   const [areYouSure, setAreYouSure] = useState(
     clients.map((client) => {
       return {
@@ -30,7 +31,6 @@ const SearchResults = ({
       };
     })
   );
-
   useEffect(() => {
     const token = Cookies.get("token");
     const headers = {
@@ -57,7 +57,7 @@ const SearchResults = ({
         setLoading(false);
         setClients(newClientsArray);
       });
-  }, [page]);
+  }, [page, setClients]);
 
   // Function to toggle the edit state for a specific client
   const handleEditToggle = (clientId, field, e) => {

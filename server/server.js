@@ -271,7 +271,7 @@ const addReservation = async (req, res) => {
   const _id = uuid();
   const client = new MongoClient(MONGO_URI_RALF);
   const client_id = uuid();
-  console.log(reservation.sendSMS);
+
   try {
     const db = client.db("HollywoodBarberShop");
 
@@ -394,7 +394,7 @@ ID: ${_id}
       });
     }
   } catch (err) {
-    console.log("Error adding reservation:", err);
+    console.error("Error adding reservation:", err);
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     await client.close();

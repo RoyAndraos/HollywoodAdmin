@@ -8,7 +8,12 @@ import {
 } from "./SearchResults";
 import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
-const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
+const ClientNumber = ({
+  handleSaveChange,
+  handleEditToggle,
+  client,
+  isSearchResult,
+}) => {
   const initialNumber = client.number;
   const [editedNumber, setEditedNumber] = useState(initialNumber); // State to track edited name
   return (
@@ -26,15 +31,20 @@ const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
             <Cancel
               key={`edit-number-${client._id}`}
               onClick={(e) => {
-                handleEditToggle(client._id, "number", e);
+                handleEditToggle(client._id, "number", e, isSearchResult);
                 setEditedNumber(initialNumber);
               }}
             />
             {initialNumber !== editedNumber && client.edit.number && (
               <SaveChanges
                 onClick={(e) => {
-                  handleSaveChange(client._id, "number", editedNumber);
-                  handleEditToggle(client._id, "number", e);
+                  handleSaveChange(
+                    client._id,
+                    "number",
+                    editedNumber,
+                    isSearchResult
+                  );
+                  handleEditToggle(client._id, "number", e, isSearchResult);
                 }}
               />
             )}
@@ -45,7 +55,7 @@ const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
             <ToggleEdit
               key={`edit-number-${client._id}`}
               onClick={(e) => {
-                handleEditToggle(client._id, "number", e);
+                handleEditToggle(client._id, "number", e, isSearchResult);
               }}
             />
           </LabelInputEditWrapper>
@@ -62,15 +72,20 @@ const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
           <Cancel
             key={`edit-number-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "number", e);
+              handleEditToggle(client._id, "number", e, isSearchResult);
               setEditedNumber(initialNumber);
             }}
           />
           {initialNumber !== editedNumber && client.edit.number && (
             <SaveChanges
               onClick={(e) => {
-                handleSaveChange(client._id, "number", editedNumber);
-                handleEditToggle(client._id, "number", e);
+                handleSaveChange(
+                  client._id,
+                  "number",
+                  editedNumber,
+                  isSearchResult
+                );
+                handleEditToggle(client._id, "number", e, isSearchResult);
               }}
             />
           )}
@@ -81,7 +96,7 @@ const ClientNumber = ({ handleSaveChange, handleEditToggle, client }) => {
           <ToggleEdit
             key={`edit-number-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "number", e);
+              handleEditToggle(client._id, "number", e, isSearchResult);
             }}
           />
         </LabelInputEditWrapper>

@@ -8,7 +8,12 @@ import {
   SaveChanges,
 } from "./SearchResults";
 import styled from "styled-components";
-const ClientName = ({ handleSaveChange, handleEditToggle, client }) => {
+const ClientName = ({
+  handleSaveChange,
+  handleEditToggle,
+  client,
+  isSearchResult,
+}) => {
   const initialName = client.fname;
   const [editedName, setEditedName] = useState(initialName); // State to track edited name
 
@@ -33,7 +38,7 @@ const ClientName = ({ handleSaveChange, handleEditToggle, client }) => {
           <Cancel
             key={`edit-fname-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "fname", e);
+              handleEditToggle(client._id, "fname", e, isSearchResult);
               setEditedName(initialName);
             }}
           />
@@ -41,15 +46,15 @@ const ClientName = ({ handleSaveChange, handleEditToggle, client }) => {
           <ToggleEdit
             key={`edit-fname-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "fname", e);
+              handleEditToggle(client._id, "fname", e, isSearchResult);
             }}
           />
         )}
         {initialName !== editedName && client.edit.fname && (
           <SaveChanges
             onClick={(e) => {
-              handleSaveChange(client._id, "fname", editedName);
-              handleEditToggle(client._id, "fname", e);
+              handleSaveChange(client._id, "fname", editedName, isSearchResult);
+              handleEditToggle(client._id, "fname", e, isSearchResult);
             }}
           />
         )}

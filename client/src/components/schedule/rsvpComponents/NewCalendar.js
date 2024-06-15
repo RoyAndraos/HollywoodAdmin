@@ -184,8 +184,15 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         element.style.zIndex = "-1";
       });
       return;
+    } else if (currentView === "day" && isMobile) {
+      const dayViewElementLabels = document.querySelectorAll(
+        ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-label"
+      );
+      //remove labels
+      dayViewElementLabels.forEach((element) => {
+        element.style.display = "none";
+      });
     }
-    const eventTime = moment(event.start).format("h:mm A");
     return (
       <div
         onClick={() => handleEventClick(event)}
@@ -193,10 +200,27 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         style={{ zIndex: "101" }}
       >
         {currentView !== "month" && (
-          <span>
-            <span>{event.client}</span>
+          <span
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              margin: "0 50px 0 50px",
+            }}
+          >
+            <span style={{ color: "#ffa700" }}>{event.client}</span>
             <span style={{ opacity: "0" }}>{event.title}</span>{" "}
-            <span>{eventTime}</span>
+            {isMobile ? (
+              <></>
+            ) : (
+              <span
+                style={{
+                  color: "#00ff8c",
+                }}
+              >
+                {event.service}
+              </span>
+            )}
           </span>
         )}
       </div>

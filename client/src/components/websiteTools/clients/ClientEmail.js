@@ -8,7 +8,12 @@ import {
 } from "./SearchResults";
 import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
-const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
+const ClientEmail = ({
+  handleSaveChange,
+  handleEditToggle,
+  client,
+  isSearchResult,
+}) => {
   const initialEmail = client.email;
   const [editedEmail, setEditedEmail] = useState(initialEmail); // State to track edited name
   return (
@@ -27,15 +32,20 @@ const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
             <Cancel
               key={`edit-email-${client._id}`}
               onClick={(e) => {
-                handleEditToggle(client._id, "email", e);
+                handleEditToggle(client._id, "email", e, isSearchResult);
                 setEditedEmail(initialEmail);
               }}
             />
             {initialEmail !== editedEmail && client.edit.email && (
               <SaveChanges
                 onClick={(e) => {
-                  handleSaveChange(client._id, "email", editedEmail);
-                  handleEditToggle(client._id, "email", e);
+                  handleSaveChange(
+                    client._id,
+                    "email",
+                    editedEmail,
+                    isSearchResult
+                  );
+                  handleEditToggle(client._id, "email", e, isSearchResult);
                 }}
               />
             )}
@@ -46,7 +56,7 @@ const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
             <ToggleEdit
               key={`edit-email-${client._id}`}
               onClick={(e) => {
-                handleEditToggle(client._id, "email", e);
+                handleEditToggle(client._id, "email", e, isSearchResult);
               }}
             />
           </LabelInputEditWrapper>
@@ -63,15 +73,20 @@ const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
           <Cancel
             key={`edit-email-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "email", e);
+              handleEditToggle(client._id, "email", e, isSearchResult);
               setEditedEmail(initialEmail);
             }}
           />
           {initialEmail !== editedEmail && client.edit.email && (
             <SaveChanges
               onClick={(e) => {
-                handleSaveChange(client._id, "email", editedEmail);
-                handleEditToggle(client._id, "email", e);
+                handleSaveChange(
+                  client._id,
+                  "email",
+                  editedEmail,
+                  isSearchResult
+                );
+                handleEditToggle(client._id, "email", e, isSearchResult);
               }}
             />
           )}
@@ -82,7 +97,7 @@ const ClientEmail = ({ handleSaveChange, handleEditToggle, client }) => {
           <ToggleEdit
             key={`edit-email-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "email", e);
+              handleEditToggle(client._id, "email", e, isSearchResult);
             }}
           />
         </LabelInputEditWrapper>

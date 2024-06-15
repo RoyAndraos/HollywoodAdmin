@@ -8,7 +8,12 @@ import {
 } from "./SearchResults";
 import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
-const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
+const ClientNote = ({
+  handleSaveChange,
+  handleEditToggle,
+  client,
+  isSearchResult,
+}) => {
   const initialNote = client.note;
   const [editedNote, setEditedNote] = useState(initialNote); // State to track edited name
   return (
@@ -27,15 +32,20 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
             <Cancel
               key={`edit-note-${client._id}`}
               onClick={(e) => {
-                handleEditToggle(client._id, "note", e);
+                handleEditToggle(client._id, "note", e, isSearchResult);
                 setEditedNote(initialNote);
               }}
             />
             {initialNote !== editedNote && client.edit.note && (
               <SaveChanges
                 onClick={(e) => {
-                  handleSaveChange(client._id, "note", editedNote);
-                  handleEditToggle(client._id, "note", e);
+                  handleSaveChange(
+                    client._id,
+                    "note",
+                    editedNote,
+                    isSearchResult
+                  );
+                  handleEditToggle(client._id, "note", e, isSearchResult);
                 }}
               />
             )}
@@ -46,7 +56,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
             <ToggleEdit
               key={`edit-note-${client._id}`}
               onClick={(e) => {
-                handleEditToggle(client._id, "note", e);
+                handleEditToggle(client._id, "note", e, isSearchResult);
                 setEditedNote("");
               }}
             />
@@ -65,15 +75,20 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
           <Cancel
             key={`edit-note-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "note", e);
+              handleEditToggle(client._id, "note", e, isSearchResult);
               setEditedNote(initialNote);
             }}
           />
           {initialNote !== editedNote && (
             <SaveChanges
               onClick={(e) => {
-                handleSaveChange(client._id, "note", editedNote);
-                handleEditToggle(client._id, "note", e);
+                handleSaveChange(
+                  client._id,
+                  "note",
+                  editedNote,
+                  isSearchResult
+                );
+                handleEditToggle(client._id, "note", e, isSearchResult);
               }}
             />
           )}
@@ -84,7 +99,7 @@ const ClientNote = ({ handleSaveChange, handleEditToggle, client }) => {
           <ToggleEdit
             key={`edit-note-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "note", e);
+              handleEditToggle(client._id, "note", e, isSearchResult);
               setEditedNote("");
             }}
           />

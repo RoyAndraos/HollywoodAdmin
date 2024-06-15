@@ -49,11 +49,10 @@ const Clients = () => {
 
         setTotalNumberOfPagesSearch(data.numberOfPages);
         setLoading(false);
-        setSearchResults(newClientsArray);
+        setClients(newClientsArray);
       });
     // eslint-disable-next-line
   }, [pageSearch, token]);
-
   //   const [searchType, setSearchType] = useState("name");
   const handleSearchClick = () => {
     const headers = {

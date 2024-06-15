@@ -18,6 +18,7 @@ const SearchResults = ({
   setPageSearch,
   clients,
   setClients,
+  setSearchResults,
 }) => {
   const { setNotification } = useContext(NotificationContext);
   const [page, setPage] = useState(1);
@@ -60,26 +61,43 @@ const SearchResults = ({
   }, [page, setClients]);
 
   // Function to toggle the edit state for a specific client
-  const handleEditToggle = (clientId, field, e) => {
+  const handleEditToggle = (clientId, field, e, isSearchResult) => {
     e.preventDefault();
-    setClients((prevClients) => {
-      return prevClients.map((client) => {
-        if (client._id === clientId) {
-          return {
-            ...client,
-            edit: {
-              ...client.edit,
-              [field]: !client.edit[field],
-            },
-          };
-        }
-        return client;
+    if (isSearchResult) {
+      setSearchResults((prevSearchResults) => {
+        return prevSearchResults.map((client) => {
+          if (client._id === clientId) {
+            return {
+              ...client,
+              edit: {
+                ...client.edit,
+                [field]: !client.edit[field],
+              },
+            };
+          }
+          return client;
+        });
       });
-    });
+    } else {
+      setClients((prevClients) => {
+        return prevClients.map((client) => {
+          if (client._id === clientId) {
+            return {
+              ...client,
+              edit: {
+                ...client.edit,
+                [field]: !client.edit[field],
+              },
+            };
+          }
+          return client;
+        });
+      });
+    }
   };
 
   // Function to save the changes made
-  const handleSaveChange = (clientId, field, value) => {
+  const handleSaveChange = (clientId, field, value, isSearchResult) => {
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
@@ -100,17 +118,32 @@ const SearchResults = ({
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 200) {
-          setClients((prevClients) => {
-            return prevClients.map((client) => {
-              if (client._id === clientId) {
-                return {
-                  ...client,
-                  [field]: value,
-                };
-              }
-              return client;
+          if (isSearchResult) {
+            setSearchResults((prevSearchResults) => {
+              return prevSearchResults.map((client) => {
+                if (client._id === clientId) {
+                  return {
+                    ...client,
+                    [field]: value,
+                  };
+                }
+                return client;
+              });
             });
-          });
+          } else {
+            setClients((prevClients) => {
+              return prevClients.map((client) => {
+                if (client._id === clientId) {
+                  return {
+                    ...client,
+                    [field]: value,
+                  };
+                }
+                return client;
+              });
+            });
+          }
+
           setNotification("Client updated successfully");
         } else {
           setNotification("Something went wrong");
@@ -178,7 +211,6 @@ const SearchResults = ({
     page
   );
   const paginationSearch = getPagination(totalNumberOfPagesSearch, pageSearch);
-
   if (clients.length === 0 && searchResults.length === 0)
     return (
       <div>
@@ -258,30 +290,35 @@ const SearchResults = ({
                   client={client}
                   handleSaveChange={handleSaveChange}
                   handleEditToggle={handleEditToggle}
+                  isSearchResult={false}
                 />
                 <StyledLabel>Last Name</StyledLabel>
                 <ClientLastName
                   client={client}
                   handleSaveChange={handleSaveChange}
                   handleEditToggle={handleEditToggle}
+                  isSearchResult={false}
                 />
                 <StyledLabel>Email</StyledLabel>
                 <ClientEmail
                   client={client}
                   handleSaveChange={handleSaveChange}
                   handleEditToggle={handleEditToggle}
+                  isSearchResult={false}
                 />
                 <StyledLabel>Number</StyledLabel>
                 <ClientNumber
                   client={client}
                   handleSaveChange={handleSaveChange}
                   handleEditToggle={handleEditToggle}
+                  isSearchResult={false}
                 />
                 <StyledLabel>Note</StyledLabel>
                 <ClientNote
                   client={client}
                   handleSaveChange={handleSaveChange}
                   handleEditToggle={handleEditToggle}
+                  isSearchResult={false}
                 />
                 <StyledLabel>Last Reservation</StyledLabel>
                 <ClientReservation client={client} />
@@ -384,30 +421,35 @@ const SearchResults = ({
                     client={client}
                     handleSaveChange={handleSaveChange}
                     handleEditToggle={handleEditToggle}
+                    isSearchResult={true}
                   />
                   <StyledLabel>Last Name</StyledLabel>
                   <ClientLastName
                     client={client}
                     handleSaveChange={handleSaveChange}
                     handleEditToggle={handleEditToggle}
+                    isSearchResult={true}
                   />
                   <StyledLabel>Email</StyledLabel>
                   <ClientEmail
                     client={client}
                     handleSaveChange={handleSaveChange}
                     handleEditToggle={handleEditToggle}
+                    isSearchResult={true}
                   />
                   <StyledLabel>Number</StyledLabel>
                   <ClientNumber
                     client={client}
                     handleSaveChange={handleSaveChange}
                     handleEditToggle={handleEditToggle}
+                    isSearchResult={true}
                   />
                   <StyledLabel>Note</StyledLabel>
                   <ClientNote
                     client={client}
                     handleSaveChange={handleSaveChange}
                     handleEditToggle={handleEditToggle}
+                    isSearchResult={true}
                   />
                   <StyledLabel>Last Reservation</StyledLabel>
                   <ClientReservation client={client} />

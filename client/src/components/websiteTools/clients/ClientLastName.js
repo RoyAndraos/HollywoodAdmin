@@ -8,10 +8,14 @@ import {
 } from "./SearchResults";
 import { Cancel } from "./ClientName";
 import { Container } from "./ClientName";
-const ClientLastName = ({ handleSaveChange, handleEditToggle, client }) => {
+const ClientLastName = ({
+  handleSaveChange,
+  handleEditToggle,
+  client,
+  isSearchResult,
+}) => {
   const initialName = client.lname;
   const [editedName, setEditedName] = useState(initialName); // State to track edited name
-
   return (
     <Container>
       <LabelInputEditWrapper>
@@ -31,13 +35,27 @@ const ClientLastName = ({ handleSaveChange, handleEditToggle, client }) => {
             <Info>{client.lname}</Info>
           )
         ) : (
-          <Info>Not Provided</Info>
+          <LabelInputEditWrapper>
+            {" "}
+            {client.edit.lname ? (
+              <StyledInput
+                type="text"
+                autoFocus
+                placeholder={client.lname}
+                onChange={(e) => {
+                  setEditedName(e.target.value);
+                }}
+              />
+            ) : (
+              <Info>Not Provided</Info>
+            )}
+          </LabelInputEditWrapper>
         )}
         {client.edit.lname ? (
           <Cancel
             key={`edit-lname-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "lname", e);
+              handleEditToggle(client._id, "lname", e, isSearchResult);
               setEditedName(initialName);
             }}
           />
@@ -45,7 +63,7 @@ const ClientLastName = ({ handleSaveChange, handleEditToggle, client }) => {
           <ToggleEdit
             key={`edit-lname-${client._id}`}
             onClick={(e) => {
-              handleEditToggle(client._id, "lname", e);
+              handleEditToggle(client._id, "lname", e, isSearchResult);
             }}
           />
         )}
@@ -53,8 +71,8 @@ const ClientLastName = ({ handleSaveChange, handleEditToggle, client }) => {
         {initialName !== editedName && client.edit.lname && (
           <SaveChanges
             onClick={(e) => {
-              handleSaveChange(client._id, "lname", editedName);
-              handleEditToggle(client._id, "lname", e);
+              handleSaveChange(client._id, "lname", editedName, isSearchResult);
+              handleEditToggle(client._id, "lname", e, isSearchResult);
             }}
           />
         )}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import Upload from "./website_images/Upload";
 import BarberProfiles from "./barber_profiles/BarberProfiles";
 import ToolBar from "./ToolBar";
 import styled from "styled-components";
@@ -8,7 +7,6 @@ import Clients from "./clients/Clients";
 import { UserContext } from "../contexts/UserContext";
 import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
-import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
@@ -19,7 +17,6 @@ const WebsiteTools = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
-  const { setImages, images } = useContext(ImageContext);
   const { setText, text } = useContext(TextContext);
 
   useEffect(() => {
@@ -39,14 +36,12 @@ const WebsiteTools = () => {
             setUserInfo(result.userInfo);
             setReservations(result.reservations);
             setServices(result.services);
-            setImages(result.images);
             setText(result.text);
           });
       }
     }
-  }, [setReservations, setServices, setUserInfo, setImages, setText, userInfo]);
-  if (!userInfo || !reservations || !services || !images || !text)
-    return <Loader />;
+  }, [setReservations, setServices, setUserInfo, setText, userInfo]);
+  if (!userInfo || !reservations || !services || !text) return <Loader />;
   return (
     <Wrapper>
       <ToolBar
@@ -56,7 +51,6 @@ const WebsiteTools = () => {
       <div style={{ position: "relative" }}>
         <RestWrapper>
           {selectedOption === "websiteText" && <WebsiteText />}
-          {selectedOption === "images" && <Upload />}
           {selectedOption === "barberProfiles" && <BarberProfiles />}
           {selectedOption === "clients" && <Clients />}
           {selectedOption === "services" && <Services />}

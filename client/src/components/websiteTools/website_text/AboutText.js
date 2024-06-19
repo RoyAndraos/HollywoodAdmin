@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import { TextContext } from "../../contexts/TextContext";
-import { Title } from "../website_images/SlideShowImages";
 import { StyledInput } from "./UnderMenuText";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";
@@ -137,5 +136,9 @@ export const Line = styled.div`
   width: 60%;
   border-bottom: 2px solid #035e3f;
 `;
-
+export const Title = styled.h1`
+  font-size: 2rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+`;
 export default AboutText;

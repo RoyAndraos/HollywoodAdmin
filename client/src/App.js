@@ -12,6 +12,7 @@ import TimeSelect from "./components/availability/TimeSelect";
 import Login from "./Login";
 import { useLocation } from "react-router-dom";
 import DailyAvailability from "./components/availability/DailyAvailability";
+import Data from "./components/dataPage/Data";
 
 const App = () => {
   const { notification, setNotification } = useContext(NotificationContext);
@@ -41,6 +42,7 @@ const App = () => {
         />
         <Route path="/timeOff/:barberId" element={<TakeTimeOff />} />
         <Route path="/schedule/:_id" element={<EditRsvp />} />
+        <Route path="/Data" element={<Data />} />
       </Routes>
     </div>
   );

@@ -6,37 +6,37 @@ import { UserProvider } from "./components/contexts/UserContext";
 import { ReservationProvider } from "./components/contexts/ReservationContext";
 import { ServicesProvider } from "./components/contexts/ServicesContext";
 import { TextProvider } from "./components/contexts/TextContext";
-import { ImageProvider } from "./components/contexts/ImageContext";
 import { NotificationProvider } from "./components/contexts/NotficationContext";
 import { NotificationLogsProvider } from "./components/contexts/NotificationLogsContext";
 import { IsMobileProvider } from "./components/contexts/IsMobileContext";
 import { LoginRoleProvider } from "./components/contexts/LoginRoleContext";
 import { EmployeeServicesProvider } from "./components/contexts/EmployeeServicesContext";
+import { ClientsProvider } from "./components/contexts/ClientsContext";
 const root = createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
     <UserProvider>
       <LoginRoleProvider>
-        <ImageProvider>
-          <TextProvider>
-            <ReservationProvider>
-              <ServicesProvider>
-                <EmployeeServicesProvider>
-                  <NotificationProvider>
-                    <NotificationLogsProvider>
-                      <IsMobileProvider>
+        <TextProvider>
+          <ReservationProvider>
+            <ServicesProvider>
+              <EmployeeServicesProvider>
+                <NotificationProvider>
+                  <NotificationLogsProvider>
+                    <IsMobileProvider>
+                      <ClientsProvider>
                         <BrowserRouter basename="/">
                           <App />
                         </BrowserRouter>
-                      </IsMobileProvider>
-                    </NotificationLogsProvider>
-                  </NotificationProvider>
-                </EmployeeServicesProvider>
-              </ServicesProvider>
-            </ReservationProvider>
-          </TextProvider>
-        </ImageProvider>
+                      </ClientsProvider>
+                    </IsMobileProvider>
+                  </NotificationLogsProvider>
+                </NotificationProvider>
+              </EmployeeServicesProvider>
+            </ServicesProvider>
+          </ReservationProvider>
+        </TextProvider>
       </LoginRoleProvider>
     </UserProvider>
   </React.StrictMode>

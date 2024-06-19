@@ -1,12 +1,10 @@
 import React, { useContext } from "react";
-import { ImageContext } from "../../contexts/ImageContext.js";
 import { NotificationContext } from "../../contexts/NotficationContext.js";
 import { styled } from "styled-components";
 import Cookies from "js-cookie";
 
 const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
   const { setNotification } = useContext(NotificationContext);
-  const { images, setImages } = useContext(ImageContext);
   const handleDeleteImage = (image) => {
     const token = Cookies.get("token");
     const headers = {
@@ -24,9 +22,6 @@ const ConfirmDelete = ({ setConfirmDelete, selectedImageToDelete }) => {
       })
       .then((result) => {
         if (result.status === 200) {
-          setImages(
-            images.filter((image) => image._id !== selectedImageToDelete)
-          );
           setConfirmDelete(false);
           setNotification("Image deleted successfully");
         }

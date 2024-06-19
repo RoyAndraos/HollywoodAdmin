@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
-import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
 
@@ -40,7 +39,7 @@ const TakeTimeOff = () => {
   const popper = document.getElementsByClassName("react-datepicker-popper");
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
-  const { setImages, images } = useContext(ImageContext);
+
   const { setText, text } = useContext(TextContext);
 
   useEffect(() => {
@@ -60,12 +59,11 @@ const TakeTimeOff = () => {
             setUserInfo(result.userInfo);
             setReservations(result.reservations);
             setServices(result.services);
-            setImages(result.images);
             setText(result.text);
           });
       }
     }
-  }, [setReservations, setServices, setUserInfo, setImages, setText, userInfo]);
+  }, [setReservations, setServices, setUserInfo, setText, userInfo]);
   useEffect(() => {
     if (popper.length !== 0) {
       popper[0].style.position = "relative";
@@ -219,8 +217,7 @@ const TakeTimeOff = () => {
     navigate(`/timeOff/${barber._id}`);
   };
 
-  if (!reservations || !services || !text || !images || !userInfo)
-    return <Loader />;
+  if (!reservations || !services || !text || !userInfo) return <Loader />;
   return (
     <Wrapper>
       <BarberContainer>

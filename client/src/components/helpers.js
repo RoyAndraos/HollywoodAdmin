@@ -657,5 +657,17 @@ export const objectsAreEqual = (objA, objB) => {
   return true;
 };
 
+export const getDateRange = (startDate, type) => {
+  const endDate = new Date(startDate);
+  if (type === "week") {
+    endDate.setDate(endDate.getDate() + 7);
+  } else if (type === "month") {
+    endDate.setMonth(endDate.getMonth() + 1);
+  } else if (type === "year") {
+    endDate.setFullYear(endDate.getFullYear() + 1);
+  }
+  return { startDate: startDate, endDate: endDate };
+};
+
 // 8.3% is 1 hour
 // 2.075% is 15 minutes

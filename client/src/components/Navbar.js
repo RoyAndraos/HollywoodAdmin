@@ -9,6 +9,7 @@ import { IsMobileContext } from "./contexts/IsMobileContext";
 const NavBar = () => {
   const navigate = useNavigate();
   const { isMobile } = useContext(IsMobileContext);
+  const role = Cookies.get("role");
   const handleLogout = () => {
     const token = Cookies.get("token");
     fetch("https://hollywood-fairmount-admin.onrender.com/logout", {
@@ -25,6 +26,9 @@ const NavBar = () => {
       <StyledNavLink to="/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/availability">Availability</StyledNavLink>
       {!isMobile && <StyledNavLink to="/websiteTools">Tools</StyledNavLink>}
+      {role === "admin" && !isMobile && (
+        <StyledNavLink to="/Data">Data</StyledNavLink>
+      )}
       <StyledNavLink to="/">
         <Logout
           onClick={() => {

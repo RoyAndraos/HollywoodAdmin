@@ -7,7 +7,6 @@ import { initialAvailability } from "../helpers";
 import { NotificationContext } from "../contexts/NotficationContext";
 import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
-import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
@@ -30,7 +29,6 @@ const TimeSelect = () => {
   );
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
-  const { setImages, images } = useContext(ImageContext);
   const { setText, text } = useContext(TextContext);
   const { isMobile } = useContext(IsMobileContext);
   const navigate = useNavigate();
@@ -51,7 +49,6 @@ const TimeSelect = () => {
             setUserInfo(result.userInfo);
             setReservations(result.reservations);
             setServices(result.services);
-            setImages(result.images);
             setText(result.text);
           });
       }
@@ -65,7 +62,6 @@ const TimeSelect = () => {
     setReservations,
     setServices,
     setUserInfo,
-    setImages,
     setText,
     selectedAdminInfo,
     userInfo,
@@ -82,8 +78,7 @@ const TimeSelect = () => {
     }
   };
 
-  if (!userInfo || !reservations || !services || !images || !text)
-    return <Loader />;
+  if (!userInfo || !reservations || !services || !text) return <Loader />;
 
   if (!selectedAdminInfo) {
     return (

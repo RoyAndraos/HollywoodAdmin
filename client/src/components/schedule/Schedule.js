@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
-import { ImageContext } from "../contexts/ImageContext";
 import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
@@ -16,7 +15,6 @@ const Schedule = () => {
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
   const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
-  const { setImages, images } = useContext(ImageContext);
   const { setText, text } = useContext(TextContext);
   const { setRole } = useContext(LoginRoleContext);
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -41,7 +39,6 @@ const Schedule = () => {
             setUserInfo(result.userInfo);
             setReservations(result.reservations);
             setServices(result.services);
-            setImages(result.images);
             setText(result.text);
             setServicesEmp(result.employeeServices);
             setRole(role);
@@ -52,20 +49,12 @@ const Schedule = () => {
     setReservations,
     setServices,
     setUserInfo,
-    setImages,
     setText,
     userInfo,
     setRole,
     setServicesEmp,
   ]);
-  if (
-    !userInfo ||
-    !reservations ||
-    !services ||
-    !images ||
-    !text ||
-    !servicesEmp
-  )
+  if (!userInfo || !reservations || !services || !text || !servicesEmp)
     return <Loader />;
   return (
     <div>

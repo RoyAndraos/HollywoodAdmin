@@ -95,10 +95,7 @@ const AddReservation = ({
       sendSMS: sendSMS,
       lname: clientName.split(" ")[1] || "",
     };
-    console.log({
-      reservation: reservation,
-    });
-    console.log(headers);
+
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {

@@ -73,8 +73,10 @@ const TimeSelect = () => {
     );
     if (currentBarberIndex === userInfo.length - 1) {
       setSelectedAdminInfo(userInfo[0]);
+      setSelectedDailyCells(userInfo[0].dailyAvailability);
     } else {
       setSelectedAdminInfo(userInfo[currentBarberIndex + 1]);
+      setSelectedDailyCells(userInfo[currentBarberIndex + 1].dailyAvailability);
     }
   };
 
@@ -292,7 +294,6 @@ const TimeSelect = () => {
           </BarberContainer>
         )}
       </ControlPanel>
-
       {!isMobile && !dailyAvailabilityToggle ? (
         <TableWrapper>
           <FirstRow>

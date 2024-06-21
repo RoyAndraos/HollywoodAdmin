@@ -2,6 +2,7 @@ require("dotenv").config();
 const { dailyAvailability } = require("./batchImport");
 const { v4: uuid } = require("uuid");
 // const { initialAvailability } = require("./helpers");
+const { weekDays } = require("./helpers");
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -278,6 +279,10 @@ const addReservation = async (req, res) => {
     const isClient = await db
       .collection("Clients")
       .findOne({ number: reservation.number });
+    // translate date string to french (from Thu Mar 28 2024 to Jeu Mar 28 2024)
+    const weekDay = reservation.date.split(" ");
+    const frenchWeekDay = weekDays.find((day) => day.day === weekDay);
+    const frenchDate = reservation.date.replace(weekDay, frenchWeekDay);
 
     if (!isClient) {
       await db.collection("Clients").insertOne({
@@ -307,14 +312,14 @@ const addReservation = async (req, res) => {
 
       if (reservation.sendSMS) {
         try {
-          const message = await twilioClient.messages.create({
+          await twilioClient.messages.create({
             body: `Bonjour ${reservation.fname} ${
               reservation.lname || ""
-            }, votre réservation au Hollywood Barbershop est confirmée pour ${
-              reservation.date
-            } à ${reservation.slot[0].split("-")[1]}. Vous recevrez une ${
-              reservation.service.name
-            } pour ${reservation.service.price} CAD. ~${reservation.barber}
+            }, votre réservation au Hollywood Barbershop est confirmée pour ${frenchDate} à ${
+              reservation.slot[0].split("-")[1]
+            }. Vous recevrez une ${reservation.service.name} pour ${
+              reservation.service.price
+            } CAD. ~${reservation.barber}
 
 Hello ${reservation.fname} ${
               reservation.lname || ""
@@ -328,8 +333,6 @@ ID: ${_id}`,
             messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
             to: reservation.number,
           });
-
-          console.log(`SMS sent successfully: ${message.sid}`);
         } catch (smsError) {
           console.error(`Error sending SMS: ${smsError.message}`);
           return res.status(500).json({
@@ -367,14 +370,14 @@ ID: ${_id}`,
 
       if (reservation.sendSMS) {
         try {
-          const message = await twilioClient.messages.create({
+          await twilioClient.messages.create({
             body: `Bonjour ${reservation.fname} ${
               reservation.lname || ""
-            }, votre réservation au Hollywood Barbershop est confirmée pour ${
-              reservation.date
-            } à ${reservation.slot[0].split("-")[1]}. Vous recevrez une ${
-              reservation.service.name
-            } pour ${reservation.service.price} CAD. ~${reservation.barber}
+            }, votre réservation au Hollywood Barbershop est confirmée pour ${frenchDate} à ${
+              reservation.slot[0].split("-")[1]
+            }. Vous recevrez une ${reservation.service.name} pour ${
+              reservation.service.price
+            } CAD. ~${reservation.barber}
 
 Hello ${reservation.fname} ${
               reservation.lname || ""
@@ -388,13 +391,11 @@ ID: ${_id}`,
             messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
             to: reservation.number,
           });
-
-          console.log(`SMS sent successfully: ${message.sid}`);
         } catch (smsError) {
-          console.error(`Error sending SMS: ${smsError.message}`);
+          console.error(`Error sending SMS: ${smsError}`);
           return res.status(500).json({
             status: 500,
-            message: `Error sending SMS: ${smsError.message}`,
+            message: `Error sending SMS: ${smsError}`,
           });
         }
       }

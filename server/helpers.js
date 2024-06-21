@@ -280,5 +280,13 @@ const initialAvailability = [
   { slot: "Sun-6:30pm", available: true },
   { slot: "Sun-6:45pm", available: true },
 ];
-
-module.exports = { initialAvailability };
+const weekDays = [
+  { day: "Mon", french: "Lundi" },
+  { day: "Tue", french: "Mardi" },
+  { day: "Wed", french: "Mercredi" },
+  { day: "Thu", french: "Jeudi" },
+  { day: "Fri", french: "Vendredi" },
+  { day: "Sat", french: "Samedi" },
+  { day: "Sun", french: "Dimanche" },
+];
+module.exports = { initialAvailability, weekDays };

@@ -49,7 +49,7 @@ const ImageInput = ({ filename, height, initialImage, setEditModes }) => {
           setUserInfo((prevUserInfo) => {
             return prevUserInfo.map((user) => {
               if (user._id === result.imageInfo.filename) {
-                return { ...user, image: result.imageInfo.src };
+                return { ...user, picture: result.imageInfo.src };
               }
               return user;
             });

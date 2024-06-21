@@ -321,7 +321,7 @@ Hello ${reservation.fname} ${
             }, your reservation at Hollywood Barbershop is confirmed for ${
               reservation.date
             } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
-              reservation.service.name
+              reservation.service.english
             } for ${reservation.service.price} CAD. ~${reservation.barber}
 
 ID: ${_id}`,
@@ -332,12 +332,10 @@ ID: ${_id}`,
           console.log(`SMS sent successfully: ${message.sid}`);
         } catch (smsError) {
           console.error(`Error sending SMS: ${smsError.message}`);
-          return res
-            .status(500)
-            .json({
-              status: 500,
-              message: `Error sending SMS: ${smsError.message}`,
-            });
+          return res.status(500).json({
+            status: 500,
+            message: `Error sending SMS: ${smsError.message}`,
+          });
         }
       }
 
@@ -383,7 +381,7 @@ Hello ${reservation.fname} ${
             }, your reservation at Hollywood Barbershop is confirmed for ${
               reservation.date
             } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
-              reservation.service.name
+              reservation.service.english
             } for ${reservation.service.price} CAD. ~${reservation.barber}
 
 ID: ${_id}`,
@@ -394,12 +392,10 @@ ID: ${_id}`,
           console.log(`SMS sent successfully: ${message.sid}`);
         } catch (smsError) {
           console.error(`Error sending SMS: ${smsError.message}`);
-          return res
-            .status(500)
-            .json({
-              status: 500,
-              message: `Error sending SMS: ${smsError.message}`,
-            });
+          return res.status(500).json({
+            status: 500,
+            message: `Error sending SMS: ${smsError.message}`,
+          });
         }
       }
 
@@ -459,82 +455,18 @@ const uploadImage = async (req, res) => {
 
   try {
     const db = client.db("HollywoodBarberShop");
-    if (filename === "slideShow") {
-      await db.collection("Images").insertOne(imageInfo);
-      res.status(202).json({ status: 200, imageInfo: imageInfo });
-    } else if (filename === "about") {
-      await db.collection("Images").updateOne(
-        {
-          filename: "about",
+
+    await db.collection("admin").updateOne(
+      {
+        _id: filename,
+      },
+      {
+        $set: {
+          picture: fileSrc,
         },
-        {
-          $set: {
-            src: fileSrc,
-          },
-        }
-      );
-      res.status(202).json({ status: 200, imageInfo: imageInfo });
-    } else if (filename === "menuBackground") {
-      await db.collection("Images").updateOne(
-        {
-          filename: "menuBackground",
-        },
-        {
-          $set: {
-            src: fileSrc,
-          },
-        }
-      );
-      res.status(202).json({ status: 200, imageInfo: imageInfo });
-    } else if (filename === "aboutBackground") {
-      await db.collection("Images").updateOne(
-        {
-          filename: "aboutBackground",
-        },
-        {
-          $set: {
-            src: fileSrc,
-          },
-        }
-      );
-      res.status(202).json({ status: 200, imageInfo: imageInfo });
-    } else if (filename === "barbersBackground") {
-      await db.collection("Images").updateOne(
-        {
-          filename: "barbersBackground",
-        },
-        {
-          $set: {
-            src: fileSrc,
-          },
-        }
-      );
-      res.status(202).json({ status: 200, imageInfo: imageInfo });
-    } else if (filename === "homepageBackground") {
-      await db.collection("Images").updateOne(
-        {
-          filename: "homepageBackground",
-        },
-        {
-          $set: {
-            src: fileSrc,
-          },
-        }
-      );
-      res.status(202).json({ status: 200, imageInfo: imageInfo });
-    } else {
-      await db.collection("admin").updateOne(
-        {
-          _id: filename,
-        },
-        {
-          $set: {
-            picture: fileSrc,
-          },
-        }
-      );
-      res.status(202).json({ status: 200, imageInfo: imageInfo });
-    }
+      }
+    );
+    res.status(202).json({ status: 200, imageInfo: imageInfo });
   } catch (err) {
     console.error("Error updating image:", err);
     res.status(500).json({ status: 500, message: err.message });

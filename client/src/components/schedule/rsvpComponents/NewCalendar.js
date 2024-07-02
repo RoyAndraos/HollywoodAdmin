@@ -17,6 +17,7 @@ const localizer = momentLocalizer(moment);
 const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const [currentView, setCurrentView] = useState("month");
   const [currentDay, setCurrentDay] = useState(false);
+  const [trackCurrentDay, setTrackCurrentDay] = useState(new Date());
   const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
   const { isMobile } = useContext(IsMobileContext);
@@ -138,8 +139,9 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     );
 
     const handleClick = (slot) => {
+      const todayDate = document.querySelector(".rbc-toolbar-label");
+      setSelectedDate(new Date(todayDate.innerHTML));
       const formattedSlot = moment(slot).format("ddd-h:mma");
-      setSelectedDate(slot);
       const todayReservations = reservations.filter((reservation) => {
         return reservation.date === moment(slot).format("ddd MMM DD YYYY");
       });
@@ -167,8 +169,14 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         slot.removeEventListener("click", handleClick);
       });
     };
-  }, [reservations, setSelectedDate, setSlotBeforeCheck, currentView]);
-
+  }, [
+    reservations,
+    setSelectedDate,
+    setSlotBeforeCheck,
+    currentView,
+    currentDay,
+    trackCurrentDay,
+  ]);
   const CustomEventComponent = ({ event }) => {
     if (currentView === "month" && isMobile) {
       const monthViewElements = document.querySelectorAll(
@@ -227,8 +235,11 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     );
   };
   const handleNavigate = () => {
-    // Handle navigation events here...
-    setCurrentDay(!currentDay); // Update the current view
+    if (currentView === "month" || currentView === "agenda") {
+      setCurrentDay(false); // Update the current view
+    } else {
+      setCurrentDay(true);
+    }
   };
   return (
     <Wrapper>

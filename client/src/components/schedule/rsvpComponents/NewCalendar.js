@@ -17,7 +17,6 @@ const localizer = momentLocalizer(moment);
 const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const [currentView, setCurrentView] = useState("month");
   const [currentDay, setCurrentDay] = useState(false);
-  const [trackCurrentDay, setTrackCurrentDay] = useState(new Date());
   const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
   const { isMobile } = useContext(IsMobileContext);
@@ -175,7 +174,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     setSlotBeforeCheck,
     currentView,
     currentDay,
-    trackCurrentDay,
   ]);
   const CustomEventComponent = ({ event }) => {
     if (currentView === "month" && isMobile) {

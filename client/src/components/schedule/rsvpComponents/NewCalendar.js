@@ -139,7 +139,9 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
 
     const handleClick = (slot) => {
       const todayDate = document.querySelector(".rbc-toolbar-label");
-      setSelectedDate(new Date(todayDate.innerHTML));
+      // new Date() to get the current year
+      const thisYear = new Date().getFullYear();
+      setSelectedDate(new Date(todayDate.innerHTML + " " + thisYear));
       const formattedSlot = moment(slot).format("ddd-h:mma");
       const todayReservations = reservations.filter((reservation) => {
         return reservation.date === moment(slot).format("ddd MMM DD YYYY");

@@ -469,6 +469,44 @@ export const getEndTime = (startTime, duration) => {
         startTime.slice(0, 13) + ":" + newEndTimeMinute + ":00";
       return newEndTime;
     }
+  } else if (duration === "3") {
+    endTimeMinute = startTimeMinute + 45;
+    if (endTimeMinute > 60) {
+      endTimeMinute = endTimeMinute - 60;
+      let newEndTimeMinute = endTimeMinute.toString();
+      if (newEndTimeMinute.length === 1) {
+        newEndTimeMinute = "0" + newEndTimeMinute;
+      }
+      let newEndTimeHour = (parseInt(startTime.slice(11, 13)) + 1).toString();
+      if (newEndTimeHour.length === 1) {
+        newEndTimeHour = "0" + newEndTimeHour;
+      }
+      const newEndTime =
+        startTime.slice(0, 11) +
+        newEndTimeHour +
+        ":" +
+        newEndTimeMinute +
+        ":00";
+      return newEndTime;
+    } else if (endTimeMinute === 60) {
+      let newEndTimeMinute = "00";
+      let newEndTimeHour = (parseInt(startTime.slice(11, 13)) + 1).toString();
+      if (newEndTimeHour.length === 1) {
+        newEndTimeHour = "0" + newEndTimeHour;
+      }
+      const newEndTime =
+        startTime.slice(0, 11) +
+        newEndTimeHour +
+        ":" +
+        newEndTimeMinute +
+        ":00";
+      return newEndTime;
+    } else {
+      let newEndTimeMinute = endTimeMinute.toString();
+      const newEndTime =
+        startTime.slice(0, 13) + ":" + newEndTimeMinute + ":00";
+      return newEndTime;
+    }
   }
 };
 

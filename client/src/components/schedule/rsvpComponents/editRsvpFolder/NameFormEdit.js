@@ -19,7 +19,7 @@ const NameFormEdit = ({ handleChange, reservation }) => {
         <span>{reservation.fname}</span>
       )}
       <EditButton
-        props={clientNameEdit}
+        $props={clientNameEdit}
         onClick={() => {
           if (clientNameEdit === "false") {
             setClientNameEdit("true");

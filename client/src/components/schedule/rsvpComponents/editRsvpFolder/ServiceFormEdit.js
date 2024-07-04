@@ -29,7 +29,7 @@ const ServiceFormEdit = ({ reservation, handleChange }) => {
         <span>{reservation.service.name}</span>
       )}
       <EditButton
-        props={serviceEdit}
+        $props={serviceEdit}
         onClick={() => {
           if (serviceEdit) {
             handleChange("service", reservation.service.name);

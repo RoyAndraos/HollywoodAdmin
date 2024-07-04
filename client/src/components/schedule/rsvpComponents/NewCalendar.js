@@ -4,9 +4,9 @@ import {
   editDatetoCalendarFormat,
   editTimeTo24,
   getEndTime,
-} from "../.././helpers";
-import { useContext, useEffect, useState } from "react";
-import { ReservationContext } from "../.././contexts/ReservationContext";
+} from "../../helpers";
+import { useContext, useEffect, useState, useCallback } from "react";
+import { ReservationContext } from "../../contexts/ReservationContext";
 import { styled } from "styled-components";
 import "../rsvpComponents/style.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -14,12 +14,14 @@ import { useNavigate } from "react-router-dom";
 import { IsMobileContext } from "../../contexts/IsMobileContext";
 
 const localizer = momentLocalizer(moment);
+
 const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const [currentView, setCurrentView] = useState("month");
-  const [currentDay, setCurrentDay] = useState(false);
+  const [currentDay, setCurrentDay] = useState(new Date());
   const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
   const { isMobile } = useContext(IsMobileContext);
+
   const events = reservations.map((reservation) => {
     let time = reservation.slot[0].split("-")[1];
     const toEdit = time.slice(-2);
@@ -42,11 +44,13 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       end: endTimeDate,
     };
   });
+
   const views = {
     month: true,
     day: true,
     agenda: true,
   };
+
   const minTime = new Date();
   minTime.setHours(9, 0, 0);
 
@@ -57,81 +61,69 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     navigate(`/schedule/${event._id}`);
   };
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const dayViewElements = document.querySelectorAll(
-      ".rbc-day-slot .rbc-events-container .rbc-event"
-    );
-    dayViewElements.forEach((element) => {
-      if (element.innerHTML.includes("Ralph")) {
-        element.style.left = "50%";
-        element.style.zIndex = "100";
-      } else {
-        element.style.zIndex = "100";
-        element.style.left = "0%";
+  const applyStyles = useCallback(() => {
+    setTimeout(() => {
+      const dayViewElements = document.querySelectorAll(
+        ".rbc-day-slot .rbc-events-container .rbc-event"
+      );
+      dayViewElements.forEach((element) => {
+        if (element.innerHTML.includes("Ralph")) {
+          element.style.width = "50%";
+          element.style.zIndex = "100";
+          element.style.left = "0%";
+          element.style.backgroundColor = "#035e3f";
+          element.style.borderBottom = "1px solid white";
+        } else if (element.innerHTML.includes("Ty")) {
+          element.style.width = "50%";
+          element.style.left = "50%";
+          element.style.zIndex = "100";
+          element.style.backgroundColor = "#e539a1";
+          element.style.borderBottom = "1px solid white";
+        }
+      });
+
+      const dayViewColor = document.querySelectorAll(
+        ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-content .event-content-div"
+      );
+      dayViewColor.forEach((element) => {
+        if (element.innerHTML.includes("Ralph")) {
+          element.style.fontWeight = "bold";
+        } else {
+          element.style.fontWeight = "bold";
+        }
+      });
+
+      if (currentView === "agenda") {
+        const agendaDate = document.querySelectorAll(".rbc-toolbar-label");
+        if (agendaDate.length > 0) {
+          const [firstDate, lastDate] = agendaDate[0].innerHTML.split("–");
+          const options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          };
+          const formattedFirstDate = new Date(firstDate).toLocaleDateString(
+            "en-US",
+            options
+          );
+          const formattedLastDate = new Date(lastDate).toLocaleDateString(
+            "en-US",
+            options
+          );
+          agendaDate[0].innerHTML = `${formattedFirstDate} - ${formattedLastDate}`;
+        }
       }
-    });
-    const dayViewColor = document.querySelectorAll(
-      ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-content .event-content-div"
-    );
-    dayViewColor.forEach((element) => {
-      if (element.innerHTML.includes("Ralf")) {
-        element.style.backgroundColor = "#70bd70";
-      } else {
-        element.style.backgroundColor = "green";
-      }
-    });
-  });
+    }, 300); // Delay to ensure DOM is fully rendered
+  }, [currentView]);
 
   useEffect(() => {
-    const dayViewElements = document.querySelectorAll(
-      ".rbc-day-slot .rbc-events-container .rbc-event"
-    );
-    dayViewElements.forEach((element) => {
-      if (element.innerHTML.includes("Ralph")) {
-        element.style.width = "50%";
-        element.style.zIndex = "100";
-        element.style.left = "0%";
-        element.style.borderBottom = "1px solid white";
-      } else {
-        element.style.width = "50%";
-        element.style.left = "50%";
-        element.style.zIndex = "100";
-        element.style.backgroundColor = "#e539a1";
-        element.style.borderBottom = "1px solid white";
-      }
-    });
-    const dayViewColor = document.querySelectorAll(
-      ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-content .event-content-div"
-    );
-    dayViewColor.forEach((element) => {
-      if (element.innerHTML.includes("Ralph")) {
-      } else {
-        element.style.fontWeight = "bold";
-      }
-    });
+    const handleDebouncedApplyStyles = () => {
+      applyStyles();
+    };
+    const timer = setTimeout(handleDebouncedApplyStyles, 300);
+    return () => clearTimeout(timer);
+  }, [currentView, currentDay, reservations, applyStyles]);
 
-    if (currentView === "agenda") {
-      const agendaDate = document.querySelectorAll(".rbc-toolbar-label");
-      const firstDate = agendaDate[0].innerHTML.split("–")[0];
-      const lastDate = agendaDate[0].innerHTML.split("–")[1];
-      const firstDateObj = new Date(firstDate);
-      const lastDateObj = new Date(lastDate);
-      const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      };
-      const formattedFirstDate = firstDateObj.toLocaleDateString(
-        "en-US",
-        options
-      );
-      const formattedLastDate = lastDateObj.toLocaleDateString(
-        "en-US",
-        options
-      );
-      agendaDate[0].innerHTML = `${formattedFirstDate} - ${formattedLastDate}`;
-    }
-  }, [currentView, currentDay, reservations]);
   useEffect(() => {
     const dayViewSlots = document.querySelectorAll(
       ".rbc-day-slot .rbc-timeslot-group .rbc-time-slot"
@@ -139,7 +131,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
 
     const handleClick = (slot) => {
       const todayDate = document.querySelector(".rbc-toolbar-label");
-      // new Date() to get the current year
       const thisYear = new Date().getFullYear();
       setSelectedDate(new Date(todayDate.innerHTML + " " + thisYear));
       const formattedSlot = moment(slot).format("ddd-h:mma");
@@ -165,7 +156,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     });
 
     return () => {
-      // Cleanup: remove event listeners when component unmounts
       dayViewSlots.forEach((slot) => {
         slot.removeEventListener("click", handleClick);
       });
@@ -177,6 +167,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     currentView,
     currentDay,
   ]);
+
   const CustomEventComponent = ({ event }) => {
     if (currentView === "month" && isMobile) {
       const monthViewElements = document.querySelectorAll(
@@ -196,7 +187,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       const dayViewElementLabels = document.querySelectorAll(
         ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-label"
       );
-      //remove labels
       dayViewElementLabels.forEach((element) => {
         element.style.display = "none";
       });
@@ -234,13 +224,22 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       </div>
     );
   };
+
   const handleNavigate = () => {
     if (currentView === "month" || currentView === "agenda") {
-      setCurrentDay(false); // Update the current view
+      return;
     } else {
-      setCurrentDay(true);
+      const thisYear = new Date().getFullYear();
+      setCurrentDay(
+        new Date(
+          document.querySelector(".rbc-toolbar-label").innerHTML +
+            " " +
+            thisYear
+        )
+      );
     }
   };
+
   return (
     <Wrapper>
       <StyledCalendar

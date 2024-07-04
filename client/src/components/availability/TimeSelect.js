@@ -12,26 +12,29 @@ import Cookies from "js-cookie";
 import Loader from "../Loader";
 import { IsMobileContext } from "../contexts/IsMobileContext";
 import DailyAvailability from "./DailyAvailability";
+import { LoginRoleContext } from "../contexts/LoginRoleContext";
+import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
-  const [selectedAdminInfo, setSelectedAdminInfo] = useState(
-    userInfo !== null ? userInfo[0] : null
-  );
+  const [selectedAdminInfo, setSelectedAdminInfo] = useState(null);
   const [dailyAvailabilityToggle, setDailyAvailabilityToggle] = useState(false);
-  const [showBarbers, setShowBarbers] = useState(false);
-  const [selectedCells, setSelectedCells] = useState(
-    selectedAdminInfo !== null ? selectedAdminInfo.availability : null
-  );
-  const [selectedDailyCells, setSelectedDailyCells] = useState(
-    selectedAdminInfo !== null ? selectedAdminInfo.dailyAvailability : null
-  );
+  const [selectedCells, setSelectedCells] = useState(null);
+  const [selectedDailyCells, setSelectedDailyCells] = useState(null);
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
+  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText, text } = useContext(TextContext);
   const { isMobile } = useContext(IsMobileContext);
   const navigate = useNavigate();
+  const { role, setRole } = useContext(LoginRoleContext);
+  useEffect(() => {
+    if (!role) {
+      const cookieRole = Cookies.get("role");
+      setRole(cookieRole);
+    }
+  }, [role, setRole]);
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
@@ -50,12 +53,26 @@ const TimeSelect = () => {
             setReservations(result.reservations);
             setServices(result.services);
             setText(result.text);
+            setServicesEmp(result.employeeServices);
+            setSelectedAdminInfo(result.userInfo[0]);
+            setSelectedCells(result.userInfo[0].availability);
           });
       }
     } else {
       if (!selectedAdminInfo) {
+        setSelectedAdminInfo(userInfo[0]);
+        setSelectedCells(userInfo[0].availability);
+        setSelectedDailyCells(userInfo[0].dailyAvailability);
       } else {
-        setSelectedCells(selectedAdminInfo.availability);
+        if (selectedAdminInfo === userInfo[0]) {
+          setSelectedAdminInfo(userInfo[0]);
+          setSelectedCells(userInfo[0].availability);
+          setSelectedDailyCells(userInfo[0].dailyAvailability);
+        } else {
+          setSelectedAdminInfo(selectedAdminInfo);
+          setSelectedCells(selectedAdminInfo.availability);
+          setSelectedDailyCells(selectedAdminInfo.dailyAvailability);
+        }
       }
     }
   }, [
@@ -65,6 +82,7 @@ const TimeSelect = () => {
     setText,
     selectedAdminInfo,
     userInfo,
+    setServicesEmp,
   ]);
   const handleSelectNextBarber = () => {
     if (userInfo.length === 1) return;
@@ -80,7 +98,8 @@ const TimeSelect = () => {
     }
   };
 
-  if (!userInfo || !reservations || !services || !text) return <Loader />;
+  if (!userInfo || !reservations || !services || !text || !servicesEmp)
+    return <Loader />;
 
   if (!selectedAdminInfo) {
     return (
@@ -98,13 +117,6 @@ const TimeSelect = () => {
 
   // daily hours for the table (from 9am to 8pm)
   const daily = getDailyHours();
-
-  // function: select/change barber
-  const selectBarber = (e, barber) => {
-    e.preventDefault();
-    setSelectedAdminInfo(barber);
-    setShowBarbers(!showBarbers);
-  };
 
   // function: save changes updates the availability of the selected barber in the database and the context
   const saveChanges = () => {
@@ -258,7 +270,8 @@ const TimeSelect = () => {
             </Reset>
           )}
         </AvailButtons>
-        {isMobile ? (
+        {/* {isMobile ? ( */}
+        {
           <BarberContainer>
             <AdminName
               key={"mobileAdminClick"}
@@ -269,30 +282,31 @@ const TimeSelect = () => {
               {selectedAdminInfo.given_name}
             </AdminName>
           </BarberContainer>
-        ) : (
-          <BarberContainer>
-            <AdminName
-              key={"noMobileAdminClick"}
-              onClick={() => setShowBarbers(!showBarbers)}
-            >
-              {showBarbers ? "X" : selectedAdminInfo.given_name}
-            </AdminName>
-            {showBarbers ? (
-              <>
-                {userInfo.map((barber) => {
-                  return (
-                    <AdminName
-                      key={barber.given_name}
-                      onClick={(e) => selectBarber(e, barber)}
-                    >
-                      {barber.given_name}
-                    </AdminName>
-                  );
-                })}
-              </>
-            ) : null}
-          </BarberContainer>
-        )}
+          // ) : (
+          //   <BarberContainer>
+          //     <AdminName
+          //       key={"noMobileAdminClick"}
+          //       onClick={() => setShowBarbers(!showBarbers)}
+          //     >
+          //       {showBarbers ? "X" : selectedAdminInfo.given_name}
+          //     </AdminName>
+          //     {showBarbers ? (
+          //       <>
+          //         {userInfo.map((barber) => {
+          //           return (
+          //             <AdminName
+          //               key={barber.given_name}
+          //               onClick={(e) => selectBarber(e, barber)}
+          //             >
+          //               {barber.given_name}
+          //             </AdminName>
+          //           );
+          //         })}
+          //       </>
+          //     ) : null}
+          //   </BarberContainer>
+          // )
+        }
       </ControlPanel>
       {!isMobile && !dailyAvailabilityToggle ? (
         <TableWrapper>

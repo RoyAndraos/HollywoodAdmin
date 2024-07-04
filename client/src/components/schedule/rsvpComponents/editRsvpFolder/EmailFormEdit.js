@@ -19,7 +19,7 @@ const EmailFormEdit = ({ reservation, handleChange }) => {
       )}
 
       <EditButton
-        props={clientEmailEdit}
+        $props={clientEmailEdit}
         onClick={() => {
           if (clientEmailEdit === "false") {
             setClientEmailEdit("true");

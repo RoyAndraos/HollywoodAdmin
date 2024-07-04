@@ -24,7 +24,7 @@ const NoteFormEdit = ({ note, handleChange, initialNote, setNote }) => {
         ></StyledInput>
       )}
       <EditButton
-        props={noteEdit}
+        $props={noteEdit}
         onClick={() => {
           if (noteEdit === "false") {
             setNoteEdit("true");

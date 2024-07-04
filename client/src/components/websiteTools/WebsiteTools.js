@@ -11,6 +11,8 @@ import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
 import Services from "./services/Services";
+import { LoginRoleContext } from "../contexts/LoginRoleContext";
+import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 
 const WebsiteTools = () => {
   const [selectedOption, setSelectedOption] = useState("barberProfiles");
@@ -18,7 +20,14 @@ const WebsiteTools = () => {
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
   const { setText, text } = useContext(TextContext);
-
+  const { role, setRole } = useContext(LoginRoleContext);
+  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
+  useEffect(() => {
+    if (!role) {
+      const cookieRole = Cookies.get("role");
+      setRole(cookieRole);
+    }
+  }, [role, setRole]);
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
@@ -37,11 +46,20 @@ const WebsiteTools = () => {
             setReservations(result.reservations);
             setServices(result.services);
             setText(result.text);
+            setServicesEmp(result.employeeServices);
           });
       }
     }
-  }, [setReservations, setServices, setUserInfo, setText, userInfo]);
-  if (!userInfo || !reservations || !services || !text) return <Loader />;
+  }, [
+    setReservations,
+    setServices,
+    setUserInfo,
+    setText,
+    userInfo,
+    setServicesEmp,
+  ]);
+  if (!userInfo || !reservations || !services || !text || !servicesEmp)
+    return <Loader />;
   return (
     <Wrapper>
       <ToolBar

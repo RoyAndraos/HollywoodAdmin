@@ -255,7 +255,7 @@ const TimeSlotEdit = ({
         </SlotSelector>
       )}
       {timeEdit === "Cancel" && <div></div>}
-      <EditButton props={timeEdit} onClick={() => handleEditClick()}>
+      <EditButton $props={timeEdit} onClick={() => handleEditClick()}>
         {timeEdit}
       </EditButton>
     </LabelInfoWrapper>
@@ -267,7 +267,7 @@ const EditButton = styled.button`
   background-color: #035e3f;
   width: 100px;
   background-color: ${(props) => {
-    return props.props === "Cancel" ? " #ad0606" : "#035e3f";
+    return props.$props === "Cancel" ? " #ad0606" : "#035e3f";
   }};
   color: whitesmoke;
   border-radius: 10px;
@@ -277,7 +277,7 @@ const EditButton = styled.button`
   font-weight: 600;
   position: relative;
   right: ${(props) => {
-    return props.props === "Cancel" ? "-20vw" : "";
+    return props.$props === "Cancel" ? "-20vw" : "";
   }};
   &:hover {
     cursor: pointer;

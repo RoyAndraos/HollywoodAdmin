@@ -13,41 +13,56 @@ import EmailFormEdit from "./EmailFormEdit";
 import NoteFormEdit from "./NoteFormEdit";
 import LastNameFormEdit from "./LastNameFormEdit";
 import Cookies from "js-cookie";
+
 const EditRsvp = () => {
   const { reservations } = useContext(ReservationContext);
   const [timeEdit, setTimeEdit] = useState("Edit");
-
   const params = useParams()._id;
   const navigate = useNavigate();
-  const thisReservation = reservations.filter(
-    (reservation) => reservation._id === params
-  );
-  const [formData, setFormData] = useState(thisReservation[0]);
+  const [thisReservation, setThisReservation] = useState(null);
+  const [formData, setFormData] = useState({});
   const [note, setNote] = useState("");
   const [initialNote, setInitialNote] = useState("");
+
+  useEffect(() => {
+    if (!reservations) {
+      navigate("/schedule");
+      return;
+    }
+    const foundReservation = reservations.find(
+      (reservation) => reservation._id === params
+    );
+    if (foundReservation) {
+      setThisReservation(foundReservation);
+      setFormData(foundReservation);
+    } else {
+      navigate("/schedule");
+    }
+  }, [reservations, params, navigate]);
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token && thisReservation) {
+      fetch(
+        `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation.client_id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          setInitialNote(result.data);
+        });
+    }
+  }, [thisReservation]);
+
   const handleChangeNote = (e) => {
     setNote(e.target.value);
   };
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const headers = {
-      authorization: token,
-    };
-    fetch(
-      `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation[0].client_id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...headers,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((result) => {
-        setInitialNote(result.data);
-      });
-  }, [thisReservation]);
 
   const handleChange = (key, value) => {
     setFormData({
@@ -60,6 +75,9 @@ const EditRsvp = () => {
     e.preventDefault();
     navigate("/schedule");
   };
+
+  if (!reservations || !thisReservation) return <div>Loading...</div>;
+
   return (
     <Wrapper style={{ position: "relative" }} key={"edit"}>
       <BackButton onClick={(e) => handleExit(e)}>
@@ -68,26 +86,26 @@ const EditRsvp = () => {
       <SmallWrapper>
         <IdWrapper>
           <StyledLabel>Reservation id</StyledLabel>
-          <Id>{thisReservation[0]._id}</Id>
+          <Id>{thisReservation._id}</Id>
         </IdWrapper>
         <NameFormEdit
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
           handleChange={handleChange}
         />
         <LastNameFormEdit
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
           handleChange={handleChange}
         />
         <BarberFormEdit
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
           handleChange={handleChange}
         />
         <ServiceFormEdit
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
           handleChange={handleChange}
         />
         <TimeSlotEdit
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
           handleChange={handleChange}
           formData={formData}
           timeEdit={timeEdit}
@@ -96,22 +114,22 @@ const EditRsvp = () => {
         />
         <NumberFormEdit
           handleChange={handleChange}
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
         />
         <EmailFormEdit
           handleChange={handleChange}
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
         />
         <NoteFormEdit
           handleChange={handleChangeNote}
-          reservation={thisReservation[0]}
+          reservation={thisReservation}
           note={note}
           initialNote={initialNote}
           setNote={setNote}
         />
         <SaveDelete
           formData={formData}
-          initialFormData={thisReservation[0]}
+          initialFormData={thisReservation}
           initialNote={initialNote}
           note={note}
         />
@@ -119,6 +137,7 @@ const EditRsvp = () => {
     </Wrapper>
   );
 };
+
 const SmallWrapper = styled.div`
   font-family: "Roboto", sans-serif;
   display: flex;
@@ -148,7 +167,7 @@ export const EditButton = styled.button`
   background-color: #035e3f;
   width: 100px;
   background-color: ${(props) => {
-    return props.props === "true" ? " #ad0606" : "#035e3f";
+    return props.$props === "true" ? " #ad0606" : "#035e3f";
   }};
   color: whitesmoke;
   border-radius: 10px;
@@ -212,7 +231,6 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
   background-color: whitesmoke;
   height: 91.5vh;
   @media (max-width: 768px) {
@@ -220,4 +238,5 @@ const Wrapper = styled.div`
     padding-bottom: 10vh;
   }
 `;
+
 export default EditRsvp;

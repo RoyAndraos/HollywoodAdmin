@@ -8,10 +8,21 @@ import ClientChart from "./ClientChart";
 import TimeSlotChart from "./TimeSlotChart";
 import DataTypeBar from "./DataTypeBar";
 import Loader from "../Loader";
+import { UserContext } from "../contexts/UserContext";
+import { ServicesContext } from "../contexts/ServicesContext";
+import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+import { TextContext } from "../contexts/TextContext";
+import { LoginRoleContext } from "../contexts/LoginRoleContext";
+
 const Data = () => {
   const [type, setType] = useState("week");
-  const { reservations } = useContext(ReservationContext);
+  const { reservations, setReservations } = useContext(ReservationContext);
   const { clients, setClients } = useContext(ClientsContext);
+  const { setUserInfo, userInfo } = useContext(UserContext);
+  const { setServices } = useContext(ServicesContext);
+  const { setServicesEmp } = useContext(EmployeeServicesContext);
+  const { setText } = useContext(TextContext);
+  const { setRole } = useContext(LoginRoleContext);
   const [clientsData, setClientsData] = useState();
   const [date, setDate] = useState(new Date());
 
@@ -33,8 +44,31 @@ const Data = () => {
           setClients(result.data);
         });
     }
+    if (!userInfo) {
+      fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
+        headers,
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setUserInfo(result.userInfo);
+          setReservations(result.reservations);
+          setServices(result.services);
+          setText(result.text);
+          setServicesEmp(result.employeeServices);
+          setRole(result.role);
+        });
+    }
     // eslint-disable-next-line
-  }, [clients]);
+  }, [
+    clients,
+    setUserInfo,
+    userInfo,
+    setReservations,
+    setServices,
+    setText,
+    setServicesEmp,
+    setRole,
+  ]);
   useEffect(() => {
     const currentDate = new Date();
 

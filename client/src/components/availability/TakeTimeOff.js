@@ -12,6 +12,8 @@ import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
 import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
+import { ClientsContext } from "../contexts/ClientsContext";
+import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 
 const TakeTimeOff = () => {
   // useState/useContext: start date of time off, end date of time off, user info to see who's selected, notification
@@ -39,7 +41,8 @@ const TakeTimeOff = () => {
   const popper = document.getElementsByClassName("react-datepicker-popper");
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
-
+  const { clients, setClients } = useContext(ClientsContext);
+  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText, text } = useContext(TextContext);
 
   useEffect(() => {
@@ -60,10 +63,20 @@ const TakeTimeOff = () => {
             setReservations(result.reservations);
             setServices(result.services);
             setText(result.text);
+            setClients(result.clients);
+            setServicesEmp(result.employeeServices);
           });
       }
     }
-  }, [setReservations, setServices, setUserInfo, setText, userInfo]);
+  }, [
+    setReservations,
+    setServices,
+    setUserInfo,
+    setText,
+    userInfo,
+    setClients,
+    setServicesEmp,
+  ]);
   useEffect(() => {
     if (popper.length !== 0) {
       popper[0].style.position = "relative";
@@ -216,8 +229,15 @@ const TakeTimeOff = () => {
     setShowBarbers(false);
     navigate(`/timeOff/${barber._id}`);
   };
-
-  if (!reservations || !services || !text || !userInfo) return <Loader />;
+  if (
+    !reservations ||
+    !services ||
+    !text ||
+    !userInfo ||
+    !clients ||
+    !servicesEmp
+  )
+    return <Loader />;
   return (
     <Wrapper>
       <BarberContainer>

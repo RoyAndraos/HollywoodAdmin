@@ -13,6 +13,7 @@ import Loader from "../Loader";
 import Services from "./services/Services";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
 import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+import { ClientsContext } from "../contexts/ClientsContext";
 
 const WebsiteTools = () => {
   const [selectedOption, setSelectedOption] = useState("barberProfiles");
@@ -22,6 +23,7 @@ const WebsiteTools = () => {
   const { setText, text } = useContext(TextContext);
   const { role, setRole } = useContext(LoginRoleContext);
   const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
+  const { clients, setClients } = useContext(ClientsContext);
   useEffect(() => {
     if (!role) {
       const cookieRole = Cookies.get("role");
@@ -47,6 +49,7 @@ const WebsiteTools = () => {
             setServices(result.services);
             setText(result.text);
             setServicesEmp(result.employeeServices);
+            setClients(result.clients);
           });
       }
     }
@@ -57,8 +60,16 @@ const WebsiteTools = () => {
     setText,
     userInfo,
     setServicesEmp,
+    setClients,
   ]);
-  if (!userInfo || !reservations || !services || !text || !servicesEmp)
+  if (
+    !userInfo ||
+    !reservations ||
+    !services ||
+    !text ||
+    !servicesEmp ||
+    !clients
+  )
     return <Loader />;
   return (
     <Wrapper>

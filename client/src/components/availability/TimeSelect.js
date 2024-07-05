@@ -14,6 +14,7 @@ import { IsMobileContext } from "../contexts/IsMobileContext";
 import DailyAvailability from "./DailyAvailability";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
 import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+import { ClientsContext } from "../contexts/ClientsContext";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const { setUserInfo, userInfo } = useContext(UserContext);
@@ -27,6 +28,7 @@ const TimeSelect = () => {
   const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText, text } = useContext(TextContext);
   const { isMobile } = useContext(IsMobileContext);
+  const { clients, setClients } = useContext(ClientsContext);
   const navigate = useNavigate();
   const { role, setRole } = useContext(LoginRoleContext);
   useEffect(() => {
@@ -54,6 +56,8 @@ const TimeSelect = () => {
             setServices(result.services);
             setText(result.text);
             setServicesEmp(result.employeeServices);
+            setClients(result.clients);
+
             setSelectedAdminInfo(result.userInfo[0]);
             setSelectedCells(result.userInfo[0].availability);
           });
@@ -83,6 +87,7 @@ const TimeSelect = () => {
     selectedAdminInfo,
     userInfo,
     setServicesEmp,
+    setClients,
   ]);
   const handleSelectNextBarber = () => {
     if (userInfo.length === 1) return;
@@ -98,7 +103,14 @@ const TimeSelect = () => {
     }
   };
 
-  if (!userInfo || !reservations || !services || !text || !servicesEmp)
+  if (
+    !userInfo ||
+    !reservations ||
+    !services ||
+    !text ||
+    !servicesEmp ||
+    !clients
+  )
     return <Loader />;
 
   if (!selectedAdminInfo) {

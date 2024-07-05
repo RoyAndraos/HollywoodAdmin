@@ -707,5 +707,7 @@ export const getDateRange = (startDate, type) => {
   return { startDate: startDate, endDate: endDate };
 };
 
+export const getClientsByName = (chars, clients) => {};
+
 // 8.3% is 1 hour
 // 2.075% is 15 minutes

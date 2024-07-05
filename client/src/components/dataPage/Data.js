@@ -55,6 +55,7 @@ const Data = () => {
           setServices(result.services);
           setText(result.text);
           setServicesEmp(result.employeeServices);
+          setClients(result.clients);
           setRole(result.role);
         });
     }
@@ -68,6 +69,7 @@ const Data = () => {
     setText,
     setServicesEmp,
     setRole,
+    setClients,
   ]);
   useEffect(() => {
     const currentDate = new Date();

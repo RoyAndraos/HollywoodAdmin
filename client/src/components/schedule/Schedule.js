@@ -10,6 +10,7 @@ import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
 import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+import { ClientsContext } from "../contexts/ClientsContext";
 const Schedule = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setReservations, reservations } = useContext(ReservationContext);
@@ -20,7 +21,7 @@ const Schedule = () => {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [slotBeforeCheck, setSlotBeforeCheck] = useState([]);
-
+  const { clients, setClients } = useContext(ClientsContext);
   useEffect(() => {
     if (!userInfo) {
       const token = Cookies.get("token");
@@ -41,6 +42,7 @@ const Schedule = () => {
             setServices(result.services);
             setText(result.text);
             setServicesEmp(result.employeeServices);
+            setClients(result.clients);
             setRole(role);
           });
       }
@@ -53,8 +55,16 @@ const Schedule = () => {
     userInfo,
     setRole,
     setServicesEmp,
+    setClients,
   ]);
-  if (!userInfo || !reservations || !services || !text || !servicesEmp)
+  if (
+    !userInfo ||
+    !reservations ||
+    !services ||
+    !text ||
+    !servicesEmp ||
+    !clients
+  )
     return <Loader />;
   return (
     <div>

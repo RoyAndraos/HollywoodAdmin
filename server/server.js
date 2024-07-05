@@ -195,6 +195,7 @@ const getUserInfo = async (req, res) => {
     const services = await db.collection("services").find().toArray();
     const images = await db.collection("Images").find().toArray();
     const text = await db.collection("web_text").find().toArray();
+    const clients = await db.collection("Clients").find().toArray();
     const employeeServices = await db
       .collection("servicesEmp")
       .find()
@@ -207,6 +208,7 @@ const getUserInfo = async (req, res) => {
       images: images,
       text: text,
       employeeServices: employeeServices,
+      clients: clients,
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });

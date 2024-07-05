@@ -41,7 +41,9 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://your-frontend-domain.com"], // Replace with your frontend domain
+    origin: ["http://www.hollywoodfairmountadmin.com"],
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
   })
 );
 app.use(helmet());

@@ -94,11 +94,9 @@ const AddReservation = ({
       email: clientEmail,
       number: formattedClientNumber,
       sendSMS: sendSMS,
-      lname:
-        clientName.split(" ")[1] + clientName.split(" ")[2]
-          ? clientName.split(" ")[2]
-          : "",
+      lname: clientName.split(" ").slice(1).join(" ") || "",
     };
+    console.log(reservation);
 
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",

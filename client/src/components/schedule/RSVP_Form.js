@@ -9,6 +9,7 @@ import SlotSelector from "./rsvpComponents/SlotSelector";
 import { NotificationContext } from "../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { IsMobileContext } from "../contexts/IsMobileContext";
+import Reminder from "./rsvpComponents/Reminder";
 const AddReservation = ({
   selectedDate,
   setSelectedDate,
@@ -34,7 +35,7 @@ const AddReservation = ({
   const [overLappingError, setOverLappingError] = useState(false);
   const [sendSMS, setSendSMS] = useState(true);
   const { isMobile } = useContext(IsMobileContext);
-
+  const [showReminderModal, setShowReminderModal] = useState(false);
   //check if barber is selected
   useEffect(() => {
     if (Object.keys(selectedBarberForm).length === 0) {
@@ -93,7 +94,10 @@ const AddReservation = ({
       email: clientEmail,
       number: formattedClientNumber,
       sendSMS: sendSMS,
-      lname: clientName.split(" ")[1] || "",
+      lname:
+        clientName.split(" ")[1] + clientName.split(" ")[2]
+          ? clientName.split(" ")[2]
+          : "",
     };
 
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
@@ -359,9 +363,22 @@ const AddReservation = ({
           <Book
             type="submit"
             disabled={error || barberError || serviceError || overLappingError}
+            key={"book"}
           >
             Book
           </Book>
+          <Book
+            onClick={() => {
+              setShowReminderModal(true);
+            }}
+            type="button"
+            key={"reminder"}
+          >
+            Send Reminders
+          </Book>
+          {showReminderModal && (
+            <Reminder setShowReminderModal={setShowReminderModal} />
+          )}
         </div>
       </StyledForm>
     </Wrapper>

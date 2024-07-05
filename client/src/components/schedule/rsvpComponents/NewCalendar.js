@@ -73,12 +73,14 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
           element.style.left = "0%";
           element.style.backgroundColor = "#035e3f";
           element.style.borderBottom = "1px solid white";
+          element.style.transition = "0.3s ease-in-out";
         } else if (element.innerHTML.includes("Ty")) {
           element.style.width = "50%";
           element.style.left = "50%";
           element.style.zIndex = "100";
           element.style.backgroundColor = "#e539a1";
           element.style.borderBottom = "1px solid white";
+          element.style.transition = "0.3s ease-in-out";
         }
       });
 

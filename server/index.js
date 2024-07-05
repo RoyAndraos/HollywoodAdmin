@@ -43,6 +43,7 @@ app.use(
   cors({
     origin: ["https://hollywoodfairmountadmin.com/", "http://localhost:3000/"],
     methods: ["GET", "POST", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );

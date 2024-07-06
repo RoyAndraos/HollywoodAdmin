@@ -1,24 +1,52 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ReservationContext } from "../../contexts/ReservationContext";
-
+import moment from "moment";
 const Reminder = ({ setShowReminderModal }) => {
   const { reservations } = useContext(ReservationContext);
-  const tomorrowReservations = reservations.filter((reservation) => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const reservationDate = new Date(reservation.date);
-    return (
-      reservationDate.getDate() === tomorrow.getDate() &&
-      reservationDate.getMonth() === tomorrow.getMonth() &&
-      reservationDate.getFullYear() === tomorrow.getFullYear()
-    );
-  });
+  const [selectedReservations, setSelectedReservations] = useState([]);
+  const [tomorrowReservations] = useState(
+    reservations.filter((reservation) => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const reservationDate = new Date(reservation.date);
+      return (
+        reservationDate.getDate() === tomorrow.getDate() &&
+        reservationDate.getMonth() === tomorrow.getMonth() &&
+        reservationDate.getFullYear() === tomorrow.getFullYear()
+      );
+    })
+  );
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const sendSMS = () => {
+    selectedReservations.forEach((reservation) => {
+      const message = `Hello ${
+        reservation.fname
+      }, this is a reminder for your appointment tomorrow at ${
+        reservation.slot[0].split("-")[1]
+      }. Thank you for choosing hollywood fairmount barbers!`;
+      fetch("https://hollywood-fairmount-admin.onrender.com/sendReminder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: reservation.number,
+          message,
+        }),
+      });
+    });
+    setShowReminderModal(false);
+  };
+  useEffect(() => {
+    setSelectedReservations(tomorrowReservations);
+  }, [reservations, tomorrowReservations]);
   return (
     <Wrapper>
       {tomorrowReservations.length > 0 ? (
         <SmolWrapper>
-          <h1>Reminder SMS</h1>
+          <h1>Reminder SMS for {moment(tomorrow).format("MMMM DD")} </h1>
           <AllResiesWrapper>
             {tomorrowReservations.map((reservation) => (
               <Res key={reservation._id}>
@@ -26,7 +54,25 @@ const Reminder = ({ setShowReminderModal }) => {
                   {reservation.fname} {reservation.lname} at{" "}
                   {reservation.slot[0].split("-")[1]}
                 </label>
-                <CheckBox type="checkbox" defaultChecked />
+                <CheckBox
+                  type="checkbox"
+                  defaultChecked
+                  onClick={() => {
+                    if (
+                      selectedReservations.find((res) => {
+                        return res._id === reservation._id;
+                      })
+                    ) {
+                      setSelectedReservations((prev) => {
+                        return prev.filter(
+                          (res) => res._id !== reservation._id
+                        );
+                      });
+                    } else {
+                      setSelectedReservations((prev) => [...prev, reservation]);
+                    }
+                  }}
+                />
               </Res>
             ))}
           </AllResiesWrapper>
@@ -34,7 +80,14 @@ const Reminder = ({ setShowReminderModal }) => {
             <Button $close={true} onClick={() => setShowReminderModal(false)}>
               Close
             </Button>
-            <Button $close={false} disabled={true}>
+            <Button
+              key={"sendSMS"}
+              $close={false}
+              disabled={selectedReservations.length === 0}
+              onClick={() => {
+                sendSMS();
+              }}
+            >
               Send
             </Button>
           </ButtonWrapper>
@@ -44,7 +97,9 @@ const Reminder = ({ setShowReminderModal }) => {
           <h1>Reminder SMS</h1>
           <p>You have no reservations tomorrow</p>
           <ButtonWrapper>
-            <Button onClick={() => setShowReminderModal(false)}>Close</Button>
+            <Button onClick={() => setShowReminderModal(false)} $close={true}>
+              Close
+            </Button>
             <Button disabled={true}>Send</Button>
           </ButtonWrapper>
         </SmolWrapper>
@@ -65,6 +120,7 @@ const SmolWrapper = styled.div`
   position: fixed;
   width: 50%;
   min-height: 50%;
+  max-height: 55%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -74,6 +130,7 @@ const SmolWrapper = styled.div`
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  padding: 30px 0;
 `;
 
 const AllResiesWrapper = styled.div`
@@ -83,6 +140,8 @@ const AllResiesWrapper = styled.div`
   gap: 15px;
   max-height: 50%;
   overflow-y: auto;
+  border: 1px solid #4caf50;
+  padding: 10px;
 `;
 
 const Res = styled.div`
@@ -101,6 +160,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 15px;
+  margin-top: 20px;
 `;
 
 const Button = styled.button`

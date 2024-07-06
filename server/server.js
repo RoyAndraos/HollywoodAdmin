@@ -223,6 +223,21 @@ const getUserInfo = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
+const sendReminders = async (req, res) => {
+  const { to, message } = req.body;
+  console.log("to", to, "message", message);
+  try {
+    await twilioClient.messages.create({
+      body: message,
+      messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+      to: to,
+    });
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -843,6 +858,7 @@ module.exports = {
   deleteClient,
   deleteService,
   updateDailyAvailability,
+  sendReminders,
 };
 
 // availability: PATCH REQUEST

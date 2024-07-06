@@ -27,7 +27,6 @@ const {
   startChangeStream,
   login,
   logout,
-  verifyToken,
   updateServices,
   getClientNotes,
   updateClientNote,
@@ -35,6 +34,7 @@ const {
   deleteClient,
   deleteService,
   updateDailyAvailability,
+  sendReminders,
 } = require("./server");
 
 const app = express();
@@ -52,31 +52,32 @@ app.options("*", cors());
 app.get("/", (req, res) => {
   res.send("Welcome to my server");
 });
-app.get("/getUserInfo", verifyToken, getUserInfo);
-app.get("/search/:searchTerm", verifyToken, getSearchResults);
-app.get("/clients", verifyToken, getClients);
-app.get("/getClientNote/:client_id", verifyToken, getClientNotes);
-app.get("/clientByName/:name", verifyToken, getClientByName);
+app.get("/getUserInfo", getUserInfo);
+app.get("/search/:searchTerm", getSearchResults);
+app.get("/clients", getClients);
+app.get("/getClientNote/:client_id", getClientNotes);
+app.get("/clientByName/:name", getClientByName);
 app.post("/logout", logout);
 app.post("/login", login);
-app.post("/addReservation", verifyToken, addReservation);
-app.post("/addBarber", verifyToken, addBarber);
-app.patch("/updateClient", verifyToken, updateClient);
-app.patch("/upload", verifyToken, uploadImage);
-app.patch("/updateAvailability", verifyToken, updateAvailability);
-app.patch("/addTimeOff", verifyToken, addTimeOff);
-app.patch("/updateReservation", verifyToken, updateReservation);
-app.patch("/updateBarberProfile", verifyToken, updateBarberProfile);
-app.patch("/updateText", verifyToken, updateText);
-app.patch("/updateServices", verifyToken, updateServices);
-app.patch("/updateClientNote", verifyToken, updateClientNote);
-app.patch("/updateDailyAvailability", verifyToken, updateDailyAvailability);
-app.delete("/images/:_id", verifyToken, deleteImage);
-app.delete("/deleteTimeOff", verifyToken, deleteTimeOff);
-app.delete("/deleteReservation", verifyToken, deleteReservation);
-app.delete("/deleteBarberProfile", verifyToken, deleteBarberProfile);
-app.delete("/deleteClient/:_id", verifyToken, deleteClient);
-app.delete("/deleteService/:_id", verifyToken, deleteService);
+app.post("/addReservation", addReservation);
+app.post("/addBarber", addBarber);
+app.post("/sendReminder", sendReminders);
+app.patch("/updateClient", updateClient);
+app.patch("/upload", uploadImage);
+app.patch("/updateAvailability", updateAvailability);
+app.patch("/addTimeOff", addTimeOff);
+app.patch("/updateReservation", updateReservation);
+app.patch("/updateBarberProfile", updateBarberProfile);
+app.patch("/updateText", updateText);
+app.patch("/updateServices", updateServices);
+app.patch("/updateClientNote", updateClientNote);
+app.patch("/updateDailyAvailability", updateDailyAvailability);
+app.delete("/images/:_id", deleteImage);
+app.delete("/deleteTimeOff", deleteTimeOff);
+app.delete("/deleteReservation", deleteReservation);
+app.delete("/deleteBarberProfile", deleteBarberProfile);
+app.delete("/deleteClient/:_id", deleteClient);
+app.delete("/deleteService/:_id", deleteService);
 
 const server = http.createServer(app);
 const io = socketIo(server, {

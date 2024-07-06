@@ -1,3 +1,7 @@
+export const getClientByNumber = (number, clients) => {
+  return clients.filter((client) => client.number.includes(number));
+};
+
 export const getDailyHours = () => {
   const daily = [];
   let hour = 9;
@@ -707,7 +711,38 @@ export const getDateRange = (startDate, type) => {
   return { startDate: startDate, endDate: endDate };
 };
 
-export const getClientsByName = (chars, clients) => {};
+export const getClientsByName = (chars, clients) => {
+  return clients.filter((client) => {
+    return (
+      client.fname.toLowerCase().includes(chars.toLowerCase()) ||
+      client.lname.toLowerCase().includes(chars.toLowerCase())
+    );
+  });
+};
+
+export const highlightText = (text, query) => {
+  const regex = new RegExp(`(${query})`, "gi");
+  const parts = text.split(regex);
+  if (parts.length > 4) {
+    return text;
+  }
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          color: "black",
+          fontWeight: "bold",
+          fontFamily: "Roboto, sans-serif",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
 
 // 8.3% is 1 hour
 // 2.075% is 15 minutes

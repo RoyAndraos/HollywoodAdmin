@@ -10,6 +10,8 @@ import { NotificationContext } from "../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { IsMobileContext } from "../contexts/IsMobileContext";
 import Reminder from "./rsvpComponents/Reminder";
+import { getClientByNumber, getClientsByName, highlightText } from "../helpers";
+import { ClientsContext } from "../contexts/ClientsContext";
 const AddReservation = ({
   selectedDate,
   setSelectedDate,
@@ -36,6 +38,8 @@ const AddReservation = ({
   const [sendSMS, setSendSMS] = useState(true);
   const { isMobile } = useContext(IsMobileContext);
   const [showReminderModal, setShowReminderModal] = useState(false);
+  const { clients } = useContext(ClientsContext);
+
   //check if barber is selected
   useEffect(() => {
     if (Object.keys(selectedBarberForm).length === 0) {
@@ -49,31 +53,35 @@ const AddReservation = ({
       setServiceError(false);
     }
   }, [selectedBarberForm, selectedService]);
-
   //searches for client data (when admin enters name in the client name input)
   const fetchClientData = async (name) => {
-    if (name.length <= 2) {
+    if (name.length <= 1) {
       setExistingClient([]);
       return;
     }
-    const token = Cookies.get("token");
-    const headers = {
-      authorization: token,
-    };
-
-    try {
-      const response = await fetch(
-        `https://hollywood-fairmount-admin.onrender.com/clientByName/${name}`,
-        {
-          headers,
-        }
-      );
-      const data = await response.json();
-      if (data.data) {
-        setExistingClient(data.data);
-      }
-    } catch (error) {
-      setNotification("Something went wrong");
+    const clientsData = getClientsByName(name, clients);
+    if (clientsData.length > 5) {
+      setExistingClient(clientsData.slice(0, 5));
+    } else if (clientsData.length > 0 && clientsData.length <= 5) {
+      setExistingClient(getClientsByName(name, clients));
+    }
+    if (clientsData.length === 0) {
+      setExistingClient([]);
+    }
+  };
+  const fetchClientNumber = async (number) => {
+    if (number.length <= 1) {
+      setExistingClient([]);
+      return;
+    }
+    const clientsData = getClientByNumber(number, clients);
+    if (clientsData.length > 5) {
+      setExistingClient(clientsData.slice(0, 5));
+    } else if (clientsData.length > 0 && clientsData.length <= 5) {
+      setExistingClient(getClientByNumber(number, clients));
+    }
+    if (clientsData.length === 0) {
+      setExistingClient([]);
     }
   };
 
@@ -96,7 +104,6 @@ const AddReservation = ({
       sendSMS: sendSMS,
       lname: clientName.split(" ").slice(1).join(" ") || "",
     };
-    console.log(reservation);
 
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
@@ -163,35 +170,42 @@ const AddReservation = ({
         }
         break;
       case "number":
-        const inputNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-        let formattedNumber = "";
-        if (inputNumber.length <= 3) {
-          formattedNumber = `(${inputNumber}`;
-        } else if (inputNumber.length <= 6) {
-          formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
-            3
-          )}`;
-        } else {
-          formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
-            3,
-            6
-          )}-${inputNumber.slice(6, 10)}`;
+        setClientNumber(e.target.value);
+        if (e.target.value.length > 2) {
+          fetchClientNumber(e.target.value);
         }
-        setClientNumber(formattedNumber);
-        //check number
         if (e.target.value.length === 0) {
           setNumberError("");
-        } else {
-          if (e.target.value.length !== 14 && e.target.value.length !== 10) {
-            setNumberError("invalid phone number");
-            setError(true);
-          } else {
-            setNumberError("");
-            if (emailError === "" && nameError === "") {
-              setError(false);
-            }
-          }
         }
+        // const inputNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+        // let formattedNumber = "";
+        // if (inputNumber.length <= 3) {
+        //   formattedNumber = `(${inputNumber}`;
+        // } else if (inputNumber.length <= 6) {
+        //   formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
+        //     3
+        //   )}`;
+        // } else {
+        //   formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
+        //     3,
+        //     6
+        //   )}-${inputNumber.slice(6, 10)}`;
+        // }
+        // setClientNumber(formattedNumber);
+        // //check number
+        // if (e.target.value.length === 0) {
+        //   setNumberError("");
+        // } else {
+        //   if (e.target.value.length !== 14 && e.target.value.length !== 10) {
+        //     setNumberError("invalid phone number");
+        //     setError(true);
+        //   } else {
+        //     setNumberError("");
+        //     if (emailError === "" && nameError === "") {
+        //       setError(false);
+        //     }
+        //   }
+        // }
         break;
       case "name":
         setClientName(e.target.value);
@@ -204,7 +218,10 @@ const AddReservation = ({
           setError(true);
           fetchClientData(e.target.value);
         } else if (e.target.value.length === 0) {
-          setNameError("");
+          setNameError("Name is required");
+          setTimeout(() => {
+            setNameError(" ");
+          }, 2000);
         } else {
           setNameError("");
           if (emailError === "" && numberError === "") {
@@ -267,10 +284,14 @@ const AddReservation = ({
                             client.fname + " " + client.lname;
                         }}
                       >
-                        {client.fname} {client.lname} <br />
+                        {highlightText(
+                          `${client.fname} ${client.lname}`,
+                          clientName
+                        )}{" "}
+                        <br />
                         {client.email}
                         <br />
-                        {client.number}
+                        {highlightText(`${client.number}`, clientNumber)}
                       </Client>
                     );
                   })}
@@ -360,7 +381,13 @@ const AddReservation = ({
           </CheckboxWrapper>
           <Book
             type="submit"
-            disabled={error || barberError || serviceError || overLappingError}
+            disabled={
+              error ||
+              barberError ||
+              serviceError ||
+              overLappingError ||
+              nameError === " "
+            }
             key={"book"}
           >
             Book
@@ -596,9 +623,14 @@ const Client = styled.div`
   padding: 10px 0;
   text-align: center;
   transition: 0.3s ease-in-out;
+  border-bottom: 1px solid #ccc;
+  margin: 0 10px;
   &:hover {
     background-color: #049f6a;
     cursor: pointer;
+  }
+  &:last-of-type {
+    border-bottom: none;
   }
 `;
 const StyledClose = styled.button`

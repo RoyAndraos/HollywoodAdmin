@@ -52,7 +52,7 @@ const Clients = () => {
         setClients(newClientsArray);
       });
     // eslint-disable-next-line
-  }, [pageSearch, token]);
+  }, [pageSearch]);
   //   const [searchType, setSearchType] = useState("name");
   const handleSearchClick = () => {
     const headers = {

@@ -171,6 +171,7 @@ const SearchResults = ({
               (prevClient) => prevClient._id !== data._id
             );
           });
+
           setNotification("Client deleted successfully");
         } else {
           setNotification("Something went wrong");
@@ -458,7 +459,7 @@ const SearchResults = ({
                     onClick={() => {
                       setAreYouSure({
                         ...areYouSure,
-                        [client._id]: !areYouSure,
+                        [client._id]: !areYouSure[client._id],
                       });
                     }}
                   >

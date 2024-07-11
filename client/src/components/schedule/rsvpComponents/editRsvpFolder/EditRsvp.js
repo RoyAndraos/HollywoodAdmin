@@ -70,7 +70,6 @@ const EditRsvp = () => {
       [key]: value,
     });
   };
-
   const handleExit = (e) => {
     e.preventDefault();
     navigate("/schedule");

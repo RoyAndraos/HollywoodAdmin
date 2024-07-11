@@ -8,11 +8,11 @@ const BarberFormEdit = ({ reservation, handleChange }) => {
   return (
     <LabelInfoWrapper>
       <StyledLabel>Barber </StyledLabel>
-      {barberEdit ? (
+      {barberEdit === "true" ? (
         <Select
           open
           id="barber"
-          onChange={(e) => handleChange(e.target.id, e.target.value)}
+          onChange={(e) => handleChange("barber", e.target.value)}
         >
           {userInfo.map((barber) => {
             return <option key={barber._id}>{barber.given_name}</option>;
@@ -24,7 +24,6 @@ const BarberFormEdit = ({ reservation, handleChange }) => {
       <EditButton
         props={barberEdit}
         onClick={() => {
-          handleChange("barber", reservation.barber);
           if (barberEdit === "false") {
             setBarberEdit("true");
           } else {

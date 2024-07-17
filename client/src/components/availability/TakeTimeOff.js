@@ -23,15 +23,8 @@ const TakeTimeOff = () => {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
   const [showBarbers, setShowBarbers] = useState(false);
+  const [selectedBarber, setSelectedBarber] = useState();
   //get the selected barber
-  let barber;
-  if (userInfo) {
-    barber = userInfo.filter((user) => {
-      return user._id === barberId;
-    });
-  } else {
-    barber = [];
-  }
 
   const navigate = useNavigate();
   //popper element is the calendar that pops up when you click on the datepicker
@@ -78,11 +71,14 @@ const TakeTimeOff = () => {
     setServicesEmp,
   ]);
   useEffect(() => {
+    const barber = userInfo.filter((barber) => barber._id === barberId);
+    setSelectedBarber(barber[0]);
+  }, [barberId, userInfo]);
+  useEffect(() => {
     if (popper.length !== 0) {
       popper[0].style.position = "relative";
     }
   }, [popper]);
-
   //format date string to look like "Mon Jan 1"
   const formatDateString = (dateString) => {
     const date = new Date(dateString);
@@ -141,7 +137,8 @@ const TakeTimeOff = () => {
     const headers = {
       authorization: token,
     };
-    fetch("/https://hollywood-fairmount-admin.onrender.com/deleteTimeOff", {
+
+    fetch("https://hollywood-fairmount-admin.onrender.com/deleteTimeOff", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -235,14 +232,15 @@ const TakeTimeOff = () => {
     !text ||
     !userInfo ||
     !clients ||
-    !servicesEmp
+    !servicesEmp ||
+    !selectedBarber
   )
     return <Loader />;
   return (
     <Wrapper>
       <BarberContainer>
         <AdminName onClick={() => setShowBarbers(!showBarbers)}>
-          {showBarbers ? "X" : barber[0].given_name}
+          {showBarbers ? "X" : selectedBarber.given_name}
         </AdminName>
         {showBarbers ? (
           <>
@@ -287,10 +285,10 @@ const TakeTimeOff = () => {
           </Submit>
         </ButtonWrapper>
         <ButtonWrapper>
-          {barber[0].time_off.length !== 0 ? (
-            barber[0].time_off.map((timeOff) => {
+          {selectedBarber.time_off.length !== 0 ? (
+            selectedBarber.time_off.map((timeOff) => {
               return (
-                <TimeOffContainer key={timeOff.startDate}>
+                <TimeOffContainer key={timeOff.startDate + timeOff.endDate}>
                   {formatDateString(timeOff.startDate)} -{" "}
                   {formatDateString(timeOff.endDate)}
                   <Delete onClick={() => handleDeleteTimeOff(timeOff)}>

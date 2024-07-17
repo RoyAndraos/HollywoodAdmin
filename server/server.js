@@ -225,7 +225,6 @@ const getUserInfo = async (req, res) => {
 
 const sendReminders = async (req, res) => {
   const { to, message } = req.body;
-  console.log("to", to, "message", message);
   try {
     await twilioClient.messages.create({
       body: message,
@@ -728,6 +727,7 @@ const updateBarberProfile = async (req, res) => {
         family_name: barberInfo.family_name,
         email: barberInfo.email,
         description: barberInfo.description,
+        french_description: barberInfo.french_description,
         picture: barberInfo.picture,
       },
     };

@@ -30,7 +30,6 @@ const SlotSelector = ({
   const todayDate = new Date();
   // format date for Wed Mar 27 2024
   const formattedDate = moment(todayDate).format("ddd MMM DD YYYY").toString();
-
   const isToday =
     formattedDate ===
     moment(selectedDate).format("ddd MMM DD YYYY").toString().slice(0, 15);
@@ -159,7 +158,6 @@ const SlotSelector = ({
     services,
     servicesEmp,
   ]);
-
   //check if selected slot will overlap with the reserved slots
   useEffect(() => {
     //select right service depending on the selected barber

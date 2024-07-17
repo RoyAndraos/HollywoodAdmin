@@ -156,15 +156,7 @@ const BarberProfiles = () => {
                 />
               ) : (
                 // Render Display Mode
-                <div
-                  style={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-evenly",
-                    width: "80%",
-                  }}
-                >
+                <Container>
                   <DisplayWrapper>
                     <Name>
                       {barber.given_name} {barber.family_name}
@@ -173,9 +165,16 @@ const BarberProfiles = () => {
                     {barber.description && barber.description !== "" && (
                       <Description>{barber.description}</Description>
                     )}
+                    {barber.french_description &&
+                      barber.french_description !== "" && (
+                        <Description>{barber.french_description}</Description>
+                      )}
                   </DisplayWrapper>
                   {barber.picture !== "" && (
-                    <BarberImage src={barber.picture} />
+                    <BarberImage
+                      src={barber.picture}
+                      alt={userInfo[0].given_name + " picture"}
+                    />
                   )}
                   <ButtonWrapper key={"notEdit" + barber._id}>
                     <EditButton
@@ -190,7 +189,7 @@ const BarberProfiles = () => {
                       Delete
                     </CancelButton>
                   </ButtonWrapper>
-                </div>
+                </Container>
               )}
             </BarberWrapper>
           );
@@ -211,15 +210,7 @@ const BarberProfiles = () => {
             />
           ) : (
             // Render Display Mode
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                width: "80%",
-              }}
-            >
+            <Container>
               <DisplayWrapper>
                 <Name>
                   {userInfo[1].given_name} {userInfo[1].family_name}
@@ -230,7 +221,10 @@ const BarberProfiles = () => {
                 )}
               </DisplayWrapper>
               {userInfo[1].picture !== "" && (
-                <BarberImage src={userInfo[1].picture} />
+                <BarberImage
+                  src={userInfo[1].picture}
+                  alt={userInfo[1].given_name + " picture"}
+                />
               )}
               <ButtonWrapper key={"notEdit" + userInfo[1]._id}>
                 <EditButton
@@ -245,7 +239,7 @@ const BarberProfiles = () => {
                   Delete
                 </CancelButton>
               </ButtonWrapper>
-            </div>
+            </Container>
           )}
         </BarberWrapper>
       )}
@@ -270,21 +264,20 @@ const BarberProfiles = () => {
     </Wrapper>
   );
 };
-
-const Wrapper = styled.div`
-  width: 100%;
-  height: fit-content;
-  margin-bottom: 10vh;
-`;
-export const BarberWrapper = styled.div`
-  width: 100%;
-  height: 100%;
+const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
+  gap: 2rem;
+`;
+const Wrapper = styled.div`
+  margin-bottom: 10vh;
+`;
+const BarberWrapper = styled.div`
+  display: flex;
+  justify-content: center;
   border-bottom: 2px solid rgba(0, 0, 0, 0.5);
-
   border-width: 0 0 1px 0;
   margin-top: 1rem;
   position: relative;
@@ -293,13 +286,14 @@ export const BarberWrapper = styled.div`
 `;
 
 const BarberImage = styled.img`
-  width: 300px;
+  width: 20vw;
   object-fit: cover;
   border: 2px solid #035e3f;
+  height: auto;
+  display: block;
 `;
 
 const AddBarber = styled.p`
-  width: fit-content;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -308,7 +302,6 @@ const AddBarber = styled.p`
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   border: 2px solid transparent;
-  border-radius: 0.5rem;
   padding: 0.5rem 1rem 0.5rem 1rem;
 `;
 const EditButton = styled.button`
@@ -318,7 +311,6 @@ const EditButton = styled.button`
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   border: 2px solid transparent;
-  border-radius: 2px;
   padding: 0.5rem 1rem 0.5rem 1rem;
   transition: 0.3s ease-in-out;
   &:hover {
@@ -338,7 +330,6 @@ export const CancelButton = styled.button`
   font-size: 1.2rem;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
-  border-radius: 2px;
   border: none;
   padding: 0.5rem 1rem 0.5rem 1rem;
   transition: 0.3s ease-in-out;
@@ -377,14 +368,13 @@ const Description = styled.p`
   margin-top: 20px;
   border: 2px solid rgba(0, 0, 0, 0.4);
   border-radius: 0.5rem;
-  width: 80%;
   padding: 0.5rem 1rem 10vh 1rem;
 `;
 const DisplayWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  height: 100%;
   font-family: "Roboto", sans-serif;
+  width: 60%;
 `;
 export default BarberProfiles;

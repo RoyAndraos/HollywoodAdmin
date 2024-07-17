@@ -160,12 +160,8 @@ const AddReservation = ({
         } else {
           if (!validEmail(e.target.value)) {
             setEmailError("invalid email");
-            setError(true);
           } else {
             setEmailError("");
-            if (nameError === "" && numberError === "") {
-              setError(false);
-            }
           }
         }
         break;
@@ -177,35 +173,9 @@ const AddReservation = ({
         if (e.target.value.length === 0) {
           setNumberError("");
         }
-        // const inputNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-        // let formattedNumber = "";
-        // if (inputNumber.length <= 3) {
-        //   formattedNumber = `(${inputNumber}`;
-        // } else if (inputNumber.length <= 6) {
-        //   formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
-        //     3
-        //   )}`;
-        // } else {
-        //   formattedNumber = `(${inputNumber.slice(0, 3)}) ${inputNumber.slice(
-        //     3,
-        //     6
-        //   )}-${inputNumber.slice(6, 10)}`;
-        // }
-        // setClientNumber(formattedNumber);
-        // //check number
-        // if (e.target.value.length === 0) {
-        //   setNumberError("");
-        // } else {
-        //   if (e.target.value.length !== 14 && e.target.value.length !== 10) {
-        //     setNumberError("invalid phone number");
-        //     setError(true);
-        //   } else {
-        //     setNumberError("");
-        //     if (emailError === "" && nameError === "") {
-        //       setError(false);
-        //     }
-        //   }
-        // }
+        if (numberError === "" && nameError === "") {
+          setError(false);
+        }
         break;
       case "name":
         setClientName(e.target.value);
@@ -224,7 +194,7 @@ const AddReservation = ({
           }, 2000);
         } else {
           setNameError("");
-          if (emailError === "" && numberError === "") {
+          if (numberError === "" && nameError === "") {
             setError(false);
           }
         }
@@ -240,6 +210,7 @@ const AddReservation = ({
     setSelectedSlot("");
     setSlotBeforeCheck("");
   };
+
   return (
     <Wrapper>
       <Title>Make a reservation</Title>
@@ -280,6 +251,14 @@ const AddReservation = ({
                           setClientEmail(client.email);
                           setClientNumber(client.number);
                           setClientName(client.fname + " " + client.lname);
+                          setNameError("");
+                          if (
+                            !barberError &&
+                            !serviceError &&
+                            !overLappingError
+                          ) {
+                            setError(false);
+                          }
                           document.getElementById("clientname").value =
                             client.fname + " " + client.lname;
                         }}
@@ -386,7 +365,9 @@ const AddReservation = ({
               barberError ||
               serviceError ||
               overLappingError ||
-              nameError === " "
+              nameError === " " ||
+              selectedSlot === "" ||
+              selectedSlot.length === 0
             }
             key={"book"}
           >

@@ -52,6 +52,14 @@ const EditProfileForm = ({
           name="description"
           onChange={(e) => handleChange(e.target.name, e.target.value)}
         />
+        <StyledTextArea
+          type="text"
+          key={"descriptionFrench" + barber._id}
+          defaultValue={barber.description}
+          placeholder="Description (French)"
+          name="french_description"
+          onChange={(e) => handleChange(e.target.name, e.target.value)}
+        />
       </InputField>
 
       {barber.given_name === "" ? (
@@ -107,6 +115,9 @@ const StyledTextArea = styled.textarea`
   font-size: 1.2rem;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
+  &:last-of-type {
+    margin-top: 20px;
+  }
 `;
 
 const EditProfileWrapper = styled.div`
@@ -122,7 +133,6 @@ const SaveButton = styled.button`
   font-size: 1.2rem;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
-  border-radius: 0.5rem;
   border: none;
   padding: 0.5rem 1rem 0.5rem 1rem;
   transition: 0.3s ease-in-out;

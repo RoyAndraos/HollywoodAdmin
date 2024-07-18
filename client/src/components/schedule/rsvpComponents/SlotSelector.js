@@ -95,7 +95,6 @@ const SlotSelector = ({
           return reservation.slot[0].split("-")[1];
         }
       );
-
       //select the right services array based on the selected Barber
       if (selectedService !== "") {
         const selectedServiceArray =

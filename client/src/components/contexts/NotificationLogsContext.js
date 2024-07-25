@@ -10,13 +10,16 @@ export const NotificationLogsProvider = ({ children }) => {
   const { setReservations } = useContext(ReservationContext);
 
   useEffect(() => {
-    const socket = io("https://hollywood-fairmount-admin.onrender.com");
+    const socket = io("https://hollywood-fairmount-admin.onrender.com", {
+      path: "/myCustomIOPath",
+    });
 
     socket.on("connect", () => {
       console.log("Connected to socket.io server");
     });
 
     socket.on("reservationChange", (change) => {
+      console.log("reservationChange", change);
       if (change.operationType === "insert") {
         const newChange = {
           ...change.fullDocument,

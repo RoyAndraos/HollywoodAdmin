@@ -85,6 +85,7 @@ const io = socketIo(server, {
     origin: "*",
   },
   transports: ["websocket", "polling"],
+  path: "/myCustomIOPath",
 });
 
 io.on("connection", (socket) => {

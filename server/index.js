@@ -82,7 +82,7 @@ app.delete("/deleteService/:_id", deleteService);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "*",
+    origin: "https://hollywoodfairmountadmin.com",
   },
   path: "/myCustomIOPath",
 });

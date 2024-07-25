@@ -19,14 +19,20 @@ export const NotificationLogsProvider = ({ children }) => {
     });
 
     socket.on("reservationChange", (change) => {
-      console.log("reservationChange", change);
       if (change.operationType === "insert") {
         const newChange = {
           ...change.fullDocument,
           read: false,
         };
+
         setNotificationLogs((prevLogs) => [...prevLogs, newChange]);
         setReservations((prevReservations) => [...prevReservations, newChange]);
+      } else if (change.operationType === "delete") {
+        setReservations((prevReservations) =>
+          prevReservations.filter(
+            (reservation) => reservation._id !== change.documentKey._id
+          )
+        );
       }
     });
 

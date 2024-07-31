@@ -2,7 +2,6 @@
 const express = require("express");
 const morgan = require("morgan");
 const http = require("http");
-const socketIo = require("socket.io");
 const cors = require("cors");
 const helmet = require("helmet");
 const PORT = process.env.PORT || 4000;
@@ -57,6 +56,18 @@ app.get("/search/:searchTerm", getSearchResults);
 app.get("/clients", getClients);
 app.get("/getClientNote/:client_id", getClientNotes);
 app.get("/clientByName/:name", getClientByName);
+app.get("/events", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  const sendEventStreamData = (data) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+  startChangeStream(sendEventStreamData);
+  req.on("close", () => {
+    res.end();
+  });
+});
 app.post("/logout", logout);
 app.post("/login", login);
 app.post("/addReservation", addReservation);
@@ -80,33 +91,7 @@ app.delete("/deleteClient/:_id", deleteClient);
 app.delete("/deleteService/:_id", deleteService);
 
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: "https://hollywoodfairmountadmin.com",
-  },
-  path: "/myCustomIOPath",
-});
-
-io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
 
 server.listen(PORT, () => {
   console.info(`Listening on port ${PORT}`);
-});
-
-startChangeStream(io);
-
-process.on("SIGTERM", () => {
-  server.close(() => {
-    console.log("Process terminated");
-  });
-});
-
-process.on("uncaughtException", (err) => {
-  console.error("There was an uncaught error", err);
-  process.exit(1);
 });

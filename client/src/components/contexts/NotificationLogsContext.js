@@ -1,6 +1,5 @@
-import { useEffect, useContext } from "react";
+import { useContext, useEffect } from "react";
 import { createContext, useState } from "react";
-import io from "socket.io-client";
 import { ReservationContext } from "./ReservationContext";
 
 export const NotificationLogsContext = createContext("");
@@ -8,41 +7,26 @@ export const NotificationLogsContext = createContext("");
 export const NotificationLogsProvider = ({ children }) => {
   const [notificationLogs, setNotificationLogs] = useState([]);
   const { setReservations } = useContext(ReservationContext);
-
   useEffect(() => {
-    const socket = io("https://hollywood-fairmount-admin.onrender.com", {
-      path: "/myCustomIOPath",
-    });
-
-    socket.on("connect", () => {
-      console.log("Connected to socket.io server");
-    });
-
-    socket.on("reservationChange", (change) => {
+    const eventSource = new EventSource(
+      "https://hollywood-fairmount-admin.onrender.com/events"
+    );
+    eventSource.onmessage = (event) => {
+      const change = JSON.parse(event.data);
+      // Update state with the new change
       if (change.operationType === "insert") {
-        const newChange = {
-          ...change.fullDocument,
-          read: false,
-        };
-
-        setNotificationLogs((prevLogs) => [...prevLogs, newChange]);
-        setReservations((prevReservations) => [...prevReservations, newChange]);
+        setNotificationLogs((prev) => [change.fullDocument, ...prev]);
+        setReservations((prev) => [change.fullDocument, ...prev]);
       } else if (change.operationType === "delete") {
-        setReservations((prevReservations) =>
-          prevReservations.filter(
-            (reservation) => reservation._id !== change.documentKey._id
-          )
+        setNotificationLogs((prev) =>
+          prev.filter((log) => log._id !== change._id)
         );
+        setReservations((prev) => prev.filter((log) => log._id !== change._id));
       }
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-    });
+    };
 
     return () => {
-      socket.disconnect();
-      console.log("Disconnected from socket.io server");
+      eventSource.close();
     };
   }, [setReservations]);
 

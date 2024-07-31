@@ -14,18 +14,20 @@ const { weekDays } = require("./helpers");
 const { MongoClient } = require("mongodb");
 const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
 
-const startChangeStream = async (io) => {
+const startChangeStream = async (sendData) => {
   const client = new MongoClient(MONGO_URI_RALF);
   const db = client.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
+  // Start listening to changes
+  await client.connect();
 
   // Create a Change Stream on the reservations collection
   const changeStream = reservationsCollection.watch();
 
   changeStream.on("change", (change) => {
-    if (io) {
+    if (sendData) {
       console.log("Change detected:", change);
-      io.emit("reservationChange", change); // Emitting the entire change object for debugging
+      sendData(change);
     }
   });
 
@@ -33,10 +35,6 @@ const startChangeStream = async (io) => {
   changeStream.on("error", (error) => {
     console.error("Change Stream error:", error);
   });
-
-  // Start listening to changes
-  await client.connect();
-  console.log("Connected to MongoDB");
 
   // Close MongoDB client on SIGTERM
   process.on("SIGTERM", () => {

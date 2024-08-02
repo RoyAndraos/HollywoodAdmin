@@ -13,13 +13,12 @@ const { weekDays } = require("./helpers");
 //-------------------------------------------------------------------------------------------------------------
 const { MongoClient } = require("mongodb");
 const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
-
+const changeStreamClient = new MongoClient(MONGO_URI_RALF, { poolSize: 10 });
 const startChangeStream = async (sendData) => {
-  const client = new MongoClient(MONGO_URI_RALF);
-  const db = client.db("HollywoodBarberShop");
+  const db = changeStreamClient.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
   // Start listening to changes
-  await client.connect();
+  await changeStreamClient.connect();
 
   // Create a Change Stream on the reservations collection
   const changeStream = reservationsCollection.watch();
@@ -36,13 +35,17 @@ const startChangeStream = async (sendData) => {
     console.error("Change Stream error:", error);
   });
 
-  // Close MongoDB client on SIGTERM
-  process.on("SIGTERM", () => {
-    client.close(() => {
-      console.log("MongoDB client disconnected");
-      process.exit(0);
+  const closeClient = () => {
+    changeStream.close(() => {
+      changeStreamClient.close(() => {
+        console.log("MongoDB client disconnected");
+        process.exit(0);
+      });
     });
-  });
+  };
+
+  process.on("SIGINT", closeClient);
+  process.on("SIGTERM", closeClient);
 };
 
 //-------------------------------------------------------------------------------------------------------------

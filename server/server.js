@@ -15,7 +15,19 @@ const { MongoClient } = require("mongodb");
 const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
 
 const changeStreamClient = new MongoClient(MONGO_URI_RALF);
-const startChangeStream = async (sendData) => {
+const sendData = async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  const sendEvent = (data) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+  startChangeStream(sendEvent);
+  req.on("close", () => {
+    res.end();
+  });
+};
+const startChangeStream = async (sendEvent) => {
   const db = changeStreamClient.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
   // Start listening to changes
@@ -25,10 +37,8 @@ const startChangeStream = async (sendData) => {
   const changeStream = reservationsCollection.watch();
 
   changeStream.on("change", (change) => {
-    if (sendData) {
-      console.log("Change detected:", change);
-      sendData(change, changeStreamClient);
-    }
+    console.log("Change detected:", change);
+    sendEvent(change);
   });
 
   // Handle errors
@@ -47,7 +57,6 @@ const startChangeStream = async (sendData) => {
 
   changeStream.on("close", () => {
     console.log("Change Stream closed");
-    closeClient();
     process.exit(0);
   });
 
@@ -879,6 +888,7 @@ module.exports = {
   deleteService,
   updateDailyAvailability,
   sendReminders,
+  sendData,
 };
 
 // availability: PATCH REQUEST

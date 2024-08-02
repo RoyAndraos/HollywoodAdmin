@@ -34,6 +34,7 @@ const {
   deleteService,
   updateDailyAvailability,
   sendReminders,
+  sendData,
 } = require("./server");
 
 const app = express();
@@ -56,19 +57,7 @@ app.get("/search/:searchTerm", getSearchResults);
 app.get("/clients", getClients);
 app.get("/getClientNote/:client_id", getClientNotes);
 app.get("/clientByName/:name", getClientByName);
-app.get("/events", (req, res) => {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  const sendEventStreamData = (data, client) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
-    client.close();
-  };
-  startChangeStream(sendEventStreamData);
-  req.on("close", () => {
-    res.end();
-  });
-});
+app.get("/events", sendData);
 app.post("/logout", logout);
 app.post("/login", login);
 app.post("/addReservation", addReservation);

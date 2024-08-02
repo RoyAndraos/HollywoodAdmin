@@ -13,7 +13,8 @@ const { weekDays } = require("./helpers");
 //-------------------------------------------------------------------------------------------------------------
 const { MongoClient } = require("mongodb");
 const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
-const changeStreamClient = new MongoClient(MONGO_URI_RALF, { poolSize: 10 });
+
+const changeStreamClient = new MongoClient(MONGO_URI_RALF);
 const startChangeStream = async (sendData) => {
   const db = changeStreamClient.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
@@ -26,7 +27,7 @@ const startChangeStream = async (sendData) => {
   changeStream.on("change", (change) => {
     if (sendData) {
       console.log("Change detected:", change);
-      sendData(change);
+      sendData(change, changeStreamClient);
     }
   });
 
@@ -43,6 +44,12 @@ const startChangeStream = async (sendData) => {
       });
     });
   };
+
+  changeStream.on("close", () => {
+    console.log("Change Stream closed");
+    closeClient();
+    process.exit(0);
+  });
 
   process.on("SIGINT", closeClient);
   process.on("SIGTERM", closeClient);

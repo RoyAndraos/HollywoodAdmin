@@ -60,8 +60,9 @@ app.get("/events", (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
-  const sendEventStreamData = (data) => {
+  const sendEventStreamData = (data, client) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
+    client.close();
   };
   startChangeStream(sendEventStreamData);
   req.on("close", () => {

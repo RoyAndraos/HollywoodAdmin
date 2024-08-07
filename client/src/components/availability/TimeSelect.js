@@ -277,8 +277,8 @@ const TimeSelect = () => {
               }}
             >
               {dailyAvailabilityToggle
-                ? "Weekly Availability"
-                : "Daily Availability"}
+                ? "Today's blocked slots"
+                : "Weekly Availability"}
             </Reset>
           )}
         </AvailButtons>

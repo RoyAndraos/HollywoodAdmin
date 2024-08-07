@@ -23,7 +23,6 @@ const {
   getSearchResults,
   getClients,
   updateClient,
-  startChangeStream,
   login,
   logout,
   updateServices,

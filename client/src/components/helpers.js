@@ -597,10 +597,13 @@ export const selectNextSlot = (slot) => {
   let newTimeMinute = parseInt(timeToEdit) + 15;
   if (newTimeMinute === 60) {
     newTimeMinute = "00";
-    const newHour = parseInt(slot.split("-")[1].split(":")[0]) + 1;
+    let newHour = parseInt(slot.split("-")[1].split(":")[0]) + 1;
     if (newHour === 12) {
       AMPM = "pm";
       return `${day}-${newHour}:${newTimeMinute}${AMPM}`;
+    } else if (newHour === 13) {
+      newHour = 1;
+      return `${day}-${newHour}:${newTimeMinute}pm`;
     } else {
       return `${day}-${newHour}:${newTimeMinute}${AMPM}`;
     }

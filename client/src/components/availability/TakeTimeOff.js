@@ -122,7 +122,9 @@ const TakeTimeOff = () => {
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 1);
         setStartDate(startOfDay);
-        setEndDate(null);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+        setEndDate(endOfDay);
       }
     } else {
       const startOfDay = new Date(date);

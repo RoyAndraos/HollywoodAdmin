@@ -30,14 +30,30 @@ const sendData = async (req, res) => {
 const startChangeStream = async (sendEvent) => {
   const db = changeStreamClient.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
+
   // Start listening to changes
   await changeStreamClient.connect();
 
-  // Create a Change Stream on the reservations collection
-  const changeStream = reservationsCollection.watch();
+  let changeStream;
+  try {
+    // Start the change stream from the latest operation time
+    const operationTime = await db
+      .command({ isMaster: 1 })
+      .then((res) => res.operationTime);
+    console.log("Operation time:", operationTime);
+    // Use `startAtOperationTime` to avoid replaying old events
+    changeStream = reservationsCollection.watch([], {
+      startAtOperationTime: operationTime,
+    });
+  } catch (error) {
+    console.error("Failed to start change stream with operation time:", error);
+
+    // Fallback to just starting the stream from now, in case of an error
+    changeStream = reservationsCollection.watch();
+  }
 
   changeStream.on("change", (change) => {
-    console.log("Change detected:", change);
+    console.log("Change detected:", change.fullDocument.fname);
     sendEvent(change);
   });
 

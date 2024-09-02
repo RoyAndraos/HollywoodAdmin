@@ -40,7 +40,6 @@ const startChangeStream = async (sendEvent) => {
     const operationTime = await db
       .command({ isMaster: 1 })
       .then((res) => res.operationTime);
-    console.log("Operation time:", operationTime);
     // Use `startAtOperationTime` to avoid replaying old events
     changeStream = reservationsCollection.watch([], {
       startAtOperationTime: operationTime,
@@ -53,7 +52,6 @@ const startChangeStream = async (sendEvent) => {
   }
 
   changeStream.on("change", (change) => {
-    console.log("Change detected:", change.fullDocument.fname);
     sendEvent(change);
   });
 
@@ -65,14 +63,12 @@ const startChangeStream = async (sendEvent) => {
   const closeClient = () => {
     changeStream.close(() => {
       changeStreamClient.close(() => {
-        console.log("MongoDB client disconnected");
         process.exit(0);
       });
     });
   };
 
   changeStream.on("close", () => {
-    console.log("Change Stream closed");
     process.exit(0);
   });
 

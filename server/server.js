@@ -3,6 +3,7 @@ const { dailyAvailability } = require("./batchImport");
 const { v4: uuid } = require("uuid");
 // const { initialAvailability } = require("./helpers");
 const { weekDays } = require("./helpers");
+const moment = require("moment");
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -477,6 +478,10 @@ const addTimeOff = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
 
   try {
+    // Ensure start and end dates are in UTC for the entire day
+    const start = moment.utc(startDate).startOf("day").toISOString();
+    const end = moment.utc(endDate).endOf("day").toISOString();
+
     const db = client.db("HollywoodBarberShop");
     await db.collection("admin").updateOne(
       {
@@ -485,12 +490,13 @@ const addTimeOff = async (req, res) => {
       {
         $push: {
           time_off: {
-            startDate: startDate,
-            endDate: endDate,
+            startDate: start,
+            endDate: end,
           },
         },
       }
     );
+
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -498,7 +504,6 @@ const addTimeOff = async (req, res) => {
     await client.close();
   }
 };
-
 const uploadImage = async (req, res) => {
   const _id = uuid();
 
@@ -615,7 +620,6 @@ const deleteImage = async (req, res) => {
 const deleteTimeOff = async (req, res) => {
   const { _id, startDate, endDate } = req.body;
   const client = new MongoClient(MONGO_URI_RALF);
-
   try {
     const db = client.db("HollywoodBarberShop");
     const query = {

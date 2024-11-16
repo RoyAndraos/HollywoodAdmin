@@ -1,11 +1,28 @@
-.react-datepicker__tab-loop{
-    position: absolute;
-}
-.react-datepicker__triangle{
-    display: none;
-}
-.react-datepicker{
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.2rem;
-    transform: translate(-121px, -134px);
-}
+/* Override the default DatePicker container */
+.react-datepicker {
+    position: static !important; /* Prevent it from being positioned incorrectly */
+    margin: 0 auto; /* Center it in the parent container */
+    box-shadow: none !important; /* Remove the default drop shadow */
+  }
+  
+  /* Adjust the calendar container */
+  .react-datepicker__triangle {
+    display: none !important; /* Hide the weird arrow */
+  }
+  
+  .react-datepicker__header {
+    background-color: #fff !important; /* Match your theme */
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .react-datepicker__day--selected,
+  .react-datepicker__day--in-range {
+    background-color: #035e3f !important; /* Match your theme color */
+    color: #fff !important;
+    border-radius: 50%;
+  }
+  
+  .react-datepicker__day--keyboard-selected {
+    background-color: #e0e0e0 !important;
+    color: #000;
+  }

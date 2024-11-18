@@ -130,7 +130,7 @@ const TakeTimeOff = () => {
     const headers = {
       authorization: token,
     };
-    fetch("https://hollywood-fairmount-admin.onrender.com", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/deleteTimeOff", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -16,8 +16,10 @@ import { IsMobileContext } from "../../contexts/IsMobileContext";
 const localizer = momentLocalizer(moment);
 
 const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
-  const [currentView, setCurrentView] = useState("month");
-  const [currentDay, setCurrentDay] = useState(new Date());
+  const savedView = localStorage.getItem("calendarView") || "month";
+  const savedDay = new Date(localStorage.getItem("calendarDay")) || new Date();
+  const [currentView, setCurrentView] = useState(savedView);
+  const [currentDay, setCurrentDay] = useState(savedDay);
   const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
   const { isMobile } = useContext(IsMobileContext);
@@ -228,11 +230,16 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       </div>
     );
   };
+  const handleViewChange = (view) => {
+    setCurrentView(view);
+    localStorage.setItem("calendarView", view);
+  };
 
-  const handleNavigate = () => {
+  const handleNavigate = (date) => {
     if (currentView === "month" || currentView === "agenda") {
       return;
     } else {
+      localStorage.setItem("calendarDay", date.toISOString());
       const thisYear = new Date().getFullYear();
       setCurrentDay(
         new Date(
@@ -250,12 +257,14 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         localizer={localizer}
         events={events}
         views={views}
-        onNavigate={handleNavigate}
         startAccessor="start"
         endAccessor="end"
         min={minTime}
         max={maxTime}
-        onView={(view) => setCurrentView(view)}
+        defaultView={savedView}
+        defaultDate={savedDay}
+        onView={handleViewChange}
+        onNavigate={handleNavigate}
         components={{
           event: CustomEventComponent,
         }}

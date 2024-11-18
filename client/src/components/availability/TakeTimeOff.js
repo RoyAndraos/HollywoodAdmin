@@ -86,7 +86,7 @@ const TakeTimeOff = () => {
       authorization: token,
     };
     // http://localhost:5000/addTimeOff
-    //
+    //https://hollywood-fairmount-admin.onrender.com/addTimeOff
     fetch("https://hollywood-fairmount-admin.onrender.com/addTimeOff", {
       method: "PATCH",
       headers: {
@@ -130,7 +130,7 @@ const TakeTimeOff = () => {
     const headers = {
       authorization: token,
     };
-    fetch("http://localhost:4000/deleteTimeOff", {
+    fetch("https://hollywood-fairmount-admin.onrender.com", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -64,7 +64,6 @@ const TakeTimeOff = () => {
   ]);
 
   useEffect(() => {
-    console.log(userInfo);
     const barber = userInfo.filter((barber) => barber._id === barberId);
     setSelectedBarber(barber[0]);
   }, [barberId, userInfo]);
@@ -87,8 +86,8 @@ const TakeTimeOff = () => {
       authorization: token,
     };
     // http://localhost:5000/addTimeOff
-    // https://hollywood-fairmount-admin.onrender.com/addTimeOff
-    fetch("http://localhost:4000/addTimeOff", {
+    //
+    fetch("https://hollywood-fairmount-admin.onrender.com/addTimeOff", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

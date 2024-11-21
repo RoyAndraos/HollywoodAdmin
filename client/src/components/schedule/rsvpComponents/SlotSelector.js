@@ -126,16 +126,15 @@ const SlotSelector = ({
             .map((slot) => {
               return slot.slot;
             });
-
         setAvailableSlots(
           filteredForOverlappingSlots
             .filter((slot) => {
               return slot !== "";
             })
             .filter((item) => {
-              return !dailyAvailabilityFilteredSlots.some((slot) =>
-                item.includes(slot)
-              );
+              return !dailyAvailabilityFilteredSlots.some((slot) => {
+                return item.slice(4) === slot;
+              });
             })
         );
       } else {

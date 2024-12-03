@@ -28,6 +28,28 @@ const sendData = async (req, res) => {
     res.end();
   });
 };
+let changeStream;
+const closeClient = async () => {
+  try {
+    if (changeStream) {
+      await changeStream.close();
+    }
+    await changeStreamClient.close();
+  } catch (error) {
+    console.error("Error closing change stream or client:", error);
+  } finally {
+    process.exit(0);
+  }
+};
+
+// Start fresh with signal handling
+process.removeAllListeners("SIGINT");
+process.removeAllListeners("SIGTERM");
+
+// Attach process listeners only once
+process.once("SIGINT", closeClient);
+process.once("SIGTERM", closeClient);
+
 const startChangeStream = async (sendEvent) => {
   const db = changeStreamClient.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
@@ -35,12 +57,12 @@ const startChangeStream = async (sendEvent) => {
   // Start listening to changes
   await changeStreamClient.connect();
 
-  let changeStream;
   try {
     // Start the change stream from the latest operation time
     const operationTime = await db
       .command({ isMaster: 1 })
       .then((res) => res.operationTime);
+
     // Use `startAtOperationTime` to avoid replaying old events
     changeStream = reservationsCollection.watch([], {
       startAtOperationTime: operationTime,
@@ -61,20 +83,9 @@ const startChangeStream = async (sendEvent) => {
     console.error("Change Stream error:", error);
   });
 
-  const closeClient = () => {
-    changeStream.close(() => {
-      changeStreamClient.close(() => {
-        process.exit(0);
-      });
-    });
-  };
-
   changeStream.on("close", () => {
-    process.exit(0);
+    console.log("Change stream closed.");
   });
-
-  process.on("SIGINT", closeClient);
-  process.on("SIGTERM", closeClient);
 };
 
 //-------------------------------------------------------------------------------------------------------------

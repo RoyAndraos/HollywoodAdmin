@@ -6,6 +6,9 @@ import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { initialAvailability } from "../../helpers";
 import { LoginRoleContext } from "../../contexts/LoginRoleContext";
+import ralf from "../../assets/ralf.webp";
+import ty from "../../assets/Ty.webp";
+import Loader from "../../Loader";
 const BarberProfiles = () => {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { setNotification } = useContext(NotificationContext);
@@ -157,23 +160,34 @@ const BarberProfiles = () => {
               ) : (
                 // Render Display Mode
                 <Container>
-                  <DisplayWrapper>
-                    <Name>
-                      {barber.given_name} {barber.family_name}
-                    </Name>
-                    <Email>{barber.email}</Email>
-                    {barber.description && barber.description !== "" && (
-                      <Description>{barber.description}</Description>
-                    )}
-                    {barber.french_description &&
-                      barber.french_description !== "" && (
-                        <Description>{barber.french_description}</Description>
+                  {barber.description ? (
+                    <DisplayWrapper>
+                      <Name>
+                        {barber.given_name} {barber.family_name}
+                      </Name>
+                      <Email>{barber.email}</Email>
+                      {barber.description && barber.description !== "" && (
+                        <Description>{barber.description}</Description>
                       )}
-                  </DisplayWrapper>
-                  {barber.picture !== "" && (
+                      {barber.french_description &&
+                        barber.french_description !== "" && (
+                          <Description>{barber.french_description}</Description>
+                        )}
+                    </DisplayWrapper>
+                  ) : (
+                    <DisplayWrapper>
+                      <Loader />
+                    </DisplayWrapper>
+                  )}
+                  {barber.given_name === "Ralph" ? (
                     <BarberImage
-                      src={barber.picture}
+                      src={ralf}
                       alt={userInfo[0].given_name + " picture"}
+                    />
+                  ) : (
+                    <BarberImage
+                      src={ty}
+                      alt={userInfo[1].given_name + " picture"}
                     />
                   )}
                   <ButtonWrapper key={"notEdit" + barber._id}>

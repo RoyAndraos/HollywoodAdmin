@@ -8,7 +8,7 @@ export const ClientsProvider = ({ children }) => {
     //sort the clients array by reservation count
     if (clients) {
       const sortedClients = clients.sort((a, b) => {
-        return b.reservations.length - a.reservations.length;
+        return b.fname - a.fname;
       });
       setClients(sortedClients);
     }

@@ -22,14 +22,6 @@ const ClientReservation = ({ client }) => {
                 <Variable>{thisReservation[0].date}</Variable>
               </InfoContainer>
               <InfoContainer>
-                <p>Time </p>
-                <Variable>{thisReservation[0].slot[0]}</Variable>
-              </InfoContainer>
-              <InfoContainer>
-                <p>Price </p>
-                <Variable>{thisReservation[0].service.price}</Variable>
-              </InfoContainer>
-              <InfoContainer>
                 <p>Reservations </p>
                 <Variable>{client.reservations.length}</Variable>
               </InfoContainer>

@@ -22,48 +22,41 @@ const Schedule = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [slotBeforeCheck, setSlotBeforeCheck] = useState([]);
   const { clients, setClients } = useContext(ClientsContext);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (!userInfo) {
-      const token = Cookies.get("token");
-      const role = Cookies.get("role");
-      if (!token) {
-        return;
-      } else {
-        const headers = {
-          authorization: token,
-        };
-        fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
-          headers,
-        })
-          .then((res) => res.json())
-          .then((result) => {
-            setUserInfo(result.userInfo);
-            setReservations(result.reservations);
-            setServices(result.services);
-            setText(result.text);
-            setServicesEmp(result.employeeServices);
-            setClients(result.clients);
-            setRole(role);
-          });
-      }
+    const token = Cookies.get("token");
+    const role = Cookies.get("role");
+    if (!token) {
+      return;
+    } else {
+      const headers = {
+        authorization: token,
+      };
+      // https://hollywood-fairmount-admin.onrender.com
+      fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
+        headers,
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setUserInfo(result.userInfo);
+          setReservations(result.reservations);
+          setServices(result.services);
+          setText(result.text);
+          setServicesEmp(result.employeeServices);
+          setClients(result.clients);
+          setRole(role);
+          setLoading(false);
+        });
     }
-  }, [
-    setReservations,
-    setServices,
-    setUserInfo,
-    setText,
-    userInfo,
-    setRole,
-    setServicesEmp,
-    setClients,
-  ]);
+  }, []);
   if (
     !userInfo ||
     !reservations ||
     !services ||
     !text ||
     !servicesEmp ||
-    !clients
+    !clients ||
+    loading
   )
     return <Loader />;
   return (

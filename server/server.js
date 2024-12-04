@@ -242,30 +242,48 @@ const getSearchResults = async (req, res) => {
     await client.close();
   }
 };
-
-const getUserInfo = async (req, res) => {
+const getUserInfoInWebTools = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
+
   try {
     const db = client.db("HollywoodBarberShop");
-    const userInfo = await db.collection("admin").find().toArray();
-    const reservations = await db.collection("reservations").find().toArray();
-    const services = await db.collection("services").find().toArray();
-    const images = await db.collection("Images").find().toArray();
-    const text = await db.collection("web_text").find().toArray();
-    const clients = await db.collection("Clients").find().toArray();
-    const employeeServices = await db
-      .collection("servicesEmp")
-      .find()
-      .toArray();
+    const [userInfo, services, text, clients, employeeServices, reservations] =
+      await Promise.all([
+        db
+          .collection("admin")
+          .find({}, { projection: { picture: 0 } })
+          .toArray(),
+        db.collection("services").find().toArray(),
+        db.collection("web_text").find().toArray(),
+        db.collection("Clients").find().toArray(),
+        db.collection("servicesEmp").find().toArray(),
+        db
+          .collection("reservations")
+          .find(
+            {},
+            {
+              projection: {
+                client_id: 0,
+                fname: 0,
+                lname: 0,
+                email: 0,
+                number: 0,
+                barber: 0,
+                slot: 0,
+              },
+            }
+          )
+          .toArray(),
+      ]);
+
     res.status(200).json({
       status: 200,
       userInfo: userInfo,
-      reservations: reservations,
       services: services,
-      images: images,
       text: text,
-      employeeServices: employeeServices,
       clients: clients,
+      employeeServices: employeeServices,
+      reservations: reservations,
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
@@ -273,6 +291,101 @@ const getUserInfo = async (req, res) => {
     await client.close();
   }
 };
+
+const getUserInfo = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+
+  try {
+    const db = client.db("HollywoodBarberShop");
+
+    // Get the current date and determine the months to query
+    const now = new Date();
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const currentMonth = now.getMonth();
+
+    // Calculate the months to query
+    const monthsToQuery = [
+      months[(currentMonth - 1 + 12) % 12], // Previous month
+      months[currentMonth], // Current month
+      months[(currentMonth + 1) % 12], // Next month
+      months[(currentMonth + 2) % 12], // Month after next
+    ];
+
+    // Use Promise.all for parallel fetching
+    const [
+      userInfo,
+      reservationsArrays,
+      services,
+      text,
+      clients,
+      employeeServices,
+    ] = await Promise.all([
+      db
+        .collection("admin")
+        .find(
+          {},
+          {
+            projection: {
+              picture: 0,
+              description: 0,
+              french_description: 0,
+              email: 0,
+            },
+          }
+        )
+        .toArray(),
+
+      // Fetch reservations for all months in parallel
+      Promise.all(
+        monthsToQuery.map((month) => {
+          const query = { date: { $regex: month, $options: "i" } };
+          return db.collection("reservations").find(query).toArray();
+        })
+      ),
+
+      db.collection("services").find().toArray(),
+      db.collection("web_text").find().toArray(),
+      db
+        .collection("Clients")
+        .find({}, { projection: { _id: 0, email: 0, reservations: 0 } })
+        .toArray(),
+      db.collection("servicesEmp").find().toArray(),
+    ]);
+
+    // Combine all reservations into a single array
+    const reservations = reservationsArrays.flat();
+
+    // Send the response
+    res.status(200).json({
+      status: 200,
+      userInfo,
+      reservations,
+      services,
+      text,
+      clients,
+      employeeServices,
+    });
+  } catch (err) {
+    console.error("Error in getUserInfo:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
+  }
+};
+
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -920,8 +1033,5 @@ module.exports = {
   updateDailyAvailability,
   sendReminders,
   sendData,
+  getUserInfoInWebTools,
 };
-
-// availability: PATCH REQUEST
-// Client Res: Note to add
-// when res delete, remove from client

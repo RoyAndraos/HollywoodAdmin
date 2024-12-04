@@ -34,6 +34,7 @@ const {
   updateDailyAvailability,
   sendReminders,
   sendData,
+  getUserInfoInWebTools,
 } = require("./server");
 
 const app = express();
@@ -57,6 +58,7 @@ app.get("/clients", getClients);
 app.get("/getClientNote/:client_id", getClientNotes);
 app.get("/clientByName/:name", getClientByName);
 app.get("/events", sendData);
+app.get("/getUserInfoInWebTools", getUserInfoInWebTools);
 app.post("/logout", logout);
 app.post("/login", login);
 app.post("/addReservation", addReservation);

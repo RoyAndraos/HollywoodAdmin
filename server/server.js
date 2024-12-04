@@ -54,17 +54,15 @@ const startChangeStream = async (sendEvent) => {
   const db = changeStreamClient.db("HollywoodBarberShop");
   const reservationsCollection = db.collection("reservations");
 
-  // Ensure the client is connected
-  if (!changeStreamClient.isConnected()) {
-    await changeStreamClient.connect();
-  }
+  // Start listening to changes
+  await changeStreamClient.connect();
 
+  let changeStream;
   try {
     // Start the change stream from the latest operation time
     const operationTime = await db
       .command({ isMaster: 1 })
       .then((res) => res.operationTime);
-
     // Use `startAtOperationTime` to avoid replaying old events
     changeStream = reservationsCollection.watch([], {
       startAtOperationTime: operationTime,
@@ -80,16 +78,25 @@ const startChangeStream = async (sendEvent) => {
     sendEvent(change);
   });
 
-  // Handle errors with more detailed logging
+  // Handle errors
   changeStream.on("error", (error) => {
-    console.error("Change Stream error:", error.message, error.stack);
+    console.error("Change Stream error:", error);
   });
 
-  // Handle stream closure and clean up listeners
+  const closeClient = () => {
+    changeStream.close(() => {
+      changeStreamClient.close(() => {
+        process.exit(0);
+      });
+    });
+  };
+
   changeStream.on("close", () => {
-    console.log("Change stream closed.");
-    changeStream.removeAllListeners();
+    process.exit(0);
   });
+
+  process.on("SIGINT", closeClient);
+  process.on("SIGTERM", closeClient);
 };
 
 //-------------------------------------------------------------------------------------------------------------

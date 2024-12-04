@@ -468,7 +468,6 @@ const addReservation = async (req, res) => {
 
   try {
     const db = client.db("HollywoodBarberShop");
-
     const isClient = await db
       .collection("Clients")
       .findOne({ number: reservation.number });

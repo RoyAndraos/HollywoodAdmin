@@ -104,7 +104,6 @@ const AddReservation = ({
       sendSMS: sendSMS,
       lname: clientName.split(" ").slice(1).join(" ") || "",
     };
-
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {
@@ -210,7 +209,6 @@ const AddReservation = ({
     setSelectedSlot("");
     setSlotBeforeCheck("");
   };
-
   return (
     <Wrapper>
       <Title>Make a reservation</Title>
@@ -245,10 +243,10 @@ const AddReservation = ({
                   {existingClient.map((client) => {
                     return (
                       <Client
-                        key={client._id}
+                        key={client.number}
                         onClick={() => {
                           setExistingClient([]);
-                          setClientEmail(client.email);
+                          setClientEmail(client.email || "");
                           setClientNumber(client.number);
                           setClientName(client.fname + " " + client.lname);
                           setNameError("");

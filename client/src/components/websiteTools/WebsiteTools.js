@@ -49,6 +49,7 @@ const WebsiteTools = () => {
         setReservations(result.reservations);
       })
       .catch((error) => console.error(error));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   if (
     (!userInfo || !services || !text || !servicesEmp || !clients, !reservations)

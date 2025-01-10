@@ -10,7 +10,7 @@ import DataTypeBar from "./DataTypeBar";
 import Loader from "../Loader";
 import { UserContext } from "../contexts/UserContext";
 import { ServicesContext } from "../contexts/ServicesContext";
-import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import { TextContext } from "../contexts/TextContext";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
 
@@ -20,7 +20,7 @@ const Data = () => {
   const { clients, setClients } = useContext(ClientsContext);
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setServices } = useContext(ServicesContext);
-  const { setServicesEmp } = useContext(EmployeeServicesContext);
+  // const { setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText } = useContext(TextContext);
   const { setRole } = useContext(LoginRoleContext);
   const [clientsData, setClientsData] = useState();
@@ -54,7 +54,7 @@ const Data = () => {
           setReservations(result.reservations);
           setServices(result.services);
           setText(result.text);
-          setServicesEmp(result.employeeServices);
+          // setServicesEmp(result.employeeServices);
           setClients(result.clients);
           setRole(result.role);
         });
@@ -67,7 +67,7 @@ const Data = () => {
     setReservations,
     setServices,
     setText,
-    setServicesEmp,
+    // setServicesEmp,
     setRole,
     setClients,
   ]);

@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 import Loader from "../Loader";
 import Services from "./services/Services";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
-import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import { ClientsContext } from "../contexts/ClientsContext";
 import { ReservationContext } from "../contexts/ReservationContext";
 
@@ -21,7 +21,7 @@ const WebsiteTools = () => {
   const { setServices, services } = useContext(ServicesContext);
   const { setText, text } = useContext(TextContext);
   const { role, setRole } = useContext(LoginRoleContext);
-  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
+  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { clients, setClients } = useContext(ClientsContext);
   const { reservations, setReservations } = useContext(ReservationContext);
   useEffect(() => {
@@ -44,7 +44,7 @@ const WebsiteTools = () => {
         setUserInfo(result.userInfo);
         setServices(result.services);
         setText(result.text);
-        setServicesEmp(result.employeeServices);
+        // setServicesEmp(result.employeeServices);
         setClients(result.clients);
         setReservations(result.reservations);
       })
@@ -52,7 +52,12 @@ const WebsiteTools = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   if (
-    (!userInfo || !services || !text || !servicesEmp || !clients, !reservations)
+    (!userInfo ||
+      !services ||
+      !text ||
+      // || !servicesEmp
+      !clients,
+    !reservations)
   )
     return <Loader />;
   return (

@@ -13,7 +13,7 @@ import Loader from "../Loader";
 import { IsMobileContext } from "../contexts/IsMobileContext";
 import DailyAvailability from "./DailyAvailability";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
-import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import { ClientsContext } from "../contexts/ClientsContext";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
@@ -25,7 +25,7 @@ const TimeSelect = () => {
   const [selectedDailyCells, setSelectedDailyCells] = useState(null);
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
-  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
+  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText, text } = useContext(TextContext);
   const { isMobile } = useContext(IsMobileContext);
   const { clients, setClients } = useContext(ClientsContext);
@@ -55,7 +55,7 @@ const TimeSelect = () => {
             setReservations(result.reservations);
             setServices(result.services);
             setText(result.text);
-            setServicesEmp(result.employeeServices);
+            // setServicesEmp(result.employeeServices);
             setClients(result.clients);
 
             setSelectedAdminInfo(result.userInfo[0]);
@@ -86,7 +86,7 @@ const TimeSelect = () => {
     setText,
     selectedAdminInfo,
     userInfo,
-    setServicesEmp,
+    // setServicesEmp,
     setClients,
   ]);
   const handleSelectNextBarber = () => {
@@ -108,7 +108,7 @@ const TimeSelect = () => {
     !reservations ||
     !services ||
     !text ||
-    !servicesEmp ||
+    // !servicesEmp ||
     !clients
   )
     return <Loader />;

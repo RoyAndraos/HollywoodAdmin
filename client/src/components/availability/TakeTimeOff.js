@@ -12,7 +12,7 @@ import { ServicesContext } from "../contexts/ServicesContext";
 import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
 import { ClientsContext } from "../contexts/ClientsContext";
-import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import format from "date-fns/format"; // Importing date-fns to format dates
 
 const TakeTimeOff = () => {
@@ -27,7 +27,7 @@ const TakeTimeOff = () => {
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
   const { clients, setClients } = useContext(ClientsContext);
-  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
+  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText, text } = useContext(TextContext);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const TakeTimeOff = () => {
             setReservations(result.reservations);
             setServices(result.services);
             setText(result.text);
-            setServicesEmp(result.employeeServices);
+            // setServicesEmp(result.employeeServices);
             setClients(result.clients);
           });
       }
@@ -60,7 +60,7 @@ const TakeTimeOff = () => {
     setText,
     userInfo,
     setClients,
-    setServicesEmp,
+    // setServicesEmp,
   ]);
 
   useEffect(() => {
@@ -173,7 +173,7 @@ const TakeTimeOff = () => {
     !text ||
     !userInfo ||
     !clients ||
-    !servicesEmp ||
+    // !servicesEmp ||
     !selectedBarber
   )
     return <Loader />;

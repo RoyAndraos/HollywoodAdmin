@@ -254,8 +254,8 @@ const getUserInfoInWebTools = async (req, res) => {
 
   try {
     const db = client.db("HollywoodBarberShop");
-    const [userInfo, services, text, clients, employeeServices, reservations] =
-      await Promise.all([
+    const [userInfo, services, text, clients, reservations] = await Promise.all(
+      [
         db
           .collection("admin")
           .find({}, { projection: { picture: 0 } })
@@ -263,7 +263,7 @@ const getUserInfoInWebTools = async (req, res) => {
         db.collection("services").find().toArray(),
         db.collection("web_text").find().toArray(),
         db.collection("Clients").find().toArray(),
-        db.collection("servicesEmp").find().toArray(),
+        // db.collection("servicesEmp").find().toArray(),
         db
           .collection("reservations")
           .find(
@@ -281,7 +281,8 @@ const getUserInfoInWebTools = async (req, res) => {
             }
           )
           .toArray(),
-      ]);
+      ]
+    );
 
     res.status(200).json({
       status: 200,
@@ -289,7 +290,7 @@ const getUserInfoInWebTools = async (req, res) => {
       services: services,
       text: text,
       clients: clients,
-      employeeServices: employeeServices,
+      // employeeServices: employeeServices,
       reservations: reservations,
     });
   } catch (err) {
@@ -338,7 +339,7 @@ const getUserInfo = async (req, res) => {
       services,
       text,
       clients,
-      employeeServices,
+      // employeeServices,
     ] = await Promise.all([
       db
         .collection("admin")
@@ -369,7 +370,7 @@ const getUserInfo = async (req, res) => {
         .collection("Clients")
         .find({}, { projection: { _id: 0, email: 0, reservations: 0 } })
         .toArray(),
-      db.collection("servicesEmp").find().toArray(),
+      // db.collection("servicesEmp").find().toArray(),
     ]);
 
     // Combine all reservations into a single array
@@ -383,7 +384,7 @@ const getUserInfo = async (req, res) => {
       services,
       text,
       clients,
-      employeeServices,
+      // employeeServices,
     });
   } catch (err) {
     console.error("Error in getUserInfo:", err);
@@ -962,21 +963,20 @@ const updateClient = async (req, res) => {
 };
 
 const updateServices = async (req, res) => {
-  const serviceEdit = req.body[1];
-  const role = req.body[0];
+  const serviceEdit = req.body.serviceEdit;
   const client = new MongoClient(MONGO_URI_RALF);
 
   try {
     const db = client.db("HollywoodBarberShop");
-    if (role === "admin") {
-      await db
-        .collection("services")
-        .updateOne({ _id: serviceEdit._id }, { $set: serviceEdit });
-    } else {
-      await db
-        .collection("servicesEmp")
-        .updateOne({ _id: serviceEdit._id }, { $set: serviceEdit });
-    }
+    // if (role === "admin") {
+    await db
+      .collection("services")
+      .updateOne({ _id: serviceEdit._id }, { $set: serviceEdit });
+    // } else {
+    //   await db
+    //     .collection("servicesEmp")
+    //     .updateOne({ _id: serviceEdit._id }, { $set: serviceEdit });
+    // }
 
     res
       .status(200)

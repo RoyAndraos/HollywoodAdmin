@@ -4,15 +4,15 @@ import Cookies from "js-cookie";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import { objectsAreEqual } from "../../helpers";
-import { EmployeeServicesContext } from "../../contexts/EmployeeServicesContext";
-import { LoginRoleContext } from "../../contexts/LoginRoleContext";
-const SService = ({ service, serviceId }) => {
+// import { EmployeeServicesContext } from "../../contexts/EmployeeServicesContext";
+// import { LoginRoleContext } from "../../contexts/LoginRoleContext";
+const SService = ({ service }) => {
   const { setNotification } = useContext(NotificationContext);
   const { setServices } = useContext(ServicesContext);
-  const { setServicesEmp } = useContext(EmployeeServicesContext);
+  // const { setServicesEmp } = useContext(EmployeeServicesContext);
   const [serviceEdit, setServiceEdit] = useState(service);
   const [initialService] = useState(service);
-  const { role } = useContext(LoginRoleContext);
+  // const { role } = useContext(LoginRoleContext);
   const handleChange = (key, value) => {
     setServiceEdit({ ...serviceEdit, [key]: value });
   };
@@ -23,7 +23,7 @@ const SService = ({ service, serviceId }) => {
     };
     fetch(`https://hollywood-fairmount-admin.onrender.com/updateServices`, {
       method: "PATCH",
-      body: JSON.stringify([role, serviceEdit]),
+      body: JSON.stringify(serviceEdit),
       headers: {
         "Content-Type": "application/json",
         ...headers,
@@ -32,27 +32,27 @@ const SService = ({ service, serviceId }) => {
       .then((res) => res.json())
       .then((result) => {
         setNotification("Service updated successfully");
-        if (role === "admin") {
-          setServices((prevServices) => {
-            return prevServices.map((service) => {
-              if (service._id === result.data._id) {
-                return result.data;
-              } else {
-                return service;
-              }
-            });
+        // if (role === "admin") {
+        setServices((prevServices) => {
+          return prevServices.map((service) => {
+            if (service._id === result.data._id) {
+              return result.data;
+            } else {
+              return service;
+            }
           });
-        } else {
-          setServicesEmp((prevServices) => {
-            return prevServices.map((service) => {
-              if (service._id === result.data._id) {
-                return result.data;
-              } else {
-                return service;
-              }
-            });
-          });
-        }
+        });
+        // } else {
+        //   setServicesEmp((prevServices) => {
+        //     return prevServices.map((service) => {
+        //       if (service._id === result.data._id) {
+        //         return result.data;
+        //       } else {
+        //         return service;
+        //       }
+        //     });
+        //   });
+        // }
       })
       .catch((err) => setNotification("Something went wrong"));
   };

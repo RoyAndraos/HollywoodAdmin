@@ -10,7 +10,7 @@ import { NotificationProvider } from "./components/contexts/NotficationContext";
 import { NotificationLogsProvider } from "./components/contexts/NotificationLogsContext";
 import { IsMobileProvider } from "./components/contexts/IsMobileContext";
 import { LoginRoleProvider } from "./components/contexts/LoginRoleContext";
-import { EmployeeServicesProvider } from "./components/contexts/EmployeeServicesContext";
+// import { EmployeeServicesProvider } from "./components/contexts/EmployeeServicesContext";
 import { ClientsProvider } from "./components/contexts/ClientsContext";
 const root = createRoot(document.getElementById("root"));
 
@@ -21,19 +21,19 @@ root.render(
         <TextProvider>
           <ReservationProvider>
             <ServicesProvider>
-              <EmployeeServicesProvider>
-                <NotificationProvider>
-                  <NotificationLogsProvider>
-                    <IsMobileProvider>
-                      <ClientsProvider>
-                        <BrowserRouter basename="/">
-                          <App />
-                        </BrowserRouter>
-                      </ClientsProvider>
-                    </IsMobileProvider>
-                  </NotificationLogsProvider>
-                </NotificationProvider>
-              </EmployeeServicesProvider>
+              {/* <EmployeeServicesProvider> */}
+              <NotificationProvider>
+                <NotificationLogsProvider>
+                  <IsMobileProvider>
+                    <ClientsProvider>
+                      <BrowserRouter basename="/">
+                        <App />
+                      </BrowserRouter>
+                    </ClientsProvider>
+                  </IsMobileProvider>
+                </NotificationLogsProvider>
+              </NotificationProvider>
+              {/* </EmployeeServicesProvider> */}
             </ServicesProvider>
           </ReservationProvider>
         </TextProvider>

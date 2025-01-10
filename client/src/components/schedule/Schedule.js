@@ -9,13 +9,13 @@ import { ServicesContext } from "../contexts/ServicesContext";
 import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
-import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
+// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import { ClientsContext } from "../contexts/ClientsContext";
 const Schedule = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setReservations, reservations } = useContext(ReservationContext);
   const { setServices, services } = useContext(ServicesContext);
-  const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
+  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText, text } = useContext(TextContext);
   const { setRole } = useContext(LoginRoleContext);
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -42,7 +42,7 @@ const Schedule = () => {
           setReservations(result.reservations);
           setServices(result.services);
           setText(result.text);
-          setServicesEmp(result.employeeServices);
+          // setServicesEmp(result.employeeServices);
           setClients(result.clients);
           setRole(role);
           setLoading(false);
@@ -55,7 +55,7 @@ const Schedule = () => {
     !reservations ||
     !services ||
     !text ||
-    !servicesEmp ||
+    // !servicesEmp ||
     !clients ||
     loading
   )

@@ -10,7 +10,7 @@ import styled from "styled-components";
 import moment from "moment";
 import { ReservationContext } from "../../../contexts/ReservationContext";
 import { ServicesContext } from "../../../contexts/ServicesContext";
-import { EmployeeServicesContext } from "../../../contexts/EmployeeServicesContext";
+// import { EmployeeServicesContext } from "../../../contexts/EmployeeServicesContext";
 
 const TimeSlotEdit = ({
   reservation,
@@ -26,7 +26,7 @@ const TimeSlotEdit = ({
   const { reservations } = useContext(ReservationContext);
   const { userInfo } = useContext(UserContext);
   const { services } = useContext(ServicesContext);
-  const { servicesEmp } = useContext(EmployeeServicesContext);
+  // const { servicesEmp } = useContext(EmployeeServicesContext);
   const selectedService = reservation.service;
   const startTime = formData.slot[0].split("-")[1];
   const [endTime, setEndTime] = useState("");
@@ -108,14 +108,14 @@ const TimeSlotEdit = ({
           return reservation.slot[0].split("-")[1];
         }
       );
-      const selectedServiceArray =
-        selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
-      const newFormDataService = selectedServiceArray.find((service) => {
-        return service._id === selectedService._id;
-      });
+      // const selectedServiceArray =
+      //   selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
+      // const newFormDataService = selectedServiceArray.find((service) => {
+      //   return service._id === selectedService._id;
+      // });
 
       const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
-        newFormDataService.duration,
+        selectedService.duration,
         todayReservationStartingSlots
       );
       const filteredForOverlappingSlots = filteredSlots.filter((slot) => {
@@ -139,7 +139,7 @@ const TimeSlotEdit = ({
     barberIsOff,
     formData.service.duration,
     services,
-    servicesEmp,
+    // servicesEmp,
   ]);
   // function: edit inner html of button
   const handleEditClick = () => {

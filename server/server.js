@@ -507,32 +507,32 @@ const addReservation = async (req, res) => {
         try {
           await twilioClient.messages.create({
             body: `Bonjour ${reservation.fname} ${
-              reservation.lname || ""
-            }, votre réservation au Hollywood Barbershop est confirmée pour ${frenchDate} à ${
-              reservation.slot[0].split("-")[1]
-            }. Vous recevrez une ${reservation.service.name} pour ${
-              reservation.service.price
-            } CAD. ~${reservation.barber}
-
-Hello ${reservation.fname} ${
-              reservation.lname || ""
+              reservation.lname !== "" && reservation.lname
+            }, votre réservation au Hollywood Barbershop est confirmée pour ${
+              reservation.date
+            } à ${reservation.slot[0].split("-")[1]}. Vous recevrez une ${
+              reservation.service.name
+            } pour ${reservation.service.price} CAD. ~${reservation.barber}
+          
+          Hello ${reservation.fname} ${
+              reservation.lname !== "" && reservation.lname
             }, your reservation at Hollywood Barbershop is confirmed for ${
               reservation.date
             } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
               reservation.service.english
-            } for ${reservation.service.price} CAD. ~${reservation.barber}
-
-ID: ${_id}`,
+            } for ${reservation.service.price}. ~${reservation.barber}
+          
+          Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
+            reservation._id
+          }
+          `,
             messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-            to: reservation.number,
+            to: userInfo.number,
           });
-        } catch (smsError) {
-          console.error(`Error sending SMS: ${smsError.message}`);
-          return res.status(500).json({
-            status: 500,
-            message: `Error sending SMS: ${smsError.message}`,
-          });
+        } catch (err) {
+          console.log(err);
         }
+        
       }
 
       res.status(200).json({

@@ -12,6 +12,9 @@ import "../rsvpComponents/style.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useNavigate } from "react-router-dom";
 import { IsMobileContext } from "../../contexts/IsMobileContext";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import HoveredEvent from "./HoveredEvent";
 
 const localizer = momentLocalizer(moment);
 
@@ -44,6 +47,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       _id: reservation._id,
       start: startTimeDate,
       end: endTimeDate,
+      client_id: reservation.client_id,
     };
   });
 
@@ -204,28 +208,33 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         style={{ zIndex: "101" }}
       >
         {currentView !== "month" && (
-          <span
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-              margin: "0 50px 0 50px",
-            }}
+          <Tippy
+            content={<HoveredEvent res={event} />}
+            zIndex={10000} // Use this instead of inline style
           >
-            <span style={{ color: "#ffa700" }}>{event.client}</span>
-            <span style={{ opacity: "0" }}>{event.title}</span>{" "}
-            {isMobile ? (
-              <></>
-            ) : (
-              <span
-                style={{
-                  color: "#00ff8c",
-                }}
-              >
-                {event.service}
-              </span>
-            )}
-          </span>
+            <span
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                margin: "0 50px 0 50px",
+              }}
+            >
+              <span style={{ color: "#ffa700" }}>{event.client}</span>{" "}
+              <span style={{ opacity: "0" }}>{event.title}</span>{" "}
+              {isMobile ? (
+                <></>
+              ) : (
+                <span
+                  style={{
+                    color: "#00ff8c",
+                  }}
+                >
+                  {event.service}
+                </span>
+              )}
+            </span>
+          </Tippy>
         )}
       </div>
     );

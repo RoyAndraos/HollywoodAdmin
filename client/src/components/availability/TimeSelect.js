@@ -15,6 +15,7 @@ import DailyAvailability from "./DailyAvailability";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
 // import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import { ClientsContext } from "../contexts/ClientsContext";
+import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const { setUserInfo, userInfo } = useContext(UserContext);
@@ -31,6 +32,7 @@ const TimeSelect = () => {
   const { clients, setClients } = useContext(ClientsContext);
   const navigate = useNavigate();
   const { role, setRole } = useContext(LoginRoleContext);
+  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   useEffect(() => {
     if (!role) {
       const cookieRole = Cookies.get("role");
@@ -57,6 +59,7 @@ const TimeSelect = () => {
             setText(result.text);
             // setServicesEmp(result.employeeServices);
             setClients(result.clients);
+            setBlockedSlots(result.blockedSlots);
 
             setSelectedAdminInfo(result.userInfo[0]);
             setSelectedCells(result.userInfo[0].availability);
@@ -88,6 +91,7 @@ const TimeSelect = () => {
     userInfo,
     // setServicesEmp,
     setClients,
+    setBlockedSlots,
   ]);
   const handleSelectNextBarber = () => {
     if (userInfo.length === 1) return;
@@ -108,6 +112,7 @@ const TimeSelect = () => {
     !reservations ||
     !services ||
     !text ||
+    !blockedSlots ||
     // !servicesEmp ||
     !clients
   )

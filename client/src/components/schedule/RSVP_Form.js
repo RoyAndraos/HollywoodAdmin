@@ -9,7 +9,6 @@ import SlotSelector from "./rsvpComponents/SlotSelector";
 import { NotificationContext } from "../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { IsMobileContext } from "../contexts/IsMobileContext";
-import Reminder from "./rsvpComponents/Reminder";
 import { getClientByNumber, getClientsByName, highlightText } from "../helpers";
 import { ClientsContext } from "../contexts/ClientsContext";
 const AddReservation = ({
@@ -37,9 +36,36 @@ const AddReservation = ({
   const [overLappingError, setOverLappingError] = useState(false);
   const [sendSMS, setSendSMS] = useState(true);
   const { isMobile } = useContext(IsMobileContext);
-  const [showReminderModal, setShowReminderModal] = useState(false);
   const { clients } = useContext(ClientsContext);
-
+  const handleBlockSlot = (slot, date, barber) => {
+    const token = Cookies.get("token");
+    const headers = {
+      authorization: token,
+    };
+    const formattedDate = date.toDateString();
+    const block = {
+      barber: barber.given_name,
+      date: formattedDate,
+      slot: slot,
+    };
+    fetch("https://hollywood-fairmount-admin.onrender.com/blockSlot", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      body: JSON.stringify({
+        block: block,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 200) {
+          setNotification("Slot blocked successfully");
+        }
+      })
+      .catch(() => setNotification("Something went wrong"));
+  };
   //check if barber is selected
   useEffect(() => {
     if (Object.keys(selectedBarberForm).length === 0) {
@@ -373,16 +399,14 @@ const AddReservation = ({
           </Book>
           <Book
             onClick={() => {
-              setShowReminderModal(true);
+              handleBlockSlot(selectedSlot, selectedDate, selectedBarberForm);
             }}
-            type="button"
-            key={"reminder"}
+            disabled={
+              selectedSlot.length === 0 || selectedSlot === "" || barberError
+            }
           >
-            Send Reminders
+            Block Slot
           </Book>
-          {showReminderModal && (
-            <Reminder setShowReminderModal={setShowReminderModal} />
-          )}
         </div>
       </StyledForm>
     </Wrapper>

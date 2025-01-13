@@ -14,6 +14,7 @@ import Loader from "../Loader";
 import { ClientsContext } from "../contexts/ClientsContext";
 // import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import format from "date-fns/format"; // Importing date-fns to format dates
+import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
 
 const TakeTimeOff = () => {
   const { barberId } = useParams();
@@ -29,6 +30,7 @@ const TakeTimeOff = () => {
   const { clients, setClients } = useContext(ClientsContext);
   // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { setText, text } = useContext(TextContext);
+  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
 
   useEffect(() => {
     if (!userInfo) {
@@ -50,6 +52,7 @@ const TakeTimeOff = () => {
             setText(result.text);
             // setServicesEmp(result.employeeServices);
             setClients(result.clients);
+            setBlockedSlots(result.blockedSlots);
           });
       }
     }
@@ -60,6 +63,7 @@ const TakeTimeOff = () => {
     setText,
     userInfo,
     setClients,
+    setBlockedSlots,
     // setServicesEmp,
   ]);
 
@@ -174,6 +178,7 @@ const TakeTimeOff = () => {
     !userInfo ||
     !clients ||
     // !servicesEmp ||
+    !blockedSlots ||
     !selectedBarber
   )
     return <Loader />;

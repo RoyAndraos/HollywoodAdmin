@@ -2,6 +2,7 @@ import { StyledLabel, LabelInputWrapper } from "../RSVP_Form";
 import { BarberSlot } from "./BarberSelect";
 import { ServicesContext } from "../../contexts/ServicesContext";
 import { useContext } from "react";
+
 const ServiceSelector = ({ selectedService, setSelectedService }) => {
   const { services } = useContext(ServicesContext);
   return (
@@ -21,6 +22,13 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
               </BarberSlot>
             );
           })}
+          <BarberSlot
+            onClick={() => {
+              setSelectedService({ name: "block", duration: "2" });
+            }}
+          >
+            30 min block
+          </BarberSlot>
         </div>
       ) : (
         <BarberSlot

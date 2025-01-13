@@ -11,6 +11,7 @@ import Loader from "../Loader";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
 // import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import { ClientsContext } from "../contexts/ClientsContext";
+import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
 const Schedule = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   const { setReservations, reservations } = useContext(ReservationContext);
@@ -22,6 +23,7 @@ const Schedule = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [slotBeforeCheck, setSlotBeforeCheck] = useState([]);
   const { clients, setClients } = useContext(ClientsContext);
+  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const token = Cookies.get("token");
@@ -46,6 +48,7 @@ const Schedule = () => {
           setClients(result.clients);
           setRole(role);
           setLoading(false);
+          setBlockedSlots(result.blockedSlots);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,6 +59,7 @@ const Schedule = () => {
     !services ||
     !text ||
     // !servicesEmp ||
+    !blockedSlots ||
     !clients ||
     loading
   )

@@ -339,6 +339,7 @@ const getUserInfo = async (req, res) => {
       services,
       text,
       clients,
+      blockedSlots,
       // employeeServices,
     ] = await Promise.all([
       db
@@ -370,6 +371,7 @@ const getUserInfo = async (req, res) => {
         .collection("Clients")
         .find({}, { projection: { _id: 0, email: 0, reservations: 0 } })
         .toArray(),
+      db.collection("blockedSlots").find().toArray(),
       // db.collection("servicesEmp").find().toArray(),
     ]);
 
@@ -384,6 +386,7 @@ const getUserInfo = async (req, res) => {
       services,
       text,
       clients,
+      blockedSlots,
       // employeeServices,
     });
   } catch (err) {
@@ -400,6 +403,22 @@ const getUserInfo = async (req, res) => {
 //POST REQUESTS
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
+
+const blockSlot = async (req, res) => {
+  const { block } = req.body;
+  const client = new MongoClient(MONGO_URI_RALF);
+
+  try {
+    const db = client.db("HollywoodBarberShop");
+    const query = { date: block.date, slot: block.slot, barber: block.barber };
+    await db.collection("blockedSlots").insertOne(query);
+    res.status(200).json({ status: 200, message: "success" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
+  }
+};
 
 const sendReminders = async (req, res) => {
   const { to, message } = req.body;
@@ -532,7 +551,6 @@ const addReservation = async (req, res) => {
         } catch (err) {
           console.log(err);
         }
-        
       }
 
       res.status(200).json({
@@ -1010,6 +1028,7 @@ const updateClientNote = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 
 module.exports = {
+  blockSlot,
   getUserInfo,
   updateAvailability,
   addReservation,

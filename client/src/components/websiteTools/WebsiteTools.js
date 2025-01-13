@@ -14,6 +14,7 @@ import { LoginRoleContext } from "../contexts/LoginRoleContext";
 // import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 import { ClientsContext } from "../contexts/ClientsContext";
 import { ReservationContext } from "../contexts/ReservationContext";
+import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
 
 const WebsiteTools = () => {
   const [selectedOption, setSelectedOption] = useState("barberProfiles");
@@ -24,6 +25,7 @@ const WebsiteTools = () => {
   // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
   const { clients, setClients } = useContext(ClientsContext);
   const { reservations, setReservations } = useContext(ReservationContext);
+  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   useEffect(() => {
     if (!role) {
       const cookieRole = Cookies.get("role");
@@ -47,6 +49,7 @@ const WebsiteTools = () => {
         // setServicesEmp(result.employeeServices);
         setClients(result.clients);
         setReservations(result.reservations);
+        setBlockedSlots(result.blockedSlots);
       })
       .catch((error) => console.error(error));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +58,7 @@ const WebsiteTools = () => {
     (!userInfo ||
       !services ||
       !text ||
+      !blockedSlots ||
       // || !servicesEmp
       !clients,
     !reservations)

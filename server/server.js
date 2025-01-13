@@ -407,10 +407,15 @@ const getUserInfo = async (req, res) => {
 const blockSlot = async (req, res) => {
   const { block } = req.body;
   const client = new MongoClient(MONGO_URI_RALF);
-
+  const _id = uuid();
   try {
     const db = client.db("HollywoodBarberShop");
-    const query = { date: block.date, slot: block.slot, barber: block.barber };
+    const query = {
+      _id: _id,
+      date: block.date,
+      slot: block.slot,
+      barber: block.barber,
+    };
     await db.collection("blockedSlots").insertOne(query);
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
@@ -724,6 +729,23 @@ const addBarber = async (req, res) => {
 //DELETE REQUESTS
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
+const deleteBlockedSlot = async (req, res) => {
+  const { _id } = req.params;
+  const client = new MongoClient(MONGO_URI_RALF);
+  const ObjectId = require("mongodb").ObjectId;
+
+  try {
+    const db = client.db("HollywoodBarberShop");
+    await db.collection("blockedSlots").deleteOne({ _id: ObjectId });
+    res
+      .status(200)
+      .json({ status: 200, _id: _id, message: "blocked slot deleted" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
+  }
+};
 const deleteService = async (req, res) => {
   const { _id } = req.params;
   const client = new MongoClient(MONGO_URI_RALF);
@@ -1028,6 +1050,7 @@ const updateClientNote = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 
 module.exports = {
+  deleteBlockedSlot,
   blockSlot,
   getUserInfo,
   updateAvailability,

@@ -194,7 +194,10 @@ const TakeTimeOff = () => {
             {userInfo.map((barber) => (
               <AdminName
                 key={barber.given_name}
-                onClick={() => navigate(`/timeOff/${barber._id}`)}
+                onClick={() => {
+                  setShowBarbers(false);
+                  navigate(`/timeOff/${barber._id}`);
+                }}
               >
                 {barber.given_name}
               </AdminName>

@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const PORT = process.env.PORT || 4000;
 
 const {
+  deleteBlockedSlot,
   getUserInfo,
   updateAvailability,
   addReservation,
@@ -76,6 +77,7 @@ app.patch("/updateText", updateText);
 app.patch("/updateServices", updateServices);
 app.patch("/updateClientNote", updateClientNote);
 app.patch("/updateDailyAvailability", updateDailyAvailability);
+app.delete("/deleteBlockedSlot/:_id", deleteBlockedSlot);
 app.delete("/images/:_id", deleteImage);
 app.delete("/deleteTimeOff", deleteTimeOff);
 app.delete("/deleteReservation", deleteReservation);

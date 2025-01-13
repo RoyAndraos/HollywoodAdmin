@@ -15,41 +15,68 @@ import { IsMobileContext } from "../../contexts/IsMobileContext";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import HoveredEvent from "./HoveredEvent";
+import { BlockedSlotsContext } from "../../contexts/BlockedSlotsContext";
+import { NotificationContext } from "../../contexts/NotficationContext";
 
 const localizer = momentLocalizer(moment);
 
 const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const savedView = localStorage.getItem("calendarView") || "month";
   const savedDay = new Date(localStorage.getItem("calendarDay")) || new Date();
+  const [showDeleteBlockedModal, setShowDeleteBlockedModal] = useState(false);
+  const [selectedBlockedSlot, setSelectedBlockedSlot] = useState("");
   const [currentView, setCurrentView] = useState(savedView);
   const [currentDay, setCurrentDay] = useState(savedDay);
   const navigate = useNavigate();
   const { reservations } = useContext(ReservationContext);
   const { isMobile } = useContext(IsMobileContext);
-
-  const events = reservations.map((reservation) => {
-    let time = reservation.slot[0].split("-")[1];
+  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
+  const { setNotification } = useContext(NotificationContext);
+  const blockedEvents = blockedSlots.map((slot) => {
+    let time = slot.slot[0].split("-")[1];
     const toEdit = time.slice(-2);
     const editedTime = editTimeTo24(time, toEdit);
-    const editedDate = editDatetoCalendarFormat(reservation.date);
+    const editedDate = editDatetoCalendarFormat(slot.date);
     const constructedDate = `${editedDate}T${editedTime}`;
-    const endTime = getEndTime(
-      constructedDate,
-      reservation.slot.length.toString()
-    );
+    const endTime = getEndTime(constructedDate, slot.slot.length.toString());
     const endTimeDate = new Date(endTime);
     const startTimeDate = new Date(constructedDate);
     return {
-      title: reservation.barber,
-      service: reservation.service.name,
-      client: reservation.fname,
-      day: reservation.date,
-      _id: reservation._id,
+      title: slot.barber,
+      client: "Blocked",
+      service: "Blocked",
+      day: slot.date,
       start: startTimeDate,
       end: endTimeDate,
-      client_id: reservation.client_id,
+      _id: slot._id,
     };
   });
+
+  const events = reservations
+    .map((reservation) => {
+      let time = reservation.slot[0].split("-")[1];
+      const toEdit = time.slice(-2);
+      const editedTime = editTimeTo24(time, toEdit);
+      const editedDate = editDatetoCalendarFormat(reservation.date);
+      const constructedDate = `${editedDate}T${editedTime}`;
+      const endTime = getEndTime(
+        constructedDate,
+        reservation.slot.length.toString()
+      );
+      const endTimeDate = new Date(endTime);
+      const startTimeDate = new Date(constructedDate);
+      return {
+        title: reservation.barber,
+        service: reservation.service.name,
+        client: reservation.fname,
+        day: reservation.date,
+        _id: reservation._id,
+        start: startTimeDate,
+        end: endTimeDate,
+        client_id: reservation.client_id,
+      };
+    })
+    .concat(blockedEvents);
 
   const views = {
     month: true,
@@ -64,6 +91,11 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   maxTime.setHours(19, 0, 0);
 
   const handleEventClick = (event) => {
+    if (event.client === "Blocked") {
+      setShowDeleteBlockedModal(true);
+      setSelectedBlockedSlot(event);
+      return;
+    }
     navigate(`/schedule/${event._id}`);
   };
 
@@ -259,6 +291,30 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       );
     }
   };
+  const handleDeleteBlockedSlot = async (event) => {
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/deleteBlockedSlot/${event._id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === 200) {
+          setNotification(result.message);
+          setBlockedSlots((prev) => {
+            return prev.filter((slot) => {
+              return slot._id !== event._id;
+            });
+          });
+        } else {
+          setNotification(result.message);
+        }
+      });
+  };
 
   return (
     <Wrapper>
@@ -278,6 +334,41 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
           event: CustomEventComponent,
         }}
       />
+      {showDeleteBlockedModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "1000",
+            backgroundColor: "white",
+            padding: "20px",
+            borderRadius: "10px",
+            boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <h2>Blocked Slot</h2>
+          <p>{selectedBlockedSlot.day}</p>
+          <p>{selectedBlockedSlot.slot}</p>
+          <button
+            onClick={() => {
+              handleDeleteBlockedSlot(selectedBlockedSlot);
+              setShowDeleteBlockedModal(false);
+            }}
+            style={{
+              backgroundColor: "#ff0000",
+              color: "white",
+              padding: "10px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </Wrapper>
   );
 };

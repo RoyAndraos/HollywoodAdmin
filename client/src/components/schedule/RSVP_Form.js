@@ -37,6 +37,7 @@ const AddReservation = ({
   const [sendSMS, setSendSMS] = useState(true);
   const { isMobile } = useContext(IsMobileContext);
   const { clients } = useContext(ClientsContext);
+  const [sendEmail, setSendEmail] = useState(false);
   const handleBlockSlot = (slot, date, barber) => {
     const token = Cookies.get("token");
     const headers = {
@@ -128,6 +129,7 @@ const AddReservation = ({
       email: clientEmail,
       number: formattedClientNumber,
       sendSMS: sendSMS,
+      sendEmail: sendEmail,
       lname: clientName.split(" ").slice(1).join(" ") || "",
     };
     fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
@@ -235,6 +237,7 @@ const AddReservation = ({
     setSelectedSlot("");
     setSlotBeforeCheck("");
   };
+
   return (
     <Wrapper>
       <Title>Make a reservation</Title>
@@ -381,6 +384,16 @@ const AddReservation = ({
               }}
             />
             <label>Send SMS</label>
+          </CheckboxWrapper>
+          <CheckboxWrapper>
+            <input
+              type="checkbox"
+              defaultChecked={sendEmail}
+              onClick={() => {
+                setSendEmail(!sendEmail);
+              }}
+            />
+            <label>Send Email</label>
           </CheckboxWrapper>
           <Book
             type="submit"

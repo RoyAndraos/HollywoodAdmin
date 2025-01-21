@@ -7,6 +7,51 @@ const moment = require("moment");
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------------------------
+// Mailtrap stuff
+// ---------------------------------------------------------------------------------------------
+const { MailtrapClient } = require("mailtrap");
+const mailtrapClient = new MailtrapClient({
+  token: process.env.EMAIL_TOKEN,
+});
+
+const scheduleEmail = (reservationId, emailData, sendAt) => {
+  const schedule = require("node-schedule");
+
+  const job = schedule.scheduleJob(sendAt, async () => {
+    try {
+      await mailtrapClient.send({
+        from: emailData.from,
+        to: emailData.to,
+        subject: emailData.subject,
+        text: emailData.text,
+        category: emailData.category,
+      });
+    } catch (err) {
+      console.error("Error sending scheduled email:", err);
+    }
+    // Remove job reference after execution
+    delete scheduledJobs[reservationId];
+  });
+
+  // Store job reference
+  scheduledJobs[reservationId] = job;
+  console.log(`Email scheduled for reservation: ${reservationId} at ${sendAt}`);
+};
+
+const cancelScheduledEmail = (reservationId) => {
+  const job = scheduledJobs[reservationId];
+  if (job) {
+    job.cancel(); // Cancel the job
+    delete scheduledJobs[reservationId]; // Remove reference
+    console.log(`Scheduled email for reservation ${reservationId} canceled.`);
+  } else {
+    console.log(`No scheduled email found for reservation ${reservationId}.`);
+  }
+};
+
+const scheduledJobs = {};
+
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 //MONGO STUFF
@@ -529,33 +574,75 @@ const addReservation = async (req, res) => {
 
       if (reservation.sendSMS) {
         try {
-          await twilioClient.messages.create({
-            body: `Bonjour ${reservation.fname} ${
-              reservation.lname !== "" && reservation.lname
-            }, votre réservation au Hollywood Barbershop est confirmée pour ${
-              reservation.date
-            } à ${reservation.slot[0].split("-")[1]}. Vous recevrez une ${
+          const message = await twilioClient.messages.create({
+            body: `
+              No Reply: Hollywood Barbershop
+  
+            Bonjour ${reservation.fname} ${
+              reservation.lname || ""
+            }, un petit rappel pour votre réservation au Hollywood Barbershop demain à ${
+              reservation.slot[0].split("-")[1]
+            } avec ${reservation.barber}. Vous recevrez une ${
               reservation.service.name
-            } pour ${reservation.service.price} CAD. ~${reservation.barber}
-          
-          Hello ${reservation.fname} ${
-              reservation.lname !== "" && reservation.lname
-            }, your reservation at Hollywood Barbershop is confirmed for ${
-              reservation.date
-            } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
+            } pour ${reservation.service.price} CAD.
+      
+            Hello ${reservation.fname} ${
+              reservation.lname || ""
+            }, a quick reminder for your reservation at Hollywood Barbershop tomorrow at ${
+              reservation.slot[0].split("-")[1]
+            } with ${reservation.barber}. You will be getting a ${
               reservation.service.english
-            } for ${reservation.service.price}. ~${reservation.barber}
-          
-          Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
-            reservation._id
-          }
-          `,
+            } for ${reservation.service.price} CAD.
+      
+            Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
+              reservation._id
+            }
+            `,
             messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
             to: userInfo.number,
+            scheduleType: "fixed",
+            sendAt: reminderTimeUTC.toISOString(), // ISO format for the scheduled time
+          });
+          //add the res _id along with the scheduled sms to the database, in case the user wants to cancel
+          await db.collection("scheduledSMS").insertOne({
+            res_id: _id,
+            messageSid: message.sid,
           });
         } catch (err) {
           console.log(err);
         }
+      } else if (reservation.sendEmail) {
+        // schedule an email reminder for the user
+        const emailData = {
+          from: "hello@hollywoodfairmountbarbers.com",
+          to: userInfo.email,
+          subject: "Reservation Reminder",
+          text: `
+              No Reply: Hollywood Barbershop
+              
+            Bonjour ${reservation.fname} ${
+            reservation.lname || ""
+          }, un petit rappel pour votre réservation au Hollywood Barbershop demain à ${
+            reservation.slot[0].split("-")[1]
+          } avec ${reservation.barber}. Vous recevrez une ${
+            reservation.service.name
+          } pour ${reservation.service.price} CAD.
+      
+            Hello ${reservation.fname} ${
+            reservation.lname || ""
+          }, a quick reminder for your reservation at Hollywood Barbershop tomorrow at ${
+            reservation.slot[0].split("-")[1]
+          } with ${reservation.barber}. You will be getting a ${
+            reservation.service.english
+          } for ${reservation.service.price} CAD.
+      
+            Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
+              reservation._id
+            }
+            `,
+          category: "Reservation Reminder",
+        };
+        scheduleEmail(emailData, reminderTime);
       }
 
       res.status(200).json({
@@ -830,6 +917,7 @@ const deleteReservation = async (req, res) => {
     await db
       .collection("Clients")
       .updateOne({ _id: client_id }, { $pull: { reservations: _id } });
+
     if (sendSMS === true) {
       // send message to client
       await twilioClient.messages.create({
@@ -841,6 +929,21 @@ const deleteReservation = async (req, res) => {
         to: clientNumber,
       });
     }
+    //delete the scheduled sms
+    const scheduledSMS = await db
+      .collection("scheduledSMS")
+      .findOne({ res_id: _id });
+    if (scheduledSMS) {
+      await twilioClient.messages(scheduledSMS.messageSid).remove();
+      await db.collection("scheduledSMS").deleteOne({ res_id: _id });
+    }
+    // Cancel the scheduled email
+    cancelScheduledEmail(_id);
+    // Respond with success
+    res.status(200).json({
+      status: 200,
+      message: "Reservation successfully deleted.",
+    });
 
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {

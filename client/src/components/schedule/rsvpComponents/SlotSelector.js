@@ -186,6 +186,55 @@ const SlotSelector = ({
           selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
           selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
         ];
+      } else if (selectedServiceDuration === "6") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+          selectNextSlot(
+            selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+          ),
+        ];
+      } else if (selectedServiceDuration === "8") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+          selectNextSlot(
+            selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+            )
+          ),
+        ];
+      } else if (selectedServiceDuration === "10") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+          selectNextSlot(
+            selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                )
+              )
+            )
+          ),
+        ];
       }
       const todayReservations = reservations.filter((reservation) => {
         const today =
@@ -314,7 +363,7 @@ const SelectedSlot = styled.div`
     width: 80vw;
   }
 `;
-const SlotContainer = styled.div`
+export const SlotContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   width: 30vw;

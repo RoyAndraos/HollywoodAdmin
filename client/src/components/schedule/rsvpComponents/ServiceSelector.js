@@ -1,10 +1,12 @@
 import { StyledLabel, LabelInputWrapper } from "../RSVP_Form";
 import { BarberSlot } from "./BarberSelect";
 import { ServicesContext } from "../../contexts/ServicesContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { Slot, SlotContainer } from "./SlotSelector";
 
 const ServiceSelector = ({ selectedService, setSelectedService }) => {
   const { services } = useContext(ServicesContext);
+  const [showDuration, setShowDuration] = useState(false);
   return (
     <LabelInputWrapper>
       <StyledLabel>Service</StyledLabel>
@@ -24,11 +26,52 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
           })}
           <BarberSlot
             onClick={() => {
-              setSelectedService({ name: "block", duration: "2" });
+              setShowDuration(true);
             }}
           >
-            30 min block
+            block
           </BarberSlot>
+          {showDuration && (
+            <SlotContainer>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "2" });
+                }}
+              >
+                30 min{" "}
+              </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "4" });
+                }}
+              >
+                1 hr
+              </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "6" });
+                }}
+              >
+                1.5 hr
+              </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "8" });
+                }}
+              >
+                2 hr
+              </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "10" });
+                }}
+              >
+                2.5 hr
+              </Slot>
+
+              <Slot onClick={() => setShowDuration(false)}>cancel</Slot>
+            </SlotContainer>
+          )}
         </div>
       ) : (
         <BarberSlot

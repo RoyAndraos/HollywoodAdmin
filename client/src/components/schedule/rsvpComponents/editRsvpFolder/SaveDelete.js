@@ -39,8 +39,8 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
       authorization: token,
     };
     e.preventDefault();
-
-    fetch(`https://hollywood-fairmount-admin.onrender.com/deleteReservation`, {
+    // https://hollywood-fairmount-admin.onrender.com
+    fetch(`http://localhost:4000/deleteReservation`, {
       method: "DELETE",
       body: JSON.stringify({
         res_id: params,

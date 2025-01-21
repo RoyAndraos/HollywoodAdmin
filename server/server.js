@@ -909,7 +909,6 @@ const deleteReservation = async (req, res) => {
   const client_id = req.body.client_id;
   const clientNumber = req.body.clientNumber;
   const client = new MongoClient(MONGO_URI_RALF);
-
   const sendSMS = req.body.sendSMS;
   try {
     const db = client.db("HollywoodBarberShop");
@@ -938,7 +937,9 @@ const deleteReservation = async (req, res) => {
       await db.collection("scheduledSMS").deleteOne({ res_id: _id });
     }
     // Cancel the scheduled email
-    cancelScheduledEmail(_id);
+    if (scheduledJobs[_id]) {
+      cancelScheduledEmail(_id);
+    }
     // Respond with success
     res.status(200).json({
       status: 200,

@@ -937,9 +937,8 @@ const deleteReservation = async (req, res) => {
       await db.collection("scheduledSMS").deleteOne({ res_id: _id });
     }
     // Cancel the scheduled email
-    if (scheduledJobs[_id]) {
-      cancelScheduledEmail(_id);
-    }
+    cancelScheduledEmail(_id);
+
     // Respond with success
     res.status(200).json({
       status: 200,

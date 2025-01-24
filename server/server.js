@@ -36,7 +36,6 @@ const scheduleEmail = (reservationId, emailData, sendAt) => {
 
   // Store job reference
   scheduledJobs[reservationId] = job;
-  console.log(`Email scheduled for reservation: ${reservationId} at ${sendAt}`);
 };
 
 const cancelScheduledEmail = (reservationId) => {
@@ -44,9 +43,7 @@ const cancelScheduledEmail = (reservationId) => {
   if (job) {
     job.cancel(); // Cancel the job
     delete scheduledJobs[reservationId]; // Remove reference
-    console.log(`Scheduled email for reservation ${reservationId} canceled.`);
   } else {
-    console.log(`No scheduled email found for reservation ${reservationId}.`);
   }
 };
 
@@ -938,14 +935,11 @@ const deleteReservation = async (req, res) => {
     }
     // Cancel the scheduled email
     cancelScheduledEmail(_id);
-
     // Respond with success
     res.status(200).json({
       status: 200,
       message: "Reservation successfully deleted.",
     });
-
-    res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {

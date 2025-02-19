@@ -421,7 +421,7 @@ const getUserInfo = async (req, res) => {
       ),
       // db.collection("servicesEmp").find().toArray(),
     ]);
-
+    const blockedSlotsToReturn = blockedSlots.flat();
     // Combine all reservations into a single array
     const reservations = reservationsArrays.flat();
 
@@ -433,7 +433,7 @@ const getUserInfo = async (req, res) => {
       services,
       text,
       clients,
-      blockedSlots,
+      blockedSlotsToReturn,
       // employeeServices,
     });
   } catch (err) {

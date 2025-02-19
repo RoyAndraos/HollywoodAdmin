@@ -1,70 +1,279 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
 const NewClients = () => {
   const [clients, setClients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const clientsPerPage = 20;
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectClient, setSelectClient] = useState(null);
+  const [editableClient, setEditableClient] = useState(null);
 
   useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:4000/clients?page=${currentPage}&limit=${clientsPerPage}`
-        );
-        const data = await response.json();
-        setClients(data.data);
-        setTotalPages(data.numberOfPages);
-      } catch (error) {
-        console.error("Error fetching clients:", error);
+    if (selectClient) {
+      setEditableClient({ ...selectClient });
+    }
+  }, [selectClient]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditableClient((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/updateClient`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editableClient),
+      });
+
+      if (response.ok) {
+        fetchClients(); // Refresh client list
+        setSelectClient(null); // Close modal
+      } else {
+        console.error("Failed to update client");
       }
-    };
+    } catch (error) {
+      console.error("Error updating client:", error);
+    }
+  };
+  const fetchClients = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/clients?page=${currentPage}&limit=${clientsPerPage}`
+      );
+      const data = await response.json();
+      setClients(data.data);
+      setTotalPages(data.numberOfPages);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchClients();
+    // eslint-disable-next-line
   }, [currentPage]);
+  const handleSearchClick = () => {
+    if (searchTerm === "") {
+      fetchClients();
+    } else {
+      fetch(`http://localhost:4000/search/${searchTerm}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setClients(data.data);
+          setTotalPages(data.numberOfPages);
+        });
+    }
+  };
   return (
-    <div>
-      <h2>Clients</h2>
-      <table>
+    <Wrapper>
+      <StyledTable>
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Note</th>
-            <th>Reservations</th>
-          </tr>
+          <StyledRow>
+            <StyledColumn>Name</StyledColumn>
+            <StyledColumn>Phone</StyledColumn>
+            <StyledColumn>Email</StyledColumn>
+            <StyledColumn>Note</StyledColumn>
+            <StyledColumn>Reservations</StyledColumn>
+          </StyledRow>
         </thead>
-        <tbody>
+        <StyledBody>
           {clients.map((client) => (
-            <tr key={client.id}>
-              <td>{client.fname + client.lname}</td>
-              <td>{client.number}</td>
-              <td>{client.email}</td>
-              <td>{client.note}</td>
-              <td>{client.reservations.length}</td>
-            </tr>
+            <StyledRow
+              key={client._id}
+              onClick={(e) => {
+                e.preventDefault();
+                setSelectClient(client);
+              }}
+            >
+              <StyledColumn>{client.fname + " " + client.lname}</StyledColumn>
+              <StyledColumn>{client.number}</StyledColumn>
+              <StyledColumn>{client.email}</StyledColumn>
+              <StyledColumn>{client.note}</StyledColumn>
+              <StyledColumn>{client.reservations.length}</StyledColumn>
+            </StyledRow>
           ))}
-        </tbody>
-      </table>
-      <div>
-        <button
+        </StyledBody>
+      </StyledTable>
+      <Bottom>
+        <StyledInput
+          type="text"
+          placeholder="Search"
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+          }}
+        />
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            handleSearchClick();
+          }}
+        >
+          Search
+        </Button>
+        <Button
           onClick={() => setCurrentPage(currentPage - 1)}
           disabled={currentPage === 1}
         >
           Previous
-        </button>
+        </Button>
         <span>
           Page {currentPage} of {totalPages}
         </span>
-        <button
+        <Button
           onClick={() => setCurrentPage(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
           Next
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Bottom>
+      {selectClient && editableClient && (
+        <Selected>
+          <ClientWrap>
+            <label>First name:</label>
+            <StyledInput
+              name="fname"
+              value={editableClient.fname}
+              onChange={handleInputChange}
+            />
+
+            <label>Last name:</label>
+            <StyledInput
+              name="lname"
+              value={editableClient.lname}
+              onChange={handleInputChange}
+            />
+
+            <label>Email:</label>
+            <StyledInput
+              name="email"
+              value={editableClient.email}
+              onChange={handleInputChange}
+            />
+
+            <label>Phone:</label>
+            <StyledInput
+              name="number"
+              value={editableClient.number}
+              onChange={handleInputChange}
+            />
+
+            <label>Note:</label>
+            <StyledInput
+              name="note"
+              value={editableClient.note}
+              onChange={handleInputChange}
+            />
+            <ButtonWrap>
+              <Button onClick={handleSave} style={{ background: "green" }}>
+                Save
+              </Button>
+              <Button
+                onClick={() => setSelectClient(null)}
+                style={{ background: "#ad0303" }}
+              >
+                Cancel
+              </Button>
+            </ButtonWrap>
+          </ClientWrap>
+        </Selected>
+      )}
+    </Wrapper>
   );
 };
+const ButtonWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  width: 100%;
+`;
+const Selected = styled.div`
+  position: fixed;
+  top: 54%;
+  left: 59%;
+  width: 75%;
+  height: 85%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const ClientWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+`;
+const StyledInput = styled.input`
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+`;
+const Button = styled.button`
+  padding: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100px;
+  transition: background-color 0.3s;
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+const Bottom = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse; /* Ensures borders don't have gaps */
+`;
+
+const StyledRow = styled.tr`
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc; /* Adds a bottom border to separate rows */
+  cursor: pointer; /* Changes the cursor to a hand */
+`;
+
+const StyledColumn = styled.td`
+  width: 20%;
+  padding: 10px; /* Adds spacing inside cells */
+  border-right: 1px solid #ccc; /* Adds a vertical border between columns */
+  text-align: left;
+
+  &:last-child {
+    border-right: none; /* Removes border from the last column */
+  }
+`;
+
+const StyledBody = styled.tbody`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  height: 88vh;
+  overflow: auto; /* Allows scrolling if content overflows */
+  padding: 10px; /* Adds spacing around the table */
+  font-family: "Roboto", sans-serif;
+`;
 
 export default NewClients;

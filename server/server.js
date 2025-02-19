@@ -4,6 +4,7 @@ const { v4: uuid } = require("uuid");
 // const { initialAvailability } = require("./helpers");
 const { weekDays } = require("./helpers");
 const moment = require("moment");
+const ObjectId = require("mongodb").ObjectId;
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -821,7 +822,6 @@ const addBarber = async (req, res) => {
 const deleteBlockedSlot = async (req, res) => {
   const { _id } = req.params;
   const client = new MongoClient(MONGO_URI_RALF);
-  const ObjectId = require("mongodb").ObjectId;
 
   try {
     const db = client.db("HollywoodBarberShop");
@@ -1083,24 +1083,29 @@ const updateText = async (req, res) => {
     await client.close();
   }
 };
-
 const updateClient = async (req, res) => {
-  const _id = req.body[1];
-  const field = Object.keys(req.body[0])[0];
-  const value = Object.values(req.body[0])[0];
-  const client = new MongoClient(MONGO_URI_RALF);
-
   try {
+    const { _id, ...updatedData } = req.body; // Extract _id and updated fields
+
+    const client = new MongoClient(MONGO_URI_RALF);
+    await client.connect();
     const db = client.db("HollywoodBarberShop");
+
     const query = { _id: _id };
-    const newValues = { $set: { [field]: value } };
-    await db.collection("Clients").updateOne(query, newValues);
-    res.status(200).json({ status: 200, message: "success" });
+    const update = { $set: updatedData }; // Use $set to update only changed fields
+
+    const result = await db.collection("Clients").updateOne(query, update);
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ status: 404, message: "Client not found" });
+    }
+
+    res
+      .status(200)
+      .json({ status: 200, message: "Client updated successfully" });
   } catch (err) {
     console.error("Error updating client:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 

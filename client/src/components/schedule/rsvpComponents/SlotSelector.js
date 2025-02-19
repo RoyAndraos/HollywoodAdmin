@@ -518,7 +518,7 @@ const SlotSelector = ({
         <SlotContainer>
           {slotBeforeCheck.length === 0 ? (
             <SlotContainer>
-              {availableSlots.length !== 0 && !barberIsOff ? (
+              {availableSlots.length !== 0 ? (
                 availableSlots.map((slot) => {
                   return (
                     <Slot

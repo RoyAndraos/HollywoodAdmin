@@ -41,6 +41,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     const endTime = getEndTime(constructedDate, slot.slot.length.toString());
     const endTimeDate = new Date(endTime);
     const startTimeDate = new Date(constructedDate);
+
     return {
       title: slot.barber,
       client: "Blocked",
@@ -51,7 +52,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       _id: slot._id,
     };
   });
-
   const events = reservations
     .map((reservation) => {
       let time = reservation.slot[0].split("-")[1];
@@ -77,7 +77,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       };
     })
     .concat(blockedEvents);
-
   const views = {
     month: true,
     day: true,
@@ -106,17 +105,24 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       );
       dayViewElements.forEach((element) => {
         if (element.innerHTML.includes("Ralph")) {
-          element.style.width = "50%";
+          element.style.width = "32%";
           element.style.zIndex = "100";
           element.style.left = "0%";
           element.style.backgroundColor = "#035e3f";
           element.style.borderBottom = "1px solid white";
           element.style.transition = "0.3s ease-in-out";
         } else if (element.innerHTML.includes("Ty")) {
-          element.style.width = "50%";
-          element.style.left = "50%";
+          element.style.width = "32%";
+          element.style.left = "33%";
           element.style.zIndex = "100";
           element.style.backgroundColor = "#e539a1";
+          element.style.borderBottom = "1px solid white";
+          element.style.transition = "0.3s ease-in-out";
+        } else {
+          element.style.width = "32%";
+          element.style.left = "66%";
+          element.style.zIndex = "100";
+          element.style.backgroundColor = "#e53939";
           element.style.borderBottom = "1px solid white";
           element.style.transition = "0.3s ease-in-out";
         }

@@ -26,7 +26,7 @@ const Clients = () => {
     fetch(
       `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${
         pageSearch + 1
-      }&limit=3`,
+      }&limit=9`,
       { headers }
     )
       .then((res) => res.json())
@@ -60,7 +60,7 @@ const Clients = () => {
     };
     setLoading(true);
     fetch(
-      `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${pageSearch}&limit=3`,
+      `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}?page=${pageSearch}&limit=9`,
       { headers }
     )
       .then((res) => res.json())

@@ -413,7 +413,12 @@ const getUserInfo = async (req, res) => {
         .collection("Clients")
         .find({}, { projection: { _id: 0, email: 0, reservations: 0 } })
         .toArray(),
-      db.collection("blockedSlots").find().toArray(),
+      Promise.all(
+        monthsToQuery.map((month) => {
+          const query = { date: { $regex: month, $options: "i" } };
+          return db.collection("blockedSlots").find(query).toArray();
+        })
+      ),
       // db.collection("servicesEmp").find().toArray(),
     ]);
 

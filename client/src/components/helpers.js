@@ -511,6 +511,303 @@ export const getEndTime = (startTime, duration) => {
         startTime.slice(0, 13) + ":" + newEndTimeMinute + ":00";
       return newEndTime;
     }
+  } else if (duration === "6") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndTimeHour = parseInt(endTimeHour) + 1;
+    let newEndTimeMinute = startTimeMinute + 30;
+    if (newEndTimeMinute === 60) {
+      newEndTimeHour = newEndTimeHour + 1;
+      newEndTimeMinute = "00";
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else if (newEndTimeMinute > 60) {
+      newEndTimeHour = newEndTimeHour + 1;
+      newEndTimeMinute = newEndTimeMinute - 60;
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "7") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndTimeHour = parseInt(endTimeHour) + 1;
+    let newEndTimeMinute = startTimeMinute + 45;
+    if (newEndTimeMinute === 60) {
+      newEndTimeHour = newEndTimeHour + 1;
+      newEndTimeMinute = "00";
+      console.log(
+        startTime.slice(0, 11) +
+          newEndTimeHour.toString() +
+          ":" +
+          newEndTimeMinute +
+          ":00"
+      );
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else if (newEndTimeMinute > 60) {
+      newEndTimeHour = newEndTimeHour + 1;
+      newEndTimeMinute = newEndTimeMinute - 60;
+
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "8") {
+    const newEndtimeHour = parseInt(startTime.slice(11, 13) + 2).toString();
+    return (
+      startTime.slice(0, 11) +
+      newEndtimeHour +
+      ":" +
+      startTimeMinute +
+      startTime.slice(-2)
+    );
+  } else if (duration === "9") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndTimeHour = parseInt(endTimeHour) + 2;
+    let newEndTimeMinute = startTimeMinute + 15;
+    if (newEndTimeMinute === 60) {
+      newEndTimeMinute = "00";
+      newEndTimeHour = newEndTimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "10") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndTimeHour = parseInt(endTimeHour) + 2;
+    let newEndTimeMinute = startTimeMinute + 30;
+    if (newEndTimeMinute === 60) {
+      newEndTimeMinute = "00";
+      newEndTimeHour = newEndTimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else if (newEndTimeMinute > 60) {
+      newEndTimeMinute = newEndTimeMinute - 60;
+      newEndTimeHour = newEndTimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "11") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndTimeHour = parseInt(endTimeHour) + 2;
+    let newEndTimeMinute = startTimeMinute + 45;
+    if (newEndTimeMinute === 60) {
+      newEndTimeMinute = "00";
+      newEndTimeHour = newEndTimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else if (newEndTimeMinute > 60) {
+      newEndTimeMinute = newEndTimeMinute - 60;
+      newEndTimeHour = newEndTimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndTimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "12") {
+    const newEndtimeHour = parseInt(startTime.slice(11, 13) + 3).toString();
+    return (
+      startTime.slice(0, 11) +
+      newEndtimeHour +
+      ":" +
+      startTimeMinute +
+      startTime.slice(-2)
+    );
+  } else if (duration === "13") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndtimeHour = parseInt(endTimeHour) + 3;
+    let newEndTimeMinute = startTimeMinute + 15;
+    if (newEndTimeMinute === 60) {
+      newEndTimeMinute = "00";
+      newEndtimeHour = newEndtimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "14") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndtimeHour = parseInt(endTimeHour) + 3;
+    let newEndTimeMinute = startTimeMinute + 30;
+    if (newEndTimeMinute === 60) {
+      newEndTimeMinute = "00";
+      newEndtimeHour = newEndtimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else if (newEndTimeMinute > 60) {
+      newEndTimeMinute = newEndTimeMinute - 60;
+      newEndtimeHour = newEndtimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "15") {
+    const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
+    let newEndtimeHour = parseInt(endTimeHour) + 3;
+    let newEndTimeMinute = startTimeMinute + 45;
+    if (newEndTimeMinute === 60) {
+      newEndTimeMinute = "00";
+      newEndtimeHour = newEndtimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else if (newEndTimeMinute > 60) {
+      newEndTimeMinute = newEndTimeMinute - 60;
+      newEndtimeHour = newEndtimeHour + 1;
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour.toString() +
+        ":" +
+        newEndTimeMinute +
+        ":00"
+      );
+    }
+  } else if (duration === "16") {
+    const newEndtimeHour = parseInt(startTime.slice(11, 13) + 4).toString();
+    return (
+      startTime.slice(0, 11) +
+      newEndtimeHour +
+      ":" +
+      startTimeMinute +
+      startTime.slice(-2)
+    );
+  } else if (duration === "20") {
+    const newEndtimeHour = parseInt(startTime.slice(11, 13) + 5).toString();
+    return (
+      startTime.slice(0, 11) +
+      newEndtimeHour +
+      ":" +
+      startTimeMinute +
+      startTime.slice(-2)
+    );
+  } else if (duration === "24") {
+    const newEndtimeHour = parseInt(startTime.slice(11, 13) + 6).toString();
+    return (
+      startTime.slice(0, 11) +
+      newEndtimeHour +
+      ":" +
+      startTimeMinute +
+      startTime.slice(-2)
+    );
   }
 };
 

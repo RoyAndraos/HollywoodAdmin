@@ -68,6 +68,34 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
               >
                 2.5 hr
               </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "12" });
+                }}
+              >
+                3 hr
+              </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "16" });
+                }}
+              >
+                4 hr
+              </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "20" });
+                }}
+              >
+                5 hr
+              </Slot>
+              <Slot
+                onClick={() => {
+                  setSelectedService({ name: "block", duration: "24" });
+                }}
+              >
+                6 hr
+              </Slot>
 
               <Slot onClick={() => setShowDuration(false)}>cancel</Slot>
             </SlotContainer>

@@ -39,7 +39,7 @@ const SearchResults = ({
     };
     setLoading(true);
     fetch(
-      `https://hollywood-fairmount-admin.onrender.com/clients?page=${page}&limit=3`,
+      `https://hollywood-fairmount-admin.onrender.com/clients?page=${page}&limit=9`,
       { headers }
     )
       .then((res) => res.json())

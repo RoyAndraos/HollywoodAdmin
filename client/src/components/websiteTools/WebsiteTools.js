@@ -3,7 +3,6 @@ import BarberProfiles from "./barber_profiles/BarberProfiles";
 import ToolBar from "./ToolBar";
 import styled from "styled-components";
 import WebsiteText from "./website_text/WebsiteText";
-import Clients from "./clients/Clients";
 import { UserContext } from "../contexts/UserContext";
 import { ServicesContext } from "../contexts/ServicesContext";
 import { TextContext } from "../contexts/TextContext";
@@ -15,6 +14,7 @@ import { LoginRoleContext } from "../contexts/LoginRoleContext";
 import { ClientsContext } from "../contexts/ClientsContext";
 import { ReservationContext } from "../contexts/ReservationContext";
 import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
+import NewClients from "./newClients/NewClients";
 
 const WebsiteTools = () => {
   const [selectedOption, setSelectedOption] = useState("barberProfiles");
@@ -74,7 +74,7 @@ const WebsiteTools = () => {
         <RestWrapper>
           {selectedOption === "websiteText" && <WebsiteText />}
           {selectedOption === "barberProfiles" && <BarberProfiles />}
-          {selectedOption === "clients" && <Clients />}
+          {selectedOption === "clients" && <NewClients />}
           {selectedOption === "services" && <Services />}
         </RestWrapper>
       </div>

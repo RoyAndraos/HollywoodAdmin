@@ -139,6 +139,7 @@ const BarberProfiles = () => {
       });
   };
   let isEditMode;
+  console.log(userInfo);
   return (
     <Wrapper>
       {role === "admin" ? (
@@ -179,17 +180,25 @@ const BarberProfiles = () => {
                       <Loader />
                     </DisplayWrapper>
                   )}
-                  {barber.given_name === "Ralph" ? (
+                  {barber.given_name === "Ralph" && (
                     <BarberImage
                       src={ralf}
                       alt={userInfo[0].given_name + " picture"}
                     />
-                  ) : (
+                  )}
+                  {barber.given_name === "Ty" && (
                     <BarberImage
                       src={ty}
                       alt={userInfo[1].given_name + " picture"}
                     />
                   )}
+                  {barber.given_name !== "Ralph" &&
+                    barber.given_name !== "Ty" && (
+                      <BarberImage
+                        src={barber.picture}
+                        alt={barber.given_name + " picture"}
+                      />
+                    )}
                   <ButtonWrapper key={"notEdit" + barber._id}>
                     <EditButton
                       onClick={() => handleToggleEditMode(barber._id)}

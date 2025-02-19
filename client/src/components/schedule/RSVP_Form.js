@@ -256,7 +256,6 @@ const AddReservation = ({
                 placeholder="Name"
                 name="name"
                 id="clientname"
-                required
                 onChange={(e) => {
                   handleChange(e, e.target.name);
                 }}
@@ -397,6 +396,7 @@ const AddReservation = ({
             <label>Send Email</label>
           </CheckboxWrapper>
           <Book
+            key="reserve"
             type="submit"
             disabled={
               error ||
@@ -407,11 +407,11 @@ const AddReservation = ({
               selectedSlot === "" ||
               selectedSlot.length === 0
             }
-            key={"book"}
           >
             Book
           </Book>
           <Book
+            key="block"
             onClick={() => {
               handleBlockSlot(selectedSlot, selectedDate, selectedBarberForm);
             }}

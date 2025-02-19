@@ -67,6 +67,10 @@ const SlotSelector = ({
           formatDate(new Date(reservation.date)) === formatDate(selectedDate);
         return selectedBarberForm.given_name === reservation.barber && today;
       });
+      // //log any reservations that contain the same slot element
+      // todayReservations.map((res) => {
+      //   console.log(res.slot);
+      // });
       //filter reserved slots for the selected day for the selected barber out
       const filteredSlots = originalAvailableSlots.filter((slot) => {
         return !todayReservations.some((reservation) => {
@@ -230,6 +234,230 @@ const SlotSelector = ({
               selectNextSlot(
                 selectNextSlot(
                   selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                )
+              )
+            )
+          ),
+        ];
+      } else if (selectedServiceDuration === "12") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+          selectNextSlot(
+            selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                  )
+                )
+              )
+            )
+          ),
+        ];
+      } else if (selectedServiceDuration === "16") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+          selectNextSlot(
+            selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                  )
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(
+                      selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                    )
+                  )
+                )
+              )
+            )
+          ),
+        ];
+      } else if (selectedServiceDuration === "20") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+          selectNextSlot(
+            selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                  )
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(
+                      selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(
+                      selectNextSlot(
+                        selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          ),
+        ];
+      } else if (selectedServiceDuration === "24") {
+        newSlotArray = [
+          ...slotBeforeCheck,
+          selectNextSlot(slotBeforeCheck[0]),
+          selectNextSlot(selectNextSlot(slotBeforeCheck[0])),
+          selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0]))),
+          selectNextSlot(
+            selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                  )
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(
+                      selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(
+                      selectNextSlot(
+                        selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(
+                selectNextSlot(
+                  selectNextSlot(
+                    selectNextSlot(
+                      selectNextSlot(
+                        selectNextSlot(selectNextSlot(slotBeforeCheck[0]))
+                      )
+                    )
+                  )
                 )
               )
             )

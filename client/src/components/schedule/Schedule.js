@@ -47,8 +47,8 @@ const Schedule = () => {
           // setServicesEmp(result.employeeServices);
           setClients(result.clients);
           setRole(role);
+          setBlockedSlots(result.blockedSlotsToReturn);
           setLoading(false);
-          setBlockedSlots(result.blockedSlots);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

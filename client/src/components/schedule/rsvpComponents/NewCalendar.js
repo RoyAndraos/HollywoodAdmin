@@ -32,6 +32,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const { isMobile } = useContext(IsMobileContext);
   const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   const { setNotification } = useContext(NotificationContext);
+  console.log("blockedSlots", blockedSlots);
   const blockedEvents = blockedSlots.map((slot) => {
     let time = slot.slot[0].split("-")[1];
     const toEdit = time.slice(-2);

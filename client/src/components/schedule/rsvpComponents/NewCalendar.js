@@ -269,7 +269,14 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
                     color: "#00ff8c",
                   }}
                 >
-                  {event.service}
+                  {event.service === "Combo coupe et barbe" && "Combo"}
+                  {event.service === "Coupe cheveux" && "Coupe"}
+                  {event.service === "Coupe enfant (1 a 10ans)" && "Enfant"}
+                  {event.service === "Barbe avec tondeuse ou lame" &&
+                    "Tondeuse/Lame"}
+                  {event.service === "Barbe avec serviette chaude" &&
+                    "Barbe Serviette"}
+                  {event.service === "Coupe et lavage" && "Coupe+Lavage"}
                 </span>
               )}
             </span>

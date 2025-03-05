@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ReservationContext } from "../../contexts/ReservationContext";
 import moment from "moment";
-const Reminder = ({ setShowReminderModal }) => {
+const Reminder = ({ setShowReminders }) => {
   const { reservations } = useContext(ReservationContext);
   const [selectedReservations, setSelectedReservations] = useState([]);
   const [tomorrowReservations] = useState(
@@ -17,6 +17,14 @@ const Reminder = ({ setShowReminderModal }) => {
       );
     })
   );
+  const sortedReservations = tomorrowReservations.sort((a, b) => {
+    //convert to 24hr time
+    const aTime = moment(a.slot[0].split("-")[1], "hh:mm A");
+    const bTime = moment(b.slot[0].split("-")[1], "hh:mm A");
+
+    return aTime.diff(bTime);
+  });
+
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const sendSMS = () => {
@@ -37,7 +45,7 @@ const Reminder = ({ setShowReminderModal }) => {
         }),
       });
     });
-    setShowReminderModal(false);
+    setShowReminders(false);
   };
   useEffect(() => {
     setSelectedReservations(tomorrowReservations);
@@ -48,7 +56,7 @@ const Reminder = ({ setShowReminderModal }) => {
         <SmolWrapper>
           <h1>Reminder SMS for {moment(tomorrow).format("MMMM DD")} </h1>
           <AllResiesWrapper>
-            {tomorrowReservations.map((reservation) => (
+            {sortedReservations.map((reservation) => (
               <Res key={reservation._id}>
                 <label>
                   {reservation.fname} {reservation.lname} at{" "}
@@ -77,7 +85,7 @@ const Reminder = ({ setShowReminderModal }) => {
             ))}
           </AllResiesWrapper>
           <ButtonWrapper>
-            <Button $close={true} onClick={() => setShowReminderModal(false)}>
+            <Button $close={true} onClick={() => setShowReminders(false)}>
               Close
             </Button>
             <Button
@@ -97,7 +105,7 @@ const Reminder = ({ setShowReminderModal }) => {
           <h1>Reminder SMS</h1>
           <p>You have no reservations tomorrow</p>
           <ButtonWrapper>
-            <Button onClick={() => setShowReminderModal(false)} $close={true}>
+            <Button onClick={() => setShowReminders(false)} $close={true}>
               Close
             </Button>
             <Button disabled={true}>Send</Button>
@@ -152,8 +160,8 @@ const Res = styled.div`
   padding: 5px 15px;
 `;
 const CheckBox = styled.input`
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 `;
 const ButtonWrapper = styled.div`

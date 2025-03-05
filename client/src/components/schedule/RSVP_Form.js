@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import { IsMobileContext } from "../contexts/IsMobileContext";
 import { getClientByNumber, getClientsByName, highlightText } from "../helpers";
 import { ClientsContext } from "../contexts/ClientsContext";
+import Reminder from "./rsvpComponents/Reminder";
 const AddReservation = ({
   selectedDate,
   setSelectedDate,
@@ -38,6 +39,7 @@ const AddReservation = ({
   const { isMobile } = useContext(IsMobileContext);
   const { clients } = useContext(ClientsContext);
   const [sendEmail, setSendEmail] = useState(false);
+  const [showReminders, setShowReminders] = useState(false);
   const handleBlockSlot = (slot, date, barber) => {
     const token = Cookies.get("token");
     const headers = {
@@ -351,6 +353,17 @@ const AddReservation = ({
             selectedBarberForm={selectedBarberForm}
             setBarber={setBarber}
           />
+          <Book
+            style={{ marginLeft: "25%" }}
+            key="reminders"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowReminders(!showReminders);
+            }}
+          >
+            Reminders
+          </Book>
+          {showReminders && <Reminder setShowReminders={setShowReminders} />}
         </div>
         <div
           style={{
@@ -376,24 +389,26 @@ const AddReservation = ({
             setSelectedService={setSelectedService}
           />
           <CheckboxWrapper>
-            <input
-              type="checkbox"
-              defaultChecked={sendSMS}
-              onClick={() => {
-                setSendSMS(!sendSMS);
-              }}
-            />
-            <label>Send SMS</label>
-          </CheckboxWrapper>
-          <CheckboxWrapper>
-            <input
-              type="checkbox"
-              defaultChecked={sendEmail}
-              onClick={() => {
-                setSendEmail(!sendEmail);
-              }}
-            />
-            <label>Send Email</label>
+            <div>
+              <input
+                type="checkbox"
+                defaultChecked={sendSMS}
+                onClick={() => {
+                  setSendSMS(!sendSMS);
+                }}
+              />
+              <label>Send SMS</label>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                defaultChecked={sendEmail}
+                onClick={() => {
+                  setSendEmail(!sendEmail);
+                }}
+              />
+              <label>Send Email</label>
+            </div>
           </CheckboxWrapper>
           <Book
             key="reserve"
@@ -429,10 +444,11 @@ const AddReservation = ({
 const CheckboxWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 30px;
   margin: 20px 0;
   color: whitesmoke;
-  width: 7vw;
+  width: 30vw;
 `;
 const fadeIn = keyframes`
   from {

@@ -547,7 +547,7 @@ const addReservation = async (req, res) => {
             body: `No Reply ~Hollywood Barbershop
             Bonjour ${reservation.fname} ${
               reservation.lname || ""
-            }, votre réservation au Hollywood Barbershop est confirmée pour aujourd'hui à ${
+            }, votre réservation au Hollywood Barbershop est confirmée pour ${frenchDate} à ${
               reservation.slot[0].split("-")[1]
             } avec ${reservation.barber}. Vous recevrez une ${
               reservation.service.name
@@ -555,11 +555,13 @@ const addReservation = async (req, res) => {
     
             Hello ${reservation.fname} ${
               reservation.lname || ""
-            }, your reservation at Hollywood Barbershop is confirmed for today at ${
-              reservation.slot[0].split("-")[1]
-            } with ${reservation.barber}. You will be getting a ${
-              reservation.service.english
-            } for ${reservation.service.price} CAD. 
+            }, your reservation at Hollywood Barbershop is confirmed for ${
+              reservation.date
+            } at ${reservation.slot[0].split("-")[1]} with ${
+              reservation.barber
+            }. You will be getting a ${reservation.service.english} for ${
+              reservation.service.price
+            } CAD. 
               Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
                 reservation._id
               }

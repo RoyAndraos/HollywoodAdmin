@@ -323,6 +323,8 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
               return slot._id !== event._id;
             });
           });
+          //force refresh
+          window.location.reload();
         } else {
           setNotification(result.message);
         }

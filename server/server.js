@@ -777,10 +777,9 @@ const addBarber = async (req, res) => {
 const deleteBlockedSlot = async (req, res) => {
   const { _id } = req.params;
   const client = new MongoClient(MONGO_URI_RALF);
-
   try {
     const db = client.db("HollywoodBarberShop");
-    await db.collection("blockedSlots").deleteOne({ _id: ObjectId });
+    await db.collection("blockedSlots").deleteOne({ _id: _id });
     res
       .status(200)
       .json({ status: 200, _id: _id, message: "blocked slot deleted" });

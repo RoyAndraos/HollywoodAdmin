@@ -551,13 +551,7 @@ export const getEndTime = (startTime, duration) => {
     if (newEndTimeMinute === 60) {
       newEndTimeHour = newEndTimeHour + 1;
       newEndTimeMinute = "00";
-      console.log(
-        startTime.slice(0, 11) +
-          newEndTimeHour.toString() +
-          ":" +
-          newEndTimeMinute +
-          ":00"
-      );
+
       return (
         startTime.slice(0, 11) +
         newEndTimeHour.toString() +

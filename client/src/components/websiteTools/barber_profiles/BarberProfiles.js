@@ -139,7 +139,7 @@ const BarberProfiles = () => {
       });
   };
   let isEditMode;
-  console.log(userInfo);
+
   return (
     <Wrapper>
       {role === "admin" ? (

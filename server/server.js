@@ -462,12 +462,20 @@ const login = async (req, res) => {
     const correctEmployeeUsername =
       process.env.EMPLOYEE_USERNAME.toLowerCase() === username.toLowerCase();
     const correctEmployeePassword = process.env.EMPLOYEE_PASSWORD === password;
+    const correctJordiUsername =
+      process.env.JORDI_USERNAME.toLowerCase() === username.toLowerCase();
+    const correctJordiPassword = process.env.JORDI_PASSWORD === password;
     if (correctPassword && correctUsername) {
       const token = jwt.sign({ userId: "admin" }, JWT_TOKEN_KEY, {
         expiresIn: "13h",
       });
       res.status(200).json({ status: 200, token: token, role: "admin" });
     } else if (correctEmployeeUsername && correctEmployeePassword) {
+      const token = jwt.sign({ userId: "employee" }, JWT_TOKEN_KEY, {
+        expiresIn: "13h",
+      });
+      res.status(200).json({ status: 200, token: token, role: "employee" });
+    } else if (correctJordiUsername && correctJordiPassword) {
       const token = jwt.sign({ userId: "employee" }, JWT_TOKEN_KEY, {
         expiresIn: "13h",
       });
@@ -577,7 +585,7 @@ const addReservation = async (req, res) => {
         const emailData = {
           from: "hello@hollywoodfairmountbarbers.com",
           to: userInfo.email,
-          subject: "Reservation Reminder",
+          subject: "Reservation Confirmation",
           text: `No Reply ~Hollywood Barbershop
             Bonjour ${reservation.fname} ${
             reservation.lname || ""
@@ -598,7 +606,7 @@ const addReservation = async (req, res) => {
                 reservation._id
               }
             `,
-          category: "Reservation Reminder",
+          category: "Reservation Confirmation",
         };
         await mailtrapClient.sendEmail(emailData);
       }

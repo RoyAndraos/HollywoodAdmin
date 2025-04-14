@@ -41,6 +41,14 @@ const {
 
 const app = express();
 
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection:", reason);
+});
+
 app.use(cors());
 app.use(helmet());
 app.use(morgan("tiny"));

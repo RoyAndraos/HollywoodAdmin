@@ -4,7 +4,6 @@ const { v4: uuid } = require("uuid");
 // const { initialAvailability } = require("./helpers");
 const { weekDays } = require("./helpers");
 const moment = require("moment");
-const ObjectId = require("mongodb").ObjectId;
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
@@ -1128,10 +1127,8 @@ module.exports = {
   getSearchResults,
   getClients,
   updateClient,
-  startChangeStream,
   login,
   logout,
-  verifyToken,
   updateServices,
   getClientNotes,
   updateClientNote,

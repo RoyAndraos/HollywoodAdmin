@@ -94,7 +94,7 @@ app.delete("/deleteClient/:_id", deleteClient);
 app.delete("/deleteService/:_id", deleteService);
 
 const server = http.createServer(app);
-
+console.log("PORT:", process.env.PORT);
 server.listen(PORT, () => {
   console.info(`Listening on port ${PORT}`);
 });

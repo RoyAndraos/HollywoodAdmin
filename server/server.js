@@ -154,23 +154,6 @@ const twilioClient = require("twilio")(accountSid, authToken);
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
-const getClientByName = async (req, res) => {
-  const name = req.params.name.toLowerCase();
-  const client = new MongoClient(MONGO_URI_RALF);
-
-  try {
-    const db = client.db("HollywoodBarberShop");
-    const query = { fname: { $regex: name.toLowerCase(), $options: "i" } };
-    const clients = await db.collection("Clients").find(query).toArray();
-    res.set("Content-Type", "application/json");
-    res.status(200).json({ status: 200, data: clients });
-  } catch (err) {
-    res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
-  }
-};
-
 const getClients = async (req, res) => {
   const page = parseInt(req.query.page); // Current page number, default to 1
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
@@ -1132,7 +1115,6 @@ module.exports = {
   updateServices,
   getClientNotes,
   updateClientNote,
-  getClientByName,
   deleteClient,
   deleteService,
   updateDailyAvailability,

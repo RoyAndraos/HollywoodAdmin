@@ -66,7 +66,6 @@ app.get("/getUserInfo", getUserInfo);
 app.get("/search/:searchTerm", getSearchResults);
 app.get("/clients", getClients);
 app.get("/getClientNote/:client_id", getClientNotes);
-app.get("/clientByName/:name", getClientByName);
 app.get("/events", sendData);
 app.get("/getUserInfoInWebTools", getUserInfoInWebTools);
 app.post("/logout", logout);
@@ -94,7 +93,6 @@ app.delete("/deleteClient/:_id", deleteClient);
 app.delete("/deleteService/:_id", deleteService);
 
 const server = http.createServer(app);
-console.log("PORT:", process.env.PORT);
 server.listen(PORT, () => {
-  console.info(`Listening on port ${process.env.PORT}`);
+  console.info(`Listening on port ${PORT}`);
 });

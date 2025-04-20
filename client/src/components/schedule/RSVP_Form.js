@@ -12,6 +12,8 @@ import { IsMobileContext } from "../contexts/IsMobileContext";
 import { getClientByNumber, getClientsByName, highlightText } from "../helpers";
 import { ClientsContext } from "../contexts/ClientsContext";
 import Reminder from "./rsvpComponents/Reminder";
+import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
+
 const AddReservation = ({
   selectedDate,
   setSelectedDate,
@@ -40,6 +42,7 @@ const AddReservation = ({
   const { clients } = useContext(ClientsContext);
   const [sendEmail, setSendEmail] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
+  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   const handleBlockSlot = (slot, date, barber) => {
     const token = Cookies.get("token");
     const headers = {
@@ -65,10 +68,19 @@ const AddReservation = ({
       .then((data) => {
         if (data.status === 200) {
           setNotification("Slot blocked successfully");
+          setBlockedSlots([
+            ...blockedSlots,
+            {
+              barber: barber.given_name,
+              date: formattedDate,
+              slot: slot,
+            },
+          ]);
         }
       })
       .catch(() => setNotification("Something went wrong"));
   };
+
   //check if barber is selected
   useEffect(() => {
     if (Object.keys(selectedBarberForm).length === 0) {
@@ -427,7 +439,9 @@ const AddReservation = ({
           </Book>
           <Book
             key="block"
-            onClick={() => {
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
               handleBlockSlot(selectedSlot, selectedDate, selectedBarberForm);
             }}
             disabled={

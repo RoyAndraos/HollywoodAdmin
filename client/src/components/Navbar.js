@@ -25,7 +25,9 @@ const NavBar = () => {
     <Wrapper>
       <StyledNavLink to="/schedule">Schedule</StyledNavLink>
       <StyledNavLink to="/availability">Availability</StyledNavLink>
-      {!isMobile && <StyledNavLink to="/websiteTools">Tools</StyledNavLink>}
+      {!isMobile && role === "admin" && (
+        <StyledNavLink to="/websiteTools">Tools</StyledNavLink>
+      )}
       {role === "admin" && !isMobile && (
         <StyledNavLink to="/Data">Data</StyledNavLink>
       )}

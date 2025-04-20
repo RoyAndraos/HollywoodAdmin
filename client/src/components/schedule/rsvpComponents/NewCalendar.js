@@ -32,7 +32,9 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const { isMobile } = useContext(IsMobileContext);
   const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   const { setNotification } = useContext(NotificationContext);
+
   const blockedEvents = blockedSlots.map((slot) => {
+    // console.log("slot", slot);
     let time = slot.slot[0].split("-")[1];
     const toEdit = time.slice(-2);
     const editedTime = editTimeTo24(time, toEdit);
@@ -41,6 +43,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     const endTime = getEndTime(constructedDate, slot.slot.length.toString());
     const endTimeDate = new Date(endTime);
     const startTimeDate = new Date(constructedDate);
+    // console.log("endTimeDate", endTimeDate);
 
     return {
       title: slot.barber,
@@ -381,6 +384,20 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
             }}
           >
             Delete
+          </button>
+          <button
+            onClick={() => setShowDeleteBlockedModal(false)}
+            style={{
+              backgroundColor: "#ff0000",
+              color: "white",
+              padding: "10px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginLeft: "10px",
+            }}
+          >
+            Cancel
           </button>
         </div>
       )}

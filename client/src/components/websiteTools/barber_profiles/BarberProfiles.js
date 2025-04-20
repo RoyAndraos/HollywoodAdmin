@@ -140,7 +140,6 @@ const BarberProfiles = () => {
       });
   };
   let isEditMode;
-  console.log(role);
 
   return (
     <Wrapper>
@@ -219,7 +218,7 @@ const BarberProfiles = () => {
             </BarberWrapper>
           );
         })
-      ) : role === "Ty" ? (
+      ) : role === "ty" ? (
         <BarberWrapper key={userInfo[1]._id}>
           {(isEditMode = editModes[userInfo[1]._id])}
           {isEditMode ? (
@@ -295,7 +294,7 @@ const BarberProfiles = () => {
               </DisplayWrapper>
               {userInfo[2].picture !== "" && (
                 <BarberImage
-                  src={userInfo[2].picture}
+                  src={jordi}
                   alt={userInfo[2].given_name + " picture"}
                 />
               )}

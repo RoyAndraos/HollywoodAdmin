@@ -140,6 +140,7 @@ const BarberProfiles = () => {
       });
   };
   let isEditMode;
+  console.log(role);
 
   return (
     <Wrapper>

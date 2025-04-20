@@ -456,12 +456,12 @@ const login = async (req, res) => {
       const token = jwt.sign({ userId: "employee" }, JWT_TOKEN_KEY, {
         expiresIn: "13h",
       });
-      res.status(200).json({ status: 200, token: token, role: "jordi" });
+      res.status(200).json({ status: 200, token: token, role: "ty" });
     } else if (correctJordiUsername && correctJordiPassword) {
       const token = jwt.sign({ userId: "employee" }, JWT_TOKEN_KEY, {
         expiresIn: "13h",
       });
-      res.status(200).json({ status: 200, token: token, role: "Ty" });
+      res.status(200).json({ status: 200, token: token, role: "jordi" });
     } else {
       res
         .status(401)

@@ -29,7 +29,6 @@ const {
   updateServices,
   getClientNotes,
   updateClientNote,
-  getClientByName,
   deleteClient,
   deleteService,
   updateDailyAvailability,

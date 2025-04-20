@@ -563,7 +563,6 @@ const addReservation = async (req, res) => {
           console.log(err);
         }
       } else if (reservation.sendEmail) {
-        // schedule an email reminder for the user
         const emailData = {
           from: "hello@hollywoodfairmountbarbers.com",
           to: userInfo.email,

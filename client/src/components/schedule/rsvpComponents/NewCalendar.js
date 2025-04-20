@@ -17,6 +17,7 @@ import "tippy.js/dist/tippy.css";
 import HoveredEvent from "./HoveredEvent";
 import { BlockedSlotsContext } from "../../contexts/BlockedSlotsContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
+import { LoginRoleContext } from "../../contexts/LoginRoleContext";
 
 const localizer = momentLocalizer(moment);
 
@@ -32,8 +33,25 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const { isMobile } = useContext(IsMobileContext);
   const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   const { setNotification } = useContext(NotificationContext);
-
-  const blockedEvents = blockedSlots.map((slot) => {
+  const { role } = useContext(LoginRoleContext);
+  let filteredReservations = [...reservations]; // spread operator
+  let filteredBlockedSlots = [...blockedSlots]; // spread operator
+  if (role === "jordi") {
+    filteredBlockedSlots = filteredBlockedSlots.filter((slot) => {
+      return slot.barber === "Jordi";
+    });
+    filteredReservations = filteredReservations.filter((reservation) => {
+      return reservation.barber === "Jordi";
+    });
+  } else if (role === "ty") {
+    filteredBlockedSlots = filteredBlockedSlots.filter((slot) => {
+      return slot.barber === "Ty";
+    });
+    filteredReservations = filteredReservations.filter((reservation) => {
+      return reservation.barber === "Ty";
+    });
+  }
+  const blockedEvents = filteredBlockedSlots.map((slot) => {
     // console.log("slot", slot);
     let time = slot.slot[0].split("-")[1];
     const toEdit = time.slice(-2);
@@ -55,7 +73,8 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       _id: slot._id,
     };
   });
-  const events = reservations
+
+  const events = filteredReservations
     .map((reservation) => {
       let time = reservation.slot[0].split("-")[1];
       const toEdit = time.slice(-2);
@@ -106,41 +125,63 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       const dayViewElements = document.querySelectorAll(
         ".rbc-day-slot .rbc-events-container .rbc-event"
       );
-      dayViewElements.forEach((element) => {
-        if (element.innerHTML.includes("Ralph")) {
-          element.style.width = "32%";
-          element.style.zIndex = "100";
-          element.style.left = "0%";
-          element.style.backgroundColor = "#035e3f";
-          element.style.borderBottom = "1px solid white";
-          element.style.transition = "0.3s ease-in-out";
-        } else if (element.innerHTML.includes("Ty")) {
-          element.style.width = "32%";
-          element.style.left = "33%";
-          element.style.zIndex = "100";
-          element.style.backgroundColor = "#e539a1";
-          element.style.borderBottom = "1px solid white";
-          element.style.transition = "0.3s ease-in-out";
+      if (role === "admin") {
+        dayViewElements.forEach((element) => {
+          if (element.innerHTML.includes("Ralph")) {
+            element.style.width = "32%";
+            element.style.zIndex = "100";
+            element.style.left = "0%";
+            element.style.backgroundColor = "#035e3f";
+            element.style.borderBottom = "1px solid white";
+            element.style.transition = "0.3s ease-in-out";
+          } else if (element.innerHTML.includes("Ty")) {
+            element.style.width = "32%";
+            element.style.left = "33%";
+            element.style.zIndex = "100";
+            element.style.backgroundColor = "#e539a1";
+            element.style.borderBottom = "1px solid white";
+            element.style.transition = "0.3s ease-in-out";
+          } else {
+            element.style.width = "32%";
+            element.style.left = "66%";
+            element.style.zIndex = "100";
+            element.style.backgroundColor = "#e53939";
+            element.style.borderBottom = "1px solid white";
+            element.style.transition = "0.3s ease-in-out";
+          }
+        });
+      } else {
+        if (role === "jordi") {
+          dayViewElements.forEach((element) => {
+            element.style.width = "99%";
+            element.style.left = "0.5%";
+            element.style.backgroundColor = "#e53939";
+            element.style.zIndex = "100";
+            element.style.borderBottom = "1px solid white";
+            element.style.transition = "0.3s ease-in-out";
+          });
         } else {
-          element.style.width = "32%";
-          element.style.left = "66%";
-          element.style.zIndex = "100";
-          element.style.backgroundColor = "#e53939";
-          element.style.borderBottom = "1px solid white";
-          element.style.transition = "0.3s ease-in-out";
+          dayViewElements.forEach((element) => {
+            element.style.width = "99%";
+            element.style.left = "0.5%";
+            element.style.backgroundColor = "#e539a1";
+            element.style.zIndex = "100";
+            element.style.borderBottom = "1px solid white";
+            element.style.transition = "0.3s ease-in-out";
+          });
         }
-      });
+      }
 
-      const dayViewColor = document.querySelectorAll(
-        ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-content .event-content-div"
-      );
-      dayViewColor.forEach((element) => {
-        if (element.innerHTML.includes("Ralph")) {
-          element.style.fontWeight = "bold";
-        } else {
-          element.style.fontWeight = "bold";
-        }
-      });
+      // const dayViewColor = document.querySelectorAll(
+      //   ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-content .event-content-div"
+      // );
+      // dayViewColor.forEach((element) => {
+      //   if (element.innerHTML.includes("Ralph")) {
+      //     element.style.fontWeight = "bold";
+      //   } else {
+      //     element.style.fontWeight = "bold";
+      //   }
+      // });
 
       if (currentView === "agenda") {
         const agendaDate = document.querySelectorAll(".rbc-toolbar-label");
@@ -163,7 +204,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         }
       }
     }, 300); // Delay to ensure DOM is fully rendered
-  }, [currentView]);
+  }, [currentView, role]);
 
   useEffect(() => {
     const handleDebouncedApplyStyles = () => {

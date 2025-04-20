@@ -24,6 +24,9 @@ export const NotificationLogsProvider = ({ children }) => {
         setReservations((prev) => prev.filter((log) => log._id !== change._id));
       }
     };
+    eventSource.onerror = (err) => {
+      console.error("EventSource failed:", err);
+    };
 
     return () => {
       eventSource.close();

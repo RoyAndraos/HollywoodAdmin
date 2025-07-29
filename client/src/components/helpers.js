@@ -545,6 +545,7 @@ export const getEndTime = (startTime, duration) => {
       );
     }
   } else if (duration === "6") {
+    console.log("duration is 6");
     const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
     let newEndTimeHour = parseInt(endTimeHour) + 1;
     let newEndTimeMinute = startTimeMinute + 30;
@@ -829,14 +830,26 @@ export const getEndTime = (startTime, duration) => {
       );
     }
   } else if (duration === "16") {
-    const newEndtimeHour = parseInt(startTime.slice(11, 13) + 4).toString();
-    return (
-      startTime.slice(0, 11) +
-      newEndtimeHour +
-      ":" +
-      startTimeMinute +
-      startTime.slice(-2)
-    );
+    const newEndtimeHour = (parseInt(startTime.slice(11, 13)) + 4).toString();
+
+    if (startTimeMinute === 0) {
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour +
+        ":" +
+        "00:" +
+        startTime.slice(-2)
+      );
+    } else {
+      return (
+        startTime.slice(0, 11) +
+        newEndtimeHour +
+        ":" +
+        startTimeMinute +
+        ":" +
+        startTime.slice(-2)
+      );
+    }
   } else if (duration === "20") {
     const newEndtimeHour = (parseInt(startTime.slice(11, 13)) + 5).toString();
     if (startTimeMinute === 0) {

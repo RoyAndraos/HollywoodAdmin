@@ -413,7 +413,7 @@ const blockSlot = async (req, res) => {
       barber: block.barber,
     };
     await db.collection("blockedSlots").insertOne(query);
-    res.status(200).json({ status: 200, message: "success" });
+    res.status(200).json({ status: 200, _id: _id, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   } finally {

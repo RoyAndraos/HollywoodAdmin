@@ -51,8 +51,8 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       return reservation.barber === "Ty";
     });
   }
+
   const blockedEvents = filteredBlockedSlots.map((slot) => {
-    // console.log("slot", slot);
     let time = slot.slot[0].split("-")[1];
     const toEdit = time.slice(-2);
     const editedTime = editTimeTo24(time, toEdit);
@@ -61,7 +61,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     const endTime = getEndTime(constructedDate, slot.slot.length.toString());
     const endTimeDate = new Date(endTime);
     const startTimeDate = new Date(constructedDate);
-    // console.log("endTimeDate", endTimeDate);
 
     return {
       title: slot.barber,
@@ -73,6 +72,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       _id: slot._id,
     };
   });
+  console.log("blockedEvents", blockedEvents);
 
   const events = filteredReservations
     .map((reservation) => {
@@ -128,22 +128,24 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       if (role === "admin") {
         dayViewElements.forEach((element) => {
           if (element.innerHTML.includes("Ralph")) {
-            element.style.width = "32%";
+            element.style.width = "50%";
             element.style.zIndex = "100";
             element.style.left = "0%";
             element.style.backgroundColor = "#035e3f";
             element.style.borderBottom = "1px solid white";
             element.style.transition = "0.3s ease-in-out";
-          } else if (element.innerHTML.includes("Ty")) {
-            element.style.width = "32%";
-            element.style.left = "33%";
-            element.style.zIndex = "100";
-            element.style.backgroundColor = "#e539a1";
-            element.style.borderBottom = "1px solid white";
-            element.style.transition = "0.3s ease-in-out";
-          } else {
-            element.style.width = "32%";
-            element.style.left = "66%";
+          }
+          //  else if (element.innerHTML.includes("Ty")) {
+          //   element.style.width = "32%";
+          //   element.style.left = "33%";
+          //   element.style.zIndex = "100";
+          //   element.style.backgroundColor = "#e539a1";
+          //   element.style.borderBottom = "1px solid white";
+          //   element.style.transition = "0.3s ease-in-out";
+          // }
+          else {
+            element.style.width = "50%";
+            element.style.left = "50%";
             element.style.zIndex = "100";
             element.style.backgroundColor = "#e53939";
             element.style.borderBottom = "1px solid white";
@@ -362,13 +364,12 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       .then((result) => {
         if (result.status === 200) {
           setNotification(result.message);
+          console.log("result", result);
           setBlockedSlots((prev) => {
             return prev.filter((slot) => {
               return slot._id !== event._id;
             });
           });
-          //force refresh
-          window.location.reload();
         } else {
           setNotification(result.message);
         }

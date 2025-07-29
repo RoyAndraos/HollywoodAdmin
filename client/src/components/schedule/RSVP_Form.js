@@ -71,6 +71,7 @@ const AddReservation = ({
           setBlockedSlots([
             ...blockedSlots,
             {
+              _id: data._id,
               barber: barber.given_name,
               date: formattedDate,
               slot: slot,

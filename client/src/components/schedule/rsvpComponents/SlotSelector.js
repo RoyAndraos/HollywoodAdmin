@@ -199,7 +199,13 @@ const SlotSelector = ({
           selectNextSlot(
             selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
           ),
+          selectNextSlot(
+            selectNextSlot(
+              selectNextSlot(selectNextSlot(selectNextSlot(slotBeforeCheck[0])))
+            )
+          ),
         ];
+        console.log("newSlotArray", newSlotArray);
       } else if (selectedServiceDuration === "8") {
         newSlotArray = [
           ...slotBeforeCheck,

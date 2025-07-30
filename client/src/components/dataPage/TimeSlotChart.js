@@ -1,10 +1,8 @@
-import { useContext } from "react";
 import { getDailyHours } from "../helpers";
-import { ReservationContext } from "../contexts/ReservationContext";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Title, Wrapper } from "./ServiceChart";
-const TimeSlotChart = () => {
-  const { reservations } = useContext(ReservationContext);
+import React from "react";
+const TimeSlotChart = React.memo(({ reservations }) => {
   const xAxis = getDailyHours();
   const xAxisRendered = xAxis.map((time) => {
     if (time.length === 6) {
@@ -44,6 +42,6 @@ const TimeSlotChart = () => {
       />
     </Wrapper>
   );
-};
+});
 
 export default TimeSlotChart;

@@ -205,7 +205,6 @@ const SlotSelector = ({
             )
           ),
         ];
-        console.log("newSlotArray", newSlotArray);
       } else if (selectedServiceDuration === "8") {
         newSlotArray = [
           ...slotBeforeCheck,

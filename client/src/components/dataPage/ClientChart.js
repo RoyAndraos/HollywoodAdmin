@@ -1,11 +1,9 @@
-import { useContext } from "react";
-import { ReservationContext } from "../contexts/ReservationContext";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { getDateRange } from "../helpers";
 import { Wrapper, Title } from "./ServiceChart";
 import moment from "moment";
-const ClientChart = ({ clientsData, date, type }) => {
-  const { reservations } = useContext(ReservationContext);
+import React from "react";
+const ClientChart = React.memo(({ clientsData, date, type, reservations }) => {
   const dateRange = getDateRange(date, type);
   const clientNames = clientsData.map((client) => {
     return client.fname + " " + client.lname;
@@ -47,6 +45,6 @@ const ClientChart = ({ clientsData, date, type }) => {
       />
     </Wrapper>
   );
-};
+});
 
 export default ClientChart;

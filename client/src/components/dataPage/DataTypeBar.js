@@ -30,29 +30,37 @@ const DataTypeBar = ({ date, setDate, type, setType }) => {
 
   const handleNext = (date, type) => {
     if (type === "week") {
-      setDate(new Date(date.setDate(date.getDate() + 7)));
+      const newDate = new Date(date);
+      newDate.setDate(newDate.getDate() + 7);
+      setDate(newDate);
     }
     if (type === "month") {
-      const firstDayOfNextMonth = new Date(
-        date.getFullYear(),
-        date.getMonth() + 1,
-        1
-      );
-      setDate(firstDayOfNextMonth);
+      const newDate = new Date(date);
+      newDate.setMonth(newDate.getMonth() + 1);
+      setDate(newDate);
     }
     if (type === "year") {
-      setDate(new Date(date.setFullYear(date.getFullYear() + 1)));
+      const newDate = new Date(date);
+      newDate.setFullYear(newDate.getFullYear() + 1);
+      setDate(newDate);
     }
   };
+
   const handlePrevious = (date, type) => {
     if (type === "week") {
-      setDate(new Date(date.setDate(date.getDate() - 7)));
+      const newDate = new Date(date);
+      newDate.setDate(newDate.getDate() - 7);
+      setDate(newDate);
     }
     if (type === "month") {
-      setDate(new Date(date.setMonth(date.getMonth() - 1)));
+      const newDate = new Date(date);
+      newDate.setMonth(newDate.getMonth() - 1);
+      setDate(newDate);
     }
     if (type === "year") {
-      setDate(new Date(date.setFullYear(date.getFullYear() - 1)));
+      const newDate = new Date(date);
+      newDate.setFullYear(newDate.getFullYear() - 1);
+      setDate(newDate);
     }
   };
   return (

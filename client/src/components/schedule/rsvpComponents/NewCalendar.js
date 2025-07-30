@@ -72,7 +72,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       _id: slot._id,
     };
   });
-  console.log("blockedEvents", blockedEvents);
 
   const events = filteredReservations
     .map((reservation) => {
@@ -364,7 +363,6 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       .then((result) => {
         if (result.status === 200) {
           setNotification(result.message);
-          console.log("result", result);
           setBlockedSlots((prev) => {
             return prev.filter((slot) => {
               return slot._id !== event._id;

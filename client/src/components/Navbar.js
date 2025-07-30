@@ -28,9 +28,9 @@ const NavBar = () => {
       {!isMobile && role === "admin" && (
         <StyledNavLink to="/websiteTools">Tools</StyledNavLink>
       )}
-      {role === "admin" && !isMobile && (
+      {/* {role === "admin" && !isMobile && (
         <StyledNavLink to="/Data">Data</StyledNavLink>
-      )}
+      )} */}
       <StyledNavLink to="/">
         <Logout
           onClick={() => {

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 const HoveredEvent = ({ res }) => {
   const [note, setNote] = useState();
   const [loading, setLoading] = useState(true);
-
+  console.log(loading);
   useEffect(() => {
     setLoading(true);
     if (res.client === "Blocked") {
@@ -18,8 +18,8 @@ const HoveredEvent = ({ res }) => {
       .then((res) => res.json())
       .then((result) => {
         setNote(result.data);
+        setLoading(false);
       });
-    setLoading(false);
   }, [res]);
   if (loading) {
     return <div>...Loading...</div>;

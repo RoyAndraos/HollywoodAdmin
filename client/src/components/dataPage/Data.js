@@ -1,6 +1,4 @@
-import { useContext, useState } from "react";
-import { ReservationContext } from "../contexts/ReservationContext";
-import { ClientsContext } from "../contexts/ClientsContext";
+import { useState } from "react";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
 import ServiceChart from "./ServiceChart";
@@ -8,73 +6,35 @@ import ClientChart from "./ClientChart";
 import TimeSlotChart from "./TimeSlotChart";
 import DataTypeBar from "./DataTypeBar";
 import Loader from "../Loader";
-import { UserContext } from "../contexts/UserContext";
-import { ServicesContext } from "../contexts/ServicesContext";
-// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
-import { TextContext } from "../contexts/TextContext";
-import { LoginRoleContext } from "../contexts/LoginRoleContext";
+import { useMemo } from "react";
 
 const Data = () => {
   const [type, setType] = useState("week");
-  const { reservations, setReservations } = useContext(ReservationContext);
-  const { clients, setClients } = useContext(ClientsContext);
-  const { setUserInfo, userInfo } = useContext(UserContext);
-  const { setServices } = useContext(ServicesContext);
-  // const { setServicesEmp } = useContext(EmployeeServicesContext);
-  const { setText } = useContext(TextContext);
-  const { setRole } = useContext(LoginRoleContext);
-  const [clientsData, setClientsData] = useState();
+  const [clients, setClients] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const [date, setDate] = useState(new Date());
-
   useEffect(() => {
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
     };
-    if (!clients) {
-      fetch(
-        `https://hollywood-fairmount-admin.onrender.com/clients`,
-        {
-          headers: headers, // add headers
-        }
-        // add headers
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          setClients(result.data);
-        });
-    }
-    if (!userInfo) {
-      fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
-        headers,
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          setUserInfo(result.userInfo);
-          setReservations(result.reservations);
-          setServices(result.services);
-          setText(result.text);
-          // setServicesEmp(result.employeeServices);
-          setClients(result.clients);
-          setRole(result.role);
-        });
-    }
-    // eslint-disable-next-line
-  }, [
-    clients,
-    setUserInfo,
-    userInfo,
-    setReservations,
-    setServices,
-    setText,
-    // setServicesEmp,
-    setRole,
-    setClients,
-  ]);
+    //https://hollywood-fairmount-admin.onrender.com
+    fetch(`http://localhost:4000/getDataPage`, {
+      headers: headers,
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setClients(result.clients);
+        setReservations(result.reservations);
+      });
+  }, []);
   useEffect(() => {
+    console.log("type", type);
     const currentDate = new Date();
 
     if (type === "week") {
+      console.log("type", type);
+
       // Set the date to the Monday of the current week
       const dayOfWeek = currentDate.getDay();
       const difference = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Calculate the difference to the previous Monday
@@ -102,16 +62,15 @@ const Data = () => {
   }, [type]);
 
   // go through clients and replace the reservations array (which usually is an array of ids) with the actual reservation objects
-  useEffect(() => {
-    if (clients && reservations) {
-      const newClients = clients.map((client) => {
-        const newReservations = client.reservations.map((reservation) => {
-          return reservations.filter((res) => res._id === reservation)[0];
-        });
-        return { ...client, reservations: newReservations };
-      });
-      setClientsData(newClients);
-    }
+  const clientsData = useMemo(() => {
+    if (clients.length === 0 || reservations.length === 0) return [];
+
+    return clients.map((client) => {
+      const newReservations = client.reservations.map((resId) =>
+        reservations.find((res) => res._id === resId)
+      );
+      return { ...client, reservations: newReservations };
+    });
   }, [clients, reservations]);
   if (!clientsData) {
     return <Loader />;
@@ -124,9 +83,14 @@ const Data = () => {
         type={type}
         setType={setType}
       />
-      <ServiceChart date={date} type={type} />
-      <ClientChart clientsData={clientsData} type={type} date={date} />
-      <TimeSlotChart />
+      <ServiceChart date={date} type={type} reservations={reservations} />
+      <ClientChart
+        clientsData={clientsData}
+        type={type}
+        date={date}
+        reservations={reservations}
+      />
+      <TimeSlotChart reservations={reservations} />
     </div>
   );
 };

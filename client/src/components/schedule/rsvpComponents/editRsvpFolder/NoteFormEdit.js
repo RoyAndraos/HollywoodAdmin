@@ -21,7 +21,9 @@ const NoteFormEdit = ({ note, handleChange, initialNote, setNote }) => {
           onChange={(e) => {
             handleChange(e);
           }}
-        ></StyledInput>
+        >
+          {initialNote}
+        </StyledInput>
       )}
       <EditButton
         $props={noteEdit}

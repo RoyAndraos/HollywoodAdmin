@@ -114,33 +114,33 @@ const startChangeStream = async (sendEvent) => {
 //-------------------------------------------------------------------------------------------------------------
 const jwt = require("jsonwebtoken");
 const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
-const verifyToken = async (req, res, next) => {
-  const token = req.headers.authorization;
-  try {
-    const client = new MongoClient(MONGO_URI_RALF);
-    await client.connect();
-    const db = client.db("HollywoodBarberShop");
-    const isRevoked = await db.collection("revoked").findOne({ token: token });
-    if (isRevoked) {
-      await client.close();
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-    await client.close(); // Close connection after checking token
-  } catch (err) {
-    console.error("Error verifying token:", err);
-  }
-  if (!token) {
-    return res.status(401).json({ message: "Token is missing" });
-  }
-  jwt.verify(token, JWT_TOKEN_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-    // Token is valid; user identification is available in decoded.userId
-    req.userId = decoded.userId;
-    next();
-  });
-};
+// const verifyToken = async (req, res, next) => {
+//   const token = req.headers.authorization;
+//   try {
+//     const client = new MongoClient(MONGO_URI_RALF);
+//     await client.connect();
+//     const db = client.db("HollywoodBarberShop");
+//     const isRevoked = await db.collection("revoked").findOne({ token: token });
+//     if (isRevoked) {
+//       await client.close();
+//       return res.status(401).json({ message: "Invalid credentials" });
+//     }
+//     await client.close(); // Close connection after checking token
+//   } catch (err) {
+//     console.error("Error verifying token:", err);
+//   }
+//   if (!token) {
+//     return res.status(401).json({ message: "Token is missing" });
+//   }
+//   jwt.verify(token, JWT_TOKEN_KEY, (err, decoded) => {
+//     if (err) {
+//       return res.status(401).json({ message: "Invalid token" });
+//     }
+//     // Token is valid; user identification is available in decoded.userId
+//     req.userId = decoded.userId;
+//     next();
+//   });
+// };
 //TWILIO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
@@ -153,7 +153,30 @@ const twilioClient = require("twilio")(accountSid, authToken);
 //GET REQUESTS
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
+const getDataPage = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+  await client.connect();
+  try {
+    const db = client.db("HollywoodBarberShop");
 
+    // Run all three queries in parallel
+    const [clients, reservations] = await Promise.all([
+      db.collection("Clients").find().toArray(),
+      db.collection("reservations").find().toArray(),
+    ]);
+
+    res.status(200).json({
+      status: 200,
+      clients: clients,
+      reservations: reservations,
+    });
+  } catch (err) {
+    console.error("Error getting data page:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
+  }
+};
 const getClients = async (req, res) => {
   const page = parseInt(req.query.page); // Current page number, default to 1
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
@@ -1044,9 +1067,8 @@ const updateClient = async (req, res) => {
 };
 
 const updateServices = async (req, res) => {
-  const serviceEdit = req.body.serviceEdit;
+  const serviceEdit = req.body;
   const client = new MongoClient(MONGO_URI_RALF);
-
   try {
     const db = client.db("HollywoodBarberShop");
     // if (role === "admin") {
@@ -1120,4 +1142,5 @@ module.exports = {
   sendReminders,
   sendData,
   getUserInfoInWebTools,
+  getDataPage,
 };

@@ -545,7 +545,6 @@ export const getEndTime = (startTime, duration) => {
       );
     }
   } else if (duration === "6") {
-    console.log("duration is 6");
     const endTimeHour = parseInt(startTime.slice(11, 13)).toString();
     let newEndTimeHour = parseInt(endTimeHour) + 1;
     let newEndTimeMinute = startTimeMinute + 30;

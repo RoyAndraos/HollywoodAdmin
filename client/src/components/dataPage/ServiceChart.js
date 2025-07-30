@@ -1,12 +1,11 @@
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useContext } from "react";
-import { ReservationContext } from "../contexts/ReservationContext";
 import { ServicesContext } from "../contexts/ServicesContext";
 import styled from "styled-components";
 import { getDateRange } from "../helpers";
 import moment from "moment";
-const ServiceChart = ({ date, type }) => {
-  const { reservations } = useContext(ReservationContext);
+import React from "react";
+const ServiceChart = React.memo(({ date, type, reservations }) => {
   const { services } = useContext(ServicesContext);
   const dateRange = getDateRange(date, type);
   const serviceNames = services.map((service) => {
@@ -50,7 +49,7 @@ const ServiceChart = ({ date, type }) => {
       />
     </Wrapper>
   );
-};
+});
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;

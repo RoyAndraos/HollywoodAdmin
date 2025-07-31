@@ -17,13 +17,11 @@ const NoteFormEdit = ({ note, handleChange, initialNote, setNote }) => {
       ) : (
         <StyledInput
           autoFocus
-          defaultValue={note}
+          defaultValue={initialNote}
           onChange={(e) => {
             handleChange(e);
           }}
-        >
-          {initialNote}
-        </StyledInput>
+        ></StyledInput>
       )}
       <EditButton
         $props={noteEdit}

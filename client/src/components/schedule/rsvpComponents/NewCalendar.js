@@ -6,7 +6,7 @@ import {
   getEndTime,
 } from "../../helpers";
 import { useContext, useEffect, useState, useCallback } from "react";
-import { ReservationContext } from "../../contexts/ReservationContext";
+// import { ReservationContext } from "../../contexts/ReservationContext";
 import { styled } from "styled-components";
 import "../rsvpComponents/style.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -15,9 +15,10 @@ import { IsMobileContext } from "../../contexts/IsMobileContext";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import HoveredEvent from "./HoveredEvent";
-import { BlockedSlotsContext } from "../../contexts/BlockedSlotsContext";
+// import { BlockedSlotsContext } from "../../contexts/BlockedSlotsContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import { LoginRoleContext } from "../../contexts/LoginRoleContext";
+import Loader from "../../Loader";
 
 const localizer = momentLocalizer(moment);
 
@@ -29,13 +30,58 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
   const [currentView, setCurrentView] = useState(savedView);
   const [currentDay, setCurrentDay] = useState(savedDay);
   const navigate = useNavigate();
-  const { reservations } = useContext(ReservationContext);
+  const [reservations, setReservations] = useState([]);
   const { isMobile } = useContext(IsMobileContext);
-  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
+  const [blockedSlots, setBlockedSlots] = useState([]);
   const { setNotification } = useContext(NotificationContext);
   const { role } = useContext(LoginRoleContext);
-  let filteredReservations = [...reservations]; // spread operator
-  let filteredBlockedSlots = [...blockedSlots]; // spread operator
+  const [loading, setLoading] = useState(true);
+  let filteredReservations = [...reservations];
+  let filteredBlockedSlots = [...blockedSlots];
+  useEffect(() => {
+    if (currentView === "day") {
+      setLoading(true);
+      fetch(
+        `http://localhost:4000/api/calendar?view=${currentView}&day=${currentDay.toISOString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          setReservations(result.reservations);
+          setBlockedSlots(result.blockedSlots);
+          setLoading(false);
+        });
+    } else if (currentView === "month") {
+      const currentMonth = new Date(currentDay).toLocaleString("default", {
+        month: "long",
+      });
+      const currentYear = new Date(currentDay).toLocaleString("default", {
+        year: "numeric",
+      });
+
+      setLoading(true);
+      fetch(
+        `http://localhost:4000/api/calendar?view=${currentView}&month=${currentMonth}&year=${currentYear}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          setReservations(result.reservations);
+          setLoading(false);
+        });
+    }
+  }, [currentView, currentDay]);
+
   if (role === "jordi") {
     filteredBlockedSlots = filteredBlockedSlots.filter((slot) => {
       return slot.barber === "Jordi";
@@ -285,68 +331,70 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
       });
     }
     return (
-      <div
-        onClick={() => handleEventClick(event)}
-        className="event-content-div"
-        style={{ zIndex: "101" }}
-      >
-        {currentView !== "month" && (
-          <Tippy
-            content={<HoveredEvent res={event} />}
-            zIndex={10000} // Use this instead of inline style
+      <>
+        {loading ? (
+          <div></div>
+        ) : (
+          <div
+            onClick={() => handleEventClick(event)}
+            className="event-content-div"
+            style={{ zIndex: "101" }}
           >
-            <span
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
-                margin: "0 50px 0 50px",
-              }}
-            >
-              <span style={{ color: "#ffa700" }}>{event.client}</span>{" "}
-              <span style={{ opacity: "0" }}>{event.title}</span>{" "}
-              {isMobile ? (
-                <></>
-              ) : (
+            {currentView !== "month" && (
+              <Tippy
+                content={<HoveredEvent res={event} />}
+                zIndex={10000} // Use this instead of inline style
+              >
                 <span
                   style={{
-                    color: "#00ff8c",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    margin: "0 50px 0 50px",
                   }}
                 >
-                  {event.service === "Combo coupe et barbe" && "Combo"}
-                  {event.service === "Coupe cheveux" && "Coupe"}
-                  {event.service === "Coupe enfant (1 a 10ans)" && "Enfant"}
-                  {event.service === "Barbe avec tondeuse ou lame" &&
-                    "Tondeuse/Lame"}
-                  {event.service === "Barbe avec serviette chaude" &&
-                    "Barbe Serviette"}
-                  {event.service === "Coupe et lavage" && "Coupe+Lavage"}
+                  <span style={{ color: "#ffa700" }}>{event.client}</span>{" "}
+                  <span style={{ opacity: "0" }}>{event.title}</span>{" "}
+                  {isMobile ? (
+                    <></>
+                  ) : (
+                    <span
+                      style={{
+                        color: "#00ff8c",
+                      }}
+                    >
+                      {event.service === "Combo coupe et barbe" && "Combo"}
+                      {event.service === "Coupe cheveux" && "Coupe"}
+                      {event.service === "Coupe enfant (1 a 10ans)" && "Enfant"}
+                      {event.service === "Barbe avec tondeuse ou lame" &&
+                        "Tondeuse/Lame"}
+                      {event.service === "Barbe avec serviette chaude" &&
+                        "Barbe Serviette"}
+                      {event.service === "Coupe et lavage" && "Coupe+Lavage"}
+                    </span>
+                  )}
                 </span>
-              )}
-            </span>
-          </Tippy>
+              </Tippy>
+            )}
+          </div>
         )}
-      </div>
+      </>
     );
   };
   const handleViewChange = (view) => {
     setCurrentView(view);
+    const current_Date = localStorage.getItem("calendarDay");
+    setCurrentDay(new Date(current_Date));
     localStorage.setItem("calendarView", view);
   };
 
   const handleNavigate = (date) => {
     if (currentView === "month" || currentView === "agenda") {
-      return;
+      localStorage.setItem("calendarDay", date.toISOString());
+      setCurrentDay(new Date(date));
     } else {
       localStorage.setItem("calendarDay", date.toISOString());
-      const thisYear = new Date().getFullYear();
-      setCurrentDay(
-        new Date(
-          document.querySelector(".rbc-toolbar-label").innerHTML +
-            " " +
-            thisYear
-        )
-      );
+      setCurrentDay(date);
     }
   };
   const handleDeleteBlockedSlot = async (event) => {
@@ -373,9 +421,13 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
         }
       });
   };
-
   return (
     <Wrapper>
+      {loading && (
+        <Loading>
+          <Loader style={{ opacity: "1" }} />
+        </Loading>
+      )}
       <StyledCalendar
         localizer={localizer}
         events={events}
@@ -444,7 +496,18 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     </Wrapper>
   );
 };
-
+const Loading = styled.div`
+  position: absolute;
+  top: 18vh;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.4);
+  z-index: 1000;
+  padding: 0;
+  margin: 0;
+`;
 const Wrapper = styled.div`
   height: 85vh;
   z-index: 100;

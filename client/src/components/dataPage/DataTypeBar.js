@@ -3,10 +3,9 @@ import DatePicker from "react-datepicker";
 import "../availability/datepick.css";
 import styled from "styled-components";
 import { BsArrowLeftCircle, BsArrowRightCircle } from "react-icons/bs";
-import { getDateRange } from "../helpers";
 import { FaSearch } from "react-icons/fa";
 import { useEffect } from "react";
-const DataTypeBar = ({ date, setDate, type, setType }) => {
+const DataTypeBar = ({ startDate, setStartDate, type, setType, endDate }) => {
   const [isCalendarClicked, setIsCalendarClicked] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isMonday = (date) => {
@@ -28,39 +27,29 @@ const DataTypeBar = ({ date, setDate, type, setType }) => {
     };
   }, []);
 
-  const handleNext = (date, type) => {
+  const handleNext = (startDate, type) => {
     if (type === "week") {
-      const newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 7);
-      setDate(newDate);
+      const newDate = new Date(startDate);
+      newDate.setStartDate(newDate.getDate() + 7);
+      setStartDate(newDate);
     }
     if (type === "month") {
-      const newDate = new Date(date);
+      const newDate = new Date(startDate);
       newDate.setMonth(newDate.getMonth() + 1);
-      setDate(newDate);
-    }
-    if (type === "year") {
-      const newDate = new Date(date);
-      newDate.setFullYear(newDate.getFullYear() + 1);
-      setDate(newDate);
+      setStartDate(newDate);
     }
   };
 
-  const handlePrevious = (date, type) => {
+  const handlePrevious = (startDate, type) => {
     if (type === "week") {
-      const newDate = new Date(date);
-      newDate.setDate(newDate.getDate() - 7);
-      setDate(newDate);
+      const newDate = new Date(startDate);
+      newDate.setStartDate(newDate.getDate() - 7);
+      setStartDate(newDate);
     }
     if (type === "month") {
-      const newDate = new Date(date);
+      const newDate = new Date(startDate);
       newDate.setMonth(newDate.getMonth() - 1);
-      setDate(newDate);
-    }
-    if (type === "year") {
-      const newDate = new Date(date);
-      newDate.setFullYear(newDate.getFullYear() - 1);
-      setDate(newDate);
+      setStartDate(newDate);
     }
   };
   return (
@@ -71,9 +60,6 @@ const DataTypeBar = ({ date, setDate, type, setType }) => {
         </Button>
         <Button $isSelected={type === "month"} onClick={() => setType("month")}>
           Month
-        </Button>
-        <Button $isSelected={type === "year"} onClick={() => setType("year")}>
-          Year
         </Button>
       </ButtonWrapper>
       <div
@@ -87,42 +73,42 @@ const DataTypeBar = ({ date, setDate, type, setType }) => {
       >
         <NextButton
           onClick={() => {
-            handlePrevious(date, type);
+            handlePrevious(startDate, type);
           }}
         />
         {isCalendarClicked &&
           (type === "week" ? (
             <DatePicker
-              selected={date}
+              selected={startDate}
               dateFormat="MMMM dd yyyy"
               filterDate={isMonday}
               open={true}
               customInput={<CustomInput />}
               onChange={(dateS) => {
-                setDate(dateS);
+                setStartDate(dateS);
                 setIsCalendarClicked(false);
               }}
             />
           ) : type === "month" ? (
             <DatePicker
-              selected={date}
+              selected={startDate}
               dateFormat="MMMM yyyy"
               open={true}
               customInput={<CustomInput />}
               showMonthYearPicker
               onChange={(dateS) => {
-                setDate(dateS);
+                setStartDate(dateS);
                 setIsCalendarClicked(false);
               }}
             />
           ) : type === "year" ? (
             <DatePicker
-              selected={date}
+              selected={startDate}
               open={true}
               dateFormat="yyyy"
               showYearPicker
               onChange={(dateS) => {
-                setDate(dateS);
+                setStartDate(dateS);
                 setIsCalendarClicked(false);
               }}
             />
@@ -132,24 +118,11 @@ const DataTypeBar = ({ date, setDate, type, setType }) => {
             setIsCalendarClicked(!isCalendarClicked);
           }}
         >
-          {type === "week" &&
-            getDateRange(date, type).startDate.toString().slice(0, 11) +
-              " - " +
-              getDateRange(date, type).endDate.toString().slice(0, 11)}
-          {type === "month" &&
-            getDateRange(date, type).startDate.toString().slice(3, 8) +
-              getDateRange(date, type).startDate.toString().slice(11, 15) +
-              " - " +
-              getDateRange(date, type).endDate.toString().slice(3, 8) +
-              getDateRange(date, type).endDate.toString().slice(11, 15)}
-          {type === "year" &&
-            getDateRange(date, type).startDate.toString().slice(11, 15) +
-              " - " +
-              getDateRange(date, type).endDate.toString().slice(11, 15)}
+          {startDate} - {endDate}
         </CurrentDate>
         <PreviousButton
           onClick={() => {
-            handleNext(date, type);
+            handleNext(startDate, type);
           }}
         />
       </div>

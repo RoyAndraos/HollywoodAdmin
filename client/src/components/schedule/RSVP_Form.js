@@ -147,8 +147,8 @@ const AddReservation = ({
       sendEmail: sendEmail,
       lname: clientName.split(" ").slice(1).join(" ") || "",
     };
-
-    fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
+    // https://hollywood-fairmount-admin.onrender.com
+    fetch("http://localhost:4000/addReservation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

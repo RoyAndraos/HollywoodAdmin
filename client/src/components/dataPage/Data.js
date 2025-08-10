@@ -12,54 +12,48 @@ const Data = () => {
   const [type, setType] = useState("week");
   const [clients, setClients] = useState([]);
   const [reservations, setReservations] = useState([]);
-  const [date, setDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
+    //set end date to today
+    //set start date to one month ago
+    const today = new Date();
+    setEndDate(formatDate(today));
+    const lastMonth = new Date(today);
+    if (type === "month") {
+      lastMonth.setMonth(today.getMonth() - 1);
+      setStartDate(formatDate(lastMonth));
+    } else if (type === "week") {
+      lastMonth.setDate(today.getDate() - 7);
+      setStartDate(formatDate(lastMonth));
+    }
+
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
     };
     //https://hollywood-fairmount-admin.onrender.com
-    fetch(`http://localhost:4000/getDataPage`, {
-      headers: headers,
-    })
+    fetch(
+      `http://localhost:4000/getDataPage?startDate=${startDate}&endDate=${endDate}`,
+      {
+        headers: headers,
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
+        console.log(result);
         setClients(result.clients);
         setReservations(result.reservations);
       });
-  }, []);
-  useEffect(() => {
-    console.log("type", type);
-    const currentDate = new Date();
-
-    if (type === "week") {
-      console.log("type", type);
-
-      // Set the date to the Monday of the current week
-      const dayOfWeek = currentDate.getDay();
-      const difference = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Calculate the difference to the previous Monday
-      const monday = new Date(
-        currentDate.setDate(currentDate.getDate() + difference)
-      );
-      setDate(monday);
-    }
-
-    if (type === "month") {
-      // Set the date to the 1st of the current month
-      const firstDayOfMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        1
-      );
-      setDate(firstDayOfMonth);
-    }
-
-    if (type === "year") {
-      // Set the date to January 1st of the current year
-      const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1);
-      setDate(firstDayOfYear);
-    }
-  }, [type]);
+  }, [startDate, endDate, type]);
 
   // go through clients and replace the reservations array (which usually is an array of ids) with the actual reservation objects
   const clientsData = useMemo(() => {
@@ -78,19 +72,33 @@ const Data = () => {
   return (
     <div>
       <DataTypeBar
-        date={date}
-        setDate={setDate}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
         type={type}
         setType={setType}
       />
-      <ServiceChart date={date} type={type} reservations={reservations} />
+
+      <ServiceChart
+        startDate={startDate}
+        endDate={endDate}
+        type={type}
+        reservations={reservations}
+      />
+
       <ClientChart
         clientsData={clientsData}
         type={type}
-        date={date}
+        startDate={startDate}
+        endDate={endDate}
         reservations={reservations}
       />
-      <TimeSlotChart reservations={reservations} />
+      {/* <TimeSlotChart
+        startDate={startDate}
+        endDate={endDate}
+        reservations={reservations}
+      /> */}
     </div>
   );
 };

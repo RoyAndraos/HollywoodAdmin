@@ -11,6 +11,7 @@ export const NotificationLogsProvider = ({ children }) => {
     const eventSource = new EventSource(
       "https://hollywood-fairmount-admin.onrender.com/events"
     );
+    console.log("EventSource initialized", eventSource);
     eventSource.onmessage = (event) => {
       const change = JSON.parse(event.data);
       // Update state with the new change

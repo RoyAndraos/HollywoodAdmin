@@ -72,6 +72,26 @@ const NewClients = () => {
         });
     }
   };
+
+  const handleDeleteClient = async (clientId) => {
+    try {
+      const response = await fetch(
+        `https://hollywood-fairmount-admin.onrender.com/deleteClient/${clientId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        fetchClients(); // Refresh client list
+      } else {
+        console.error("Failed to delete client");
+      }
+    } catch (error) {
+      console.error("Error deleting client:", error);
+    }
+  };
+
   return (
     <Wrapper>
       <StyledTable>
@@ -182,6 +202,15 @@ const NewClients = () => {
                 Cancel
               </Button>
             </ButtonWrap>
+            <Button
+              onClick={() => {
+                handleDeleteClient(editableClient._id);
+                setSelectClient(null);
+              }}
+              style={{ background: "#ad0303", marginTop: "10px" }}
+            >
+              Delete
+            </Button>
           </ClientWrap>
         </Selected>
       )}
@@ -190,7 +219,7 @@ const NewClients = () => {
 };
 const ButtonWrap = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-top: 10px;
   width: 100%;
 `;
@@ -228,8 +257,9 @@ const Button = styled.button`
   color: white;
   cursor: pointer;
   border-radius: 5px;
-  width: 100px;
+  width: 45%;
   transition: background-color 0.3s;
+  align-self: center;
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;

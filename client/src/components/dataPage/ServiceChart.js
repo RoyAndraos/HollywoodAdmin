@@ -1,13 +1,20 @@
 import { BarChart } from "@mui/x-charts/BarChart";
-import { useContext } from "react";
-import { ServicesContext } from "../contexts/ServicesContext";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { getDateRange } from "../helpers";
 import moment from "moment";
 import React from "react";
-const ServiceChart = React.memo(({ date, type, reservations }) => {
-  const { services } = useContext(ServicesContext);
-  const dateRange = getDateRange(date, type);
+const ServiceChart = React.memo(({ startDate, type, reservations }) => {
+  const [services, setServices] = useState([]);
+  useEffect(() => {
+    fetch(`http://localhost:4000/getServices`)
+      .then((response) => response.json())
+      .then((data) => {
+        setServices(data.data);
+      });
+  }, []);
+
+  const dateRange = getDateRange(new Date(startDate), type);
   const serviceNames = services.map((service) => {
     if (service.name.length > 15) {
       return service.name.slice(0, 15) + "...";
@@ -29,7 +36,6 @@ const ServiceChart = React.memo(({ date, type, reservations }) => {
       }
     }).length;
   });
-
   return (
     <Wrapper>
       <Title>Services</Title>

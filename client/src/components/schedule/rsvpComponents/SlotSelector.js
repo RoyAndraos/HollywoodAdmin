@@ -47,6 +47,7 @@ const SlotSelector = ({
         const startDate = moment(selectedBarberForm.time_off[0].startDate)._i;
         const endDate = moment(selectedBarberForm.time_off[0].endDate)._i;
         const timeOff = moment(selectedDate).isBetween(startDate, endDate);
+        console.log(timeOff);
         setBarberIsOff(timeOff);
       }
       // if barber is not off, filter available slots of the selected day

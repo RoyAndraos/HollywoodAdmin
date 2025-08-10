@@ -2,37 +2,25 @@ import React, { useState, useContext, useEffect } from "react";
 import { styled } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { getDailyHours } from "../helpers";
-import { UserContext } from "../contexts/UserContext";
 import { initialAvailability } from "../helpers";
 import { NotificationContext } from "../contexts/NotficationContext";
-import { ReservationContext } from "../contexts/ReservationContext";
-import { ServicesContext } from "../contexts/ServicesContext";
-import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
 import { IsMobileContext } from "../contexts/IsMobileContext";
 import DailyAvailability from "./DailyAvailability";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
 // import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
-import { ClientsContext } from "../contexts/ClientsContext";
-import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
-  const { setUserInfo, userInfo } = useContext(UserContext);
+  const [userInfo, setUserInfo] = useState([]);
   const { setNotification } = useContext(NotificationContext);
   const [selectedAdminInfo, setSelectedAdminInfo] = useState(null);
   const [dailyAvailabilityToggle, setDailyAvailabilityToggle] = useState(false);
   const [selectedCells, setSelectedCells] = useState(null);
   const [selectedDailyCells, setSelectedDailyCells] = useState(null);
-  const { setReservations, reservations } = useContext(ReservationContext);
-  const { setServices, services } = useContext(ServicesContext);
-  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
-  const { setText, text } = useContext(TextContext);
   const { isMobile } = useContext(IsMobileContext);
-  const { clients, setClients } = useContext(ClientsContext);
   const navigate = useNavigate();
   const { role, setRole } = useContext(LoginRoleContext);
-  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
   useEffect(() => {
     if (!role) {
       const cookieRole = Cookies.get("role");
@@ -40,7 +28,7 @@ const TimeSelect = () => {
     }
   }, [role, setRole]);
   useEffect(() => {
-    if (!userInfo) {
+    if (userInfo.length === 0) {
       const token = Cookies.get("token");
       if (!token) {
         return;
@@ -48,25 +36,19 @@ const TimeSelect = () => {
         const headers = {
           authorization: token,
         };
-        fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
+        // https://hollywood-fairmount-admin.onrender.com
+        fetch(`http://localhost:4000/getAvailability`, {
           headers,
         })
           .then((res) => res.json())
           .then((result) => {
-            setUserInfo(result.userInfo);
-            setReservations(result.reservations);
-            setServices(result.services);
-            setText(result.text);
-            // setServicesEmp(result.employeeServices);
-            setClients(result.clients);
-            setBlockedSlots(result.blockedSlots);
-
-            setSelectedAdminInfo(result.userInfo[0]);
-            setSelectedCells(result.userInfo[0].availability);
+            setUserInfo(result.availability);
+            setSelectedAdminInfo(result.availability[0]);
+            setSelectedCells(result.availability[0].availability);
           });
       }
     } else {
-      if (!selectedAdminInfo) {
+      if (!selectedAdminInfo && userInfo.length > 0) {
         setSelectedAdminInfo(userInfo[0]);
         setSelectedCells(userInfo[0].availability);
         setSelectedDailyCells(userInfo[0].dailyAvailability);
@@ -82,17 +64,7 @@ const TimeSelect = () => {
         }
       }
     }
-  }, [
-    setReservations,
-    setServices,
-    setUserInfo,
-    setText,
-    selectedAdminInfo,
-    userInfo,
-    // setServicesEmp,
-    setClients,
-    setBlockedSlots,
-  ]);
+  }, [userInfo, selectedAdminInfo]);
   const handleSelectNextBarber = () => {
     if (userInfo.length === 1) return;
     const currentBarberIndex = userInfo.findIndex(
@@ -107,16 +79,7 @@ const TimeSelect = () => {
     }
   };
 
-  if (
-    !userInfo ||
-    !reservations ||
-    !services ||
-    !text ||
-    !blockedSlots ||
-    // !servicesEmp ||
-    !clients
-  )
-    return <Loader />;
+  if (!selectedAdminInfo) return <Loader />;
 
   if (!selectedAdminInfo) {
     return (
@@ -287,7 +250,6 @@ const TimeSelect = () => {
             </Reset>
           )}
         </AvailButtons>
-        {/* {isMobile ? ( */}
         {
           <BarberContainer>
             <AdminName
@@ -299,30 +261,6 @@ const TimeSelect = () => {
               {selectedAdminInfo.given_name}
             </AdminName>
           </BarberContainer>
-          // ) : (
-          //   <BarberContainer>
-          //     <AdminName
-          //       key={"noMobileAdminClick"}
-          //       onClick={() => setShowBarbers(!showBarbers)}
-          //     >
-          //       {showBarbers ? "X" : selectedAdminInfo.given_name}
-          //     </AdminName>
-          //     {showBarbers ? (
-          //       <>
-          //         {userInfo.map((barber) => {
-          //           return (
-          //             <AdminName
-          //               key={barber.given_name}
-          //               onClick={(e) => selectBarber(e, barber)}
-          //             >
-          //               {barber.given_name}
-          //             </AdminName>
-          //           );
-          //         })}
-          //       </>
-          //     ) : null}
-          //   </BarberContainer>
-          // )
         }
       </ControlPanel>
       {!isMobile && !dailyAvailabilityToggle ? (

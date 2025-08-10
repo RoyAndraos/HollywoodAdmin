@@ -1,11 +1,9 @@
-import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
 const HoveredEvent = ({ res }) => {
   const [note, setNote] = useState();
   const [loading, setLoading] = useState(true);
-  console.log(loading);
   useEffect(() => {
     setLoading(true);
     if (res.client === "Blocked") {

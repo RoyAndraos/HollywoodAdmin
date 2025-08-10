@@ -37,6 +37,9 @@ const {
   getUserInfoInWebTools,
   blockSlot,
   getDataPage,
+  getCalendar,
+  getServices,
+  getAvailability,
 } = require("./server");
 
 const app = express();
@@ -69,6 +72,9 @@ app.get("/getClientNote/:client_id", getClientNotes);
 app.get("/events", sendData);
 app.get("/getDataPage", getDataPage);
 app.get("/getUserInfoInWebTools", getUserInfoInWebTools);
+app.get("/api/calendar", getCalendar);
+app.get("/getAvailability", getAvailability);
+app.get("/getServices", getServices);
 app.post("/logout", logout);
 app.post("/login", login);
 app.post("/addReservation", addReservation);

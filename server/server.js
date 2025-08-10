@@ -147,28 +147,124 @@ const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
 const accountSid = process.env.SMS_SSID;
 const authToken = process.env.SMS_AUTH_TOKEN;
 const twilioClient = require("twilio")(accountSid, authToken);
+const telnyxApiKey = process.env.SMS_API_KEY_TELNYX;
+const initTelnyx = async () => {
+  const Telnyx = (await import("telnyx")).default;
+  return new Telnyx(telnyxApiKey);
+};
+//---------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------
-
 //GET REQUESTS
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-const getDataPage = async (req, res) => {
+
+const getAvailability = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   await client.connect();
+  const db = client.db("HollywoodBarberShop");
+  try {
+    const availabilityData = await db
+      .collection("admin")
+      .find(
+        {},
+        {
+          projection: {
+            email: 0,
+            picture: 0,
+            description: 0,
+            french_description: 0,
+            family_name: 0,
+          },
+        }
+      )
+      .toArray();
+    res.status(200).json({
+      message: "Availability data retrieved",
+      availability: availabilityData,
+    });
+  } catch (error) {
+    console.error("Error fetching availability data:", error);
+    res.status(500).json({ message: "Internal server error" });
+  } finally {
+    await client.close();
+  }
+};
+const getCalendar = async (req, res) => {
+  const { view, day, month, year } = req.query;
+  let formatted;
+  const client = new MongoClient(MONGO_URI_RALF);
+  await client.connect();
+  const db = client.db("HollywoodBarberShop");
+  if (view === "day") {
+    formatted = new Date(day).toDateString();
+    try {
+      const calendarData = await db
+        .collection("reservations")
+        .find({ date: formatted })
+        .toArray();
+      const blockedSlots = await db
+        .collection("blockedSlots")
+        .find({ date: formatted })
+        .toArray();
+      res.status(200).json({
+        message: "Calendar data retrieved",
+        reservations: calendarData,
+        blockedSlots: blockedSlots,
+      });
+    } catch (error) {
+      console.error("Error fetching calendar data:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  } else if (view === "month") {
+    try {
+      const monthYearRegex = new RegExp(`${month.slice(0, 3)}.*${year}`, "i");
+
+      const calendarData = await db
+        .collection("reservations")
+        .find({ date: { $regex: monthYearRegex } })
+        .toArray();
+
+      res.status(200).json({
+        message: "Calendar data retrieved",
+        reservations: calendarData,
+      });
+    } catch (error) {
+      console.error("Error fetching calendar data:", error);
+      res.status(500).json({ message: "Internal server error" });
+    } finally {
+      await client.close();
+    }
+  }
+};
+
+const getDataPage = async (req, res) => {
+  const { startDate, endDate } = req.query; // Expecting something like: "2024-03-01" and "2024-04-01"
+
+  const client = new MongoClient(MONGO_URI_RALF);
+  await client.connect();
+
   try {
     const db = client.db("HollywoodBarberShop");
 
-    // Run all three queries in parallel
     const [clients, reservations] = await Promise.all([
       db.collection("Clients").find().toArray(),
-      db.collection("reservations").find().toArray(),
+      db
+        .collection("reservations")
+        .find({
+          $expr: {
+            $and: [
+              { $gt: [{ $toDate: "$date" }, new Date(startDate)] }, // strictly greater
+              { $lt: [{ $toDate: "$date" }, new Date(endDate)] }, // strictly less
+            ],
+          },
+        })
+        .toArray(),
     ]);
 
     res.status(200).json({
       status: 200,
-      clients: clients,
-      reservations: reservations,
+      clients,
+      reservations,
     });
   } catch (err) {
     console.error("Error getting data page:", err);
@@ -258,6 +354,19 @@ const getSearchResults = async (req, res) => {
       .status(200)
       .json({ status: 200, data: clients, numberOfPages: numberOfPages });
   } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
+  }
+};
+const getServices = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+  try {
+    const db = client.db("HollywoodBarberShop");
+    const services = await db.collection("services").find().toArray();
+    res.status(200).json({ status: 200, data: services });
+  } catch (err) {
+    console.error("Error getting services:", err);
     res.status(500).json({ status: 500, message: err.message });
   } finally {
     await client.close();
@@ -512,6 +621,23 @@ const logout = async (req, res) => {
   }
 };
 
+const shortenUrl = async (longUrl) => {
+  const encodedUrl = encodeURIComponent(longUrl);
+  const apiUrl = `https://is.gd/create.php?format=simple&url=${encodedUrl}`;
+
+  const response = await fetch(apiUrl);
+  if (!response.ok) {
+    throw new Error(`is.gd API error: ${response.statusText}`);
+  }
+
+  const shortUrl = await response.text();
+  if (shortUrl.startsWith("Error:")) {
+    throw new Error(`is.gd API returned error: ${shortUrl}`);
+  }
+
+  return shortUrl;
+};
+
 const addReservation = async (req, res) => {
   const reservation = req.body.reservation;
   const _id = uuid();
@@ -555,40 +681,38 @@ const addReservation = async (req, res) => {
       await db.collection("reservations").insertOne(reservationToSend);
 
       if (reservation.sendSMS) {
+        const shortUrl = await shortenUrl(
+          `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
+        );
         try {
-          await twilioClient.messages.create({
-            body: `No Reply ~Hollywood Barbershop
-            Bonjour ${reservation.fname} ${
-              reservation.lname || ""
-            }, votre réservation au Hollywood Barbershop est confirmée pour ${frenchDate} à ${
-              reservation.slot[0].split("-")[1]
-            } avec ${reservation.barber}. Vous recevrez une ${
-              reservation.service.name
-            } pour ${reservation.service.price} CAD. ~Hollywood Barbershop
-    
-            Hello ${reservation.fname} ${
-              reservation.lname || ""
-            }, your reservation at Hollywood Barbershop is confirmed for ${
-              reservation.date
-            } at ${reservation.slot[0].split("-")[1]} with ${
-              reservation.barber
-            }. You will be getting a ${reservation.service.english} for ${
-              reservation.service.price
-            } CAD. 
-              Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
-                reservation._id
-              }
+          (async () => {
+            const telnyx = await initTelnyx();
+            await telnyx.messages.create({
+              text: `No Reply ~Hollywood Barbershop
+             réservation confirmée pour ${
+               reservation.fname
+             } le ${frenchDate} à ${reservation.slot[0].split("-")[1]} avec ${
+                reservation.barber
+              }.
+
+Annulation: ${shortUrl}
             `,
-            messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-            to: userInfo.number,
-          });
+              // messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+              messaging_profile_id: process.env.SMS_PROFILE_ID,
+              from: "+14388035805",
+              to: reservationToSend.number,
+            });
+          })();
         } catch (err) {
-          console.log(err);
+          console.error(
+            "Telnyx error:",
+            JSON.stringify(err.raw?.errors, null, 2)
+          );
         }
       } else if (reservation.sendEmail) {
         const emailData = {
           from: "hello@hollywoodfairmountbarbers.com",
-          to: userInfo.email,
+          to: reservationToSend.email,
           subject: "Reservation Confirmation",
           text: `No Reply ~Hollywood Barbershop
             Bonjour ${reservation.fname} ${
@@ -643,36 +767,34 @@ const addReservation = async (req, res) => {
 
       if (reservation.sendSMS) {
         try {
-          await twilioClient.messages.create({
-            body: `Bonjour ${reservation.fname} ${
-              reservation.lname || ""
-            }, votre réservation au Hollywood Barbershop est confirmée pour ${frenchDate} à ${
+          const shortUrl = await shortenUrl(
+            `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
+          );
+
+          const telnyx = await initTelnyx(); // make sure this returns new Telnyx(apiKey)
+
+          await telnyx.messages.create({
+            text: `No Reply ~Hollywood Barbershop
+Réservation confirmée pour ${reservation.fname} le ${frenchDate} à ${
               reservation.slot[0].split("-")[1]
-            }. Vous recevrez une ${reservation.service.name} pour ${
-              reservation.service.price
-            } CAD. ~${reservation.barber}
-
-Hello ${reservation.fname} ${
-              reservation.lname || ""
-            }, your reservation at Hollywood Barbershop is confirmed for ${
-              reservation.date
-            } at ${reservation.slot[0].split("-")[1]}. You will be getting a ${
-              reservation.service.english
-            } for ${reservation.service.price} CAD. ~${reservation.barber}
-
-ID: ${_id}`,
-            messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-            to: reservation.number,
+            } avec ${reservation.barber}.
+Annulation: ${shortUrl}`,
+            messaging_profile_id: process.env.SMS_PROFILE_ID,
+            from: "+14388035805", // make sure this number is linked to the profile
+            to: `+1${reservationToSend.number}`, // must be in E.164 format (e.g., +15145551234)
           });
         } catch (smsError) {
-          console.error(`Error sending SMS: ${smsError}`);
+          console.error(
+            "Telnyx error:",
+            JSON.stringify(smsError.raw?.errors, null, 2)
+          );
           return res.status(500).json({
             status: 500,
-            message: `Error sending SMS: ${smsError}`,
+            message: "Error sending SMS",
+            detail: smsError.raw?.errors ?? smsError.message,
           });
         }
       }
-
       res.status(200).json({
         status: 200,
         message: "success",
@@ -887,14 +1009,25 @@ const deleteReservation = async (req, res) => {
 
     if (sendSMS === true) {
       // send message to client
-      await twilioClient.messages.create({
-        body: `Bonjour, votre réservation a été annulée. ~Hollywood Barbershop
-        
-        Hello, your reservation has been cancelled. ~Hollywood Barbershop
+      try {
+        (async () => {
+          const telnyx = await initTelnyx();
+          await telnyx.messages.create({
+            text: `Bonjour, votre réservation a été annulée. ~Hollywood Barbershop
+
+            Hello, your reservation has been cancelled. ~Hollywood Barbershop
         `,
-        messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-        to: clientNumber,
-      });
+            messaging_profile_id: process.env.SMS_PROFILE_ID,
+            from: "+14388035805",
+            to: `+1${clientNumber}`,
+          });
+        })();
+      } catch (err) {
+        console.error(
+          "Telnyx error:",
+          JSON.stringify(err.raw?.errors, null, 2)
+        );
+      }
     }
 
     // Respond with success
@@ -1135,7 +1268,9 @@ module.exports = {
   logout,
   updateServices,
   getClientNotes,
+  getServices,
   updateClientNote,
+  getAvailability,
   deleteClient,
   deleteService,
   updateDailyAvailability,
@@ -1143,4 +1278,5 @@ module.exports = {
   sendData,
   getUserInfoInWebTools,
   getDataPage,
+  getCalendar,
 };

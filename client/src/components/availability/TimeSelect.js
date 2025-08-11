@@ -37,9 +37,12 @@ const TimeSelect = () => {
           authorization: token,
         };
         // https://hollywood-fairmount-admin.onrender.com
-        fetch(`http://localhost:4000/getAvailability`, {
-          headers,
-        })
+        fetch(
+          `https://hollywood-fairmount-admin.onrender.com/getAvailability`,
+          {
+            headers,
+          }
+        )
           .then((res) => res.json())
           .then((result) => {
             setUserInfo(result.availability);

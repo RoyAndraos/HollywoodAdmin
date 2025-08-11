@@ -42,7 +42,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
     if (currentView === "day") {
       setLoading(true);
       fetch(
-        `http://localhost:4000/api/calendar?view=${currentView}&day=${currentDay.toISOString()}`,
+        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&day=${currentDay.toISOString()}`,
         {
           method: "GET",
           headers: {
@@ -66,7 +66,7 @@ const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
 
       setLoading(true);
       fetch(
-        `http://localhost:4000/api/calendar?view=${currentView}&month=${currentMonth}&year=${currentYear}`,
+        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&month=${currentMonth}&year=${currentYear}`,
         {
           method: "GET",
           headers: {

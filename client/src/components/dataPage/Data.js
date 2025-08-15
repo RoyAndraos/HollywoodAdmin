@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 import ServiceChart from "./ServiceChart";
 import ClientChart from "./ClientChart";
-import TimeSlotChart from "./TimeSlotChart";
+// import TimeSlotChart from "./TimeSlotChart";
 import DataTypeBar from "./DataTypeBar";
 import Loader from "../Loader";
 import { useMemo } from "react";

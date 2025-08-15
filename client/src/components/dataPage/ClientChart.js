@@ -9,7 +9,7 @@ const ClientChart = React.memo(
     const [clientNames, setClientNames] = useState([]);
     const dateRange = getDateRange(new Date(startDate), type);
     // put it in a useEffect
-    const [filteredClientsData, setFilteredClientsData] = React.useState([]);
+    const [filteredClientsData, setFilteredClientsData] = useState([]);
 
     useEffect(() => {
       // Filter clients that have at least one reservation
@@ -47,6 +47,7 @@ const ClientChart = React.memo(
       dateRange.endDate,
       type,
     ]);
+    console.log(filteredClientsData);
     return (
       <Wrapper>
         <Title>Clients</Title>

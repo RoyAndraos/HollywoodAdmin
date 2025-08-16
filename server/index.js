@@ -40,6 +40,9 @@ const {
   getCalendar,
   getServices,
   getAvailability,
+  getBarbers,
+  getClientInfoForBooking,
+  getResById,
 } = require("./server");
 
 const app = express();
@@ -68,6 +71,7 @@ app.get("/", (req, res) => {
 app.get("/getUserInfo", getUserInfo);
 app.get("/search/:searchTerm", getSearchResults);
 app.get("/clients", getClients);
+app.get("/getClientsForRSVP", getClientInfoForBooking);
 app.get("/getClientNote/:client_id", getClientNotes);
 app.get("/events", sendData);
 app.get("/getDataPage", getDataPage);
@@ -75,11 +79,13 @@ app.get("/getUserInfoInWebTools", getUserInfoInWebTools);
 app.get("/api/calendar", getCalendar);
 app.get("/getAvailability", getAvailability);
 app.get("/getServices", getServices);
+app.get("/api/barbers", getBarbers);
+app.get("/getReservationsById", getResById);
+app.get("/sendReminders", sendReminders);
 app.post("/logout", logout);
 app.post("/login", login);
 app.post("/addReservation", addReservation);
 app.post("/addBarber", addBarber);
-app.post("/sendReminder", sendReminders);
 app.post("/blockSlot", blockSlot);
 app.patch("/updateClient", updateClient);
 app.patch("/upload", uploadImage);

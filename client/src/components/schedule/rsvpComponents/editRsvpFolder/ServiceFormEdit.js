@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
-import { useContext } from "react";
-import { ServicesContext } from "../../../contexts/ServicesContext";
 import styled from "styled-components";
+import Loader from "../../../Loader";
 const ServiceFormEdit = ({ reservation, handleChange }) => {
-  const { services } = useContext(ServicesContext);
+  const [services, setServices] = useState([]);
   const [serviceEdit, setServiceEdit] = useState("false");
+  useEffect(() => {
+    fetch("https://hollywood-fairmount-admin.onrender.com/getServices")
+      .then((res) => res.json())
+      .then((result) => {
+        setServices(result.data);
+      });
+  }, []);
+  if (!services) return <Loader />;
   return (
     <LabelInfoWrapper>
       <StyledLabel>Service </StyledLabel>

@@ -1,12 +1,27 @@
 import { StyledLabel, LabelInputWrapper } from "../RSVP_Form";
 import { BarberSlot } from "./BarberSelect";
-import { ServicesContext } from "../../contexts/ServicesContext";
-import { useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import { Slot, SlotContainer } from "./SlotSelector";
+import Loader from "../../Loader";
 
 const ServiceSelector = ({ selectedService, setSelectedService }) => {
-  const { services } = useContext(ServicesContext);
+  const [services, setServices] = useState([]);
   const [showDuration, setShowDuration] = useState(false);
+  useEffect(() => {
+    fetch("https://hollywood-fairmount-admin.onrender.com/getServices", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setServices(data.data);
+      });
+  }, []);
+  if (services.length === 0) {
+    return <Loader />;
+  }
   return (
     <LabelInputWrapper>
       <StyledLabel>Service</StyledLabel>

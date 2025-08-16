@@ -1,10 +1,21 @@
-import { useContext, useEffect } from "react";
-import { UserContext } from "../../contexts/UserContext";
+import { useState, useEffect } from "react";
 import { LabelInputWrapper } from "../RSVP_Form";
 import styled from "styled-components";
 import { StyledLabel } from "../RSVP_Form";
 const BarberSelect = ({ selectedBarberForm, setBarber }) => {
-  const { userInfo } = useContext(UserContext);
+  const [userInfo, setUserInfo] = useState([]);
+  useEffect(() => {
+    fetch("https://hollywood-fairmount-admin.onrender.com/api/barbers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUserInfo(data.barbers);
+      });
+  }, []);
   useEffect(() => {
     if (userInfo.length === 1) setBarber(userInfo[0]);
   }, [userInfo, setBarber]);

@@ -1,31 +1,23 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import BarberProfiles from "./barber_profiles/BarberProfiles";
 import ToolBar from "./ToolBar";
 import styled from "styled-components";
 import WebsiteText from "./website_text/WebsiteText";
-import { UserContext } from "../contexts/UserContext";
-import { ServicesContext } from "../contexts/ServicesContext";
-import { TextContext } from "../contexts/TextContext";
 import Cookies from "js-cookie";
 import Loader from "../Loader";
 import Services from "./services/Services";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
-// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
-import { ClientsContext } from "../contexts/ClientsContext";
-import { ReservationContext } from "../contexts/ReservationContext";
-import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
 import NewClients from "./newClients/NewClients";
 
 const WebsiteTools = () => {
   const [selectedOption, setSelectedOption] = useState("barberProfiles");
-  const { setUserInfo, userInfo } = useContext(UserContext);
-  const { setServices, services } = useContext(ServicesContext);
-  const { setText, text } = useContext(TextContext);
+  const [userInfo, setUserInfo] = useState([]);
+  const [services, setServices] = useState([]);
+  const [text, setText] = useState([]);
   const { role, setRole } = useContext(LoginRoleContext);
-  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
-  const { clients, setClients } = useContext(ClientsContext);
-  const { reservations, setReservations } = useContext(ReservationContext);
-  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
+  const [clients, setClients] = useState([]);
+  const [reservations, setReservations] = useState([]);
+  const [blockedSlots, setBlockedSlots] = useState([]);
   useEffect(() => {
     if (!role) {
       const cookieRole = Cookies.get("role");
@@ -46,7 +38,6 @@ const WebsiteTools = () => {
         setUserInfo(result.userInfo);
         setServices(result.services);
         setText(result.text);
-        // setServicesEmp(result.employeeServices);
         setClients(result.clients);
         setReservations(result.reservations);
         setBlockedSlots(result.blockedSlots);
@@ -72,10 +63,16 @@ const WebsiteTools = () => {
       />
       <div style={{ position: "relative" }}>
         <RestWrapper>
-          {selectedOption === "websiteText" && <WebsiteText />}
-          {selectedOption === "barberProfiles" && <BarberProfiles />}
+          {selectedOption === "websiteText" && (
+            <WebsiteText text={text} setText={setText} />
+          )}
+          {selectedOption === "barberProfiles" && (
+            <BarberProfiles userInfo={userInfo} setUserInfo={setUserInfo} />
+          )}
           {selectedOption === "clients" && <NewClients />}
-          {selectedOption === "services" && <Services />}
+          {selectedOption === "services" && (
+            <Services services={services} setServices={setServices} />
+          )}
         </RestWrapper>
       </div>
     </Wrapper>

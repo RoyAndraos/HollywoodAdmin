@@ -1,12 +1,10 @@
 import { useContext, useState } from "react";
-import { TextContext } from "../../contexts/TextContext";
 import { Title } from "./AboutText";
 import { Wrapper, SaveButton, Language, Line } from "./AboutText";
 import styled from "styled-components";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";
-const UnderMenuText = () => {
-  const { text, setText } = useContext(TextContext);
+const UnderMenuText = ({ text, setText }) => {
   const { setNotification } = useContext(NotificationContext);
   const initialUnderMenuText = text.filter(
     (text) => text._id === "underMenu"

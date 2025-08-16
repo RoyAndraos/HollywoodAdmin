@@ -3,16 +3,13 @@ import DatePicker from "react-datepicker";
 import BarberSelect from "./rsvpComponents/BarberSelect";
 import "react-datepicker/dist/react-datepicker.css";
 import styled, { keyframes } from "styled-components";
-import { ReservationContext } from "../contexts/ReservationContext";
 import ServiceSelector from "./rsvpComponents/ServiceSelector";
 import SlotSelector from "./rsvpComponents/SlotSelector";
 import { NotificationContext } from "../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { IsMobileContext } from "../contexts/IsMobileContext";
 import { getClientByNumber, getClientsByName, highlightText } from "../helpers";
-import { ClientsContext } from "../contexts/ClientsContext";
 import Reminder from "./rsvpComponents/Reminder";
-import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
 
 const AddReservation = ({
   selectedDate,
@@ -21,8 +18,9 @@ const AddReservation = ({
   setSelectedSlot,
   slotBeforeCheck,
   setSlotBeforeCheck,
+  reservations,
+  setReservations,
 }) => {
-  const { reservations, setReservations } = useContext(ReservationContext);
   const { setNotification } = useContext(NotificationContext);
   const [selectedBarberForm, setBarber] = useState({});
   const [clientName, setClientName] = useState("");
@@ -39,10 +37,25 @@ const AddReservation = ({
   const [overLappingError, setOverLappingError] = useState(false);
   const [sendSMS, setSendSMS] = useState(true);
   const { isMobile } = useContext(IsMobileContext);
-  const { clients } = useContext(ClientsContext);
+  const [clients, setClients] = useState([]);
   const [sendEmail, setSendEmail] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
-  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
+  const [blockedSlots, setBlockedSlots] = useState([]);
+
+  useEffect(() => {
+    //fetch clients
+    fetch("https://hollywood-fairmount-admin.onrender.com/getClientsForRSVP", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setClients(result.clients);
+      });
+  }, []);
+
   const handleBlockSlot = (slot, date, barber) => {
     const token = Cookies.get("token");
     const headers = {
@@ -400,6 +413,7 @@ const AddReservation = ({
             overLappingError={overLappingError}
             setOverLappingError={setOverLappingError}
             setSelectedService={setSelectedService}
+            reservations={reservations}
           />
           <CheckboxWrapper>
             <div>

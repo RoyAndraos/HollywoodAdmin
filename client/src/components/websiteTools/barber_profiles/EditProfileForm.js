@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import ImageInput from "../website_images/SlideshowInput";
 import { ButtonWrapper, CancelButton } from "./BarberProfiles";
+
 const EditProfileForm = ({
   handleChange,
   handleSave,
@@ -85,24 +85,6 @@ const EditProfileForm = ({
             Cancel
           </CancelButton>
         </ButtonWrapper>
-      )}
-
-      {barber.given_name !== "" && (
-        <div
-          style={{
-            flexDirection: "column",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <SectionTitle>{text} Display Picture</SectionTitle>
-          <ImageInput
-            filename={barber._id}
-            height={"200px"}
-            initialImage={barber.picture}
-            setEditModes={setEditModes}
-          />
-        </div>
       )}
     </EditProfileWrapper>
   );

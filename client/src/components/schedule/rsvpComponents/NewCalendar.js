@@ -6,7 +6,7 @@ import {
   getEndTime,
 } from "../../helpers";
 import { useContext, useEffect, useState, useCallback } from "react";
-// import { ReservationContext } from "../../contexts/ReservationContext";
+
 import { styled } from "styled-components";
 import "../rsvpComponents/style.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -15,72 +15,34 @@ import { IsMobileContext } from "../../contexts/IsMobileContext";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import HoveredEvent from "./HoveredEvent";
-// import { BlockedSlotsContext } from "../../contexts/BlockedSlotsContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
-import { LoginRoleContext } from "../../contexts/LoginRoleContext";
 import Loader from "../../Loader";
+import Cookies from "js-cookie";
 
 const localizer = momentLocalizer(moment);
 
-const NewCalendar = ({ setSelectedDate, setSlotBeforeCheck }) => {
-  const savedView = localStorage.getItem("calendarView") || "month";
-  const savedDay = new Date(localStorage.getItem("calendarDay")) || new Date();
+const NewCalendar = ({
+  setSelectedDate,
+  setSlotBeforeCheck,
+  reservations,
+  currentView,
+  currentDay,
+  loading,
+  setCurrentView,
+  setCurrentDay,
+  savedView,
+  savedDay,
+  setBlockedSlots,
+  blockedSlots,
+}) => {
   const [showDeleteBlockedModal, setShowDeleteBlockedModal] = useState(false);
   const [selectedBlockedSlot, setSelectedBlockedSlot] = useState("");
-  const [currentView, setCurrentView] = useState(savedView);
-  const [currentDay, setCurrentDay] = useState(savedDay);
   const navigate = useNavigate();
-  const [reservations, setReservations] = useState([]);
   const { isMobile } = useContext(IsMobileContext);
-  const [blockedSlots, setBlockedSlots] = useState([]);
   const { setNotification } = useContext(NotificationContext);
-  const { role } = useContext(LoginRoleContext);
-  const [loading, setLoading] = useState(true);
+  const role = Cookies.get("role");
   let filteredReservations = [...reservations];
   let filteredBlockedSlots = [...blockedSlots];
-  useEffect(() => {
-    if (currentView === "day") {
-      setLoading(true);
-      fetch(
-        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&day=${currentDay.toISOString()}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          setReservations(result.reservations);
-          setBlockedSlots(result.blockedSlots);
-          setLoading(false);
-        });
-    } else if (currentView === "month") {
-      const currentMonth = new Date(currentDay).toLocaleString("default", {
-        month: "long",
-      });
-      const currentYear = new Date(currentDay).toLocaleString("default", {
-        year: "numeric",
-      });
-
-      setLoading(true);
-      fetch(
-        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&month=${currentMonth}&year=${currentYear}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          setReservations(result.reservations);
-          setLoading(false);
-        });
-    }
-  }, [currentView, currentDay]);
 
   if (role === "jordi") {
     filteredBlockedSlots = filteredBlockedSlots.filter((slot) => {

@@ -4,12 +4,9 @@ import {
   SelectedSlotContainer,
 } from "../RSVP_Form";
 import { BarberSlot } from "./BarberSelect";
-import { useContext, useEffect, useState } from "react";
-import { ReservationContext } from "../../contexts/ReservationContext";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { removeSlotsForOverLapping, selectNextSlot } from "../../helpers";
-import { ServicesContext } from "../../contexts/ServicesContext";
-// import { EmployeeServicesContext } from "../../contexts/EmployeeServicesContext";
 import moment from "moment";
 const SlotSelector = ({
   selectedBarberForm,
@@ -21,10 +18,8 @@ const SlotSelector = ({
   overLappingError,
   setOverLappingError,
   setSelectedService,
+  reservations,
 }) => {
-  const { reservations } = useContext(ReservationContext);
-  const { services } = useContext(ServicesContext);
-  // const { servicesEmp } = useContext(EmployeeServicesContext);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [barberIsOff, setBarberIsOff] = useState(false);
   const todayDate = new Date();
@@ -47,7 +42,6 @@ const SlotSelector = ({
         const startDate = moment(selectedBarberForm.time_off[0].startDate)._i;
         const endDate = moment(selectedBarberForm.time_off[0].endDate)._i;
         const timeOff = moment(selectedDate).isBetween(startDate, endDate);
-        console.log(timeOff);
         setBarberIsOff(timeOff);
       }
       // if barber is not off, filter available slots of the selected day
@@ -62,16 +56,13 @@ const SlotSelector = ({
             return "";
           }
         });
+
       //get reserved slots of the selected day
       const todayReservations = reservations.filter((reservation) => {
         const today =
           formatDate(new Date(reservation.date)) === formatDate(selectedDate);
         return selectedBarberForm.given_name === reservation.barber && today;
       });
-      // //log any reservations that contain the same slot element
-      // todayReservations.map((res) => {
-      //   console.log(res.slot);
-      // });
       //filter reserved slots for the selected day for the selected barber out
       const filteredSlots = originalAvailableSlots.filter((slot) => {
         return !todayReservations.some((reservation) => {
@@ -100,16 +91,6 @@ const SlotSelector = ({
           return reservation.slot[0].split("-")[1];
         }
       );
-      //select the right services array based on the selected Barber
-      // if (selectedService !== "") {
-      //   const selectedServiceArray =
-      //     selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
-      //   setSelectedService(
-      //     selectedServiceArray.find((service) => {
-      //       return service._id === selectedService._id;
-      //     })
-      //   );
-      // }
 
       const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
         selectedService.duration,
@@ -158,8 +139,6 @@ const SlotSelector = ({
     setSelectedService,
     barberIsOff,
     isToday,
-    services,
-    // servicesEmp,
   ]);
   //check if selected slot will overlap with the reserved slots
   useEffect(() => {
@@ -168,11 +147,6 @@ const SlotSelector = ({
     if (slotBeforeCheck.length === 0 || selectedService === "") {
       return;
     } else {
-      // const selectedServiceArray =
-      //   selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
-      // const finalSelectedService = selectedServiceArray.find((service) => {
-      //   return service._id === selectedService._id;
-      // });
       const selectedServiceDuration = selectedService.duration;
 
       if (selectedServiceDuration === "1") {
@@ -1497,8 +1471,6 @@ const SlotSelector = ({
     reservations,
     setSelectedSlot,
     setOverLappingError,
-    services,
-    // servicesEmp,
   ]);
 
   const handleFormatDateForSlots = (date) => {

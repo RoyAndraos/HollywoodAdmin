@@ -1,83 +1,91 @@
 import { styled } from "styled-components";
 import NewCalendar from "./rsvpComponents/NewCalendar";
 import AddReservation from "../schedule/RSVP_Form";
-import Cookies from "js-cookie";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../contexts/UserContext";
-import { ReservationContext } from "../contexts/ReservationContext";
-import { ServicesContext } from "../contexts/ServicesContext";
-import { TextContext } from "../contexts/TextContext";
-import Loader from "../Loader";
-import { LoginRoleContext } from "../contexts/LoginRoleContext";
-// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
-import { ClientsContext } from "../contexts/ClientsContext";
-import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
+import { useState, useEffect } from "react";
+
 const Schedule = () => {
-  const { setUserInfo, userInfo } = useContext(UserContext);
-  const { setReservations, reservations } = useContext(ReservationContext);
-  const { setServices, services } = useContext(ServicesContext);
-  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
-  const { setText, text } = useContext(TextContext);
-  const { setRole } = useContext(LoginRoleContext);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [slotBeforeCheck, setSlotBeforeCheck] = useState([]);
-  const { clients, setClients } = useContext(ClientsContext);
-  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
+  const [reservations, setReservations] = useState([]);
+  const savedView = localStorage.getItem("calendarView") || "month";
+  const savedDay = new Date(localStorage.getItem("calendarDay")) || new Date();
+  const [currentView, setCurrentView] = useState(savedView);
+  const [currentDay, setCurrentDay] = useState(savedDay);
   const [loading, setLoading] = useState(true);
+  const [blockedSlots, setBlockedSlots] = useState([]);
+
   useEffect(() => {
-    const token = Cookies.get("token");
-    const role = Cookies.get("role");
-    if (!token) {
-      return;
-    } else {
-      const headers = {
-        authorization: token,
-      };
-      // https://hollywood-fairmount-admin.onrender.com
-      fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
-        headers,
-      })
+    if (currentView === "day") {
+      setLoading(true);
+      fetch(
+        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&day=${currentDay.toISOString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((res) => res.json())
         .then((result) => {
-          setUserInfo(result.userInfo);
           setReservations(result.reservations);
-          setServices(result.services);
-          setText(result.text);
-          // setServicesEmp(result.employeeServices);
-          setClients(result.clients);
-          setRole(role);
-          setBlockedSlots(result.blockedSlotsToReturn);
+          setBlockedSlots(result.blockedSlots);
+          setLoading(false);
+        });
+    } else if (currentView === "month") {
+      const currentMonth = new Date(currentDay).toLocaleString("default", {
+        month: "long",
+      });
+      const currentYear = new Date(currentDay).toLocaleString("default", {
+        year: "numeric",
+      });
+
+      setLoading(true);
+      fetch(
+        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&month=${currentMonth}&year=${currentYear}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          setReservations(result.reservations);
+          setBlockedSlots(result.blockedSlots);
           setLoading(false);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  if (
-    !userInfo ||
-    !reservations ||
-    !services ||
-    !text ||
-    // !servicesEmp ||
-    !blockedSlots ||
-    !clients ||
-    loading
-  )
-    return <Loader />;
+  }, [currentView, currentDay]);
   return (
     <div>
       <Wrapper key={"calendar"}>
         <NewCalendar
+          reservations={reservations}
+          setReservations={setReservations}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
           selectedSlot={selectedSlot}
           setSelectedSlot={setSelectedSlot}
           slotBeforeCheck={slotBeforeCheck}
           setSlotBeforeCheck={setSlotBeforeCheck}
+          currentView={currentView}
+          currentDay={currentDay}
+          setCurrentView={setCurrentView}
+          setCurrentDay={setCurrentDay}
+          loading={loading}
+          savedView={savedView}
+          savedDay={savedDay}
+          blockedSlots={blockedSlots}
+          setBlockedSlots={setBlockedSlots}
         />
       </Wrapper>
       <Wrapper key={"rsvp"} style={{ height: "fit-content" }} id="rsvp">
         <AddReservation
+          reservations={reservations}
+          setReservations={setReservations}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
           selectedSlot={selectedSlot}

@@ -158,6 +158,68 @@ const initTelnyx = async () => {
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
+const getResById = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+  await client.connect();
+  const db = client.db("HollywoodBarberShop");
+  try {
+    const { _id } = req.query;
+    if (!_id) {
+      return res.status(400).json({ error: "Missing id in query" });
+    }
+    const reservation = await db
+      .collection("reservations")
+      .findOne({ _id: _id });
+    if (!reservation) {
+      return res.status(404).json({ error: "Reservation not found" });
+    } else {
+      const allReservations = await db
+        .collection("reservations")
+        .find({
+          date: reservation.date,
+        })
+        .toArray();
+      return res
+        .status(200)
+        .json({ status: 200, reservations: allReservations });
+    }
+  } catch {
+  } finally {
+    await client.close();
+  }
+};
+
+const getBarbers = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+  await client.connect();
+  const db = client.db("HollywoodBarberShop");
+  try {
+    const barbers = await db
+      .collection("admin")
+      .find(
+        {},
+        {
+          projection: {
+            email: 0,
+            picture: 0,
+            description: 0,
+            french_description: 0,
+          },
+        }
+      )
+      .toArray();
+    res.status(200).json({
+      message: "Barbers retrieved successfully",
+      barbers: barbers,
+    });
+  } catch (error) {
+    console.error("Error fetching barbers:", error);
+    res.status(500).json({ message: "Internal server error" });
+  } finally {
+    await client.close();
+  }
+};
+
 const getAvailability = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
   await client.connect();
@@ -372,6 +434,22 @@ const getServices = async (req, res) => {
     await client.close();
   }
 };
+const getClientInfoForBooking = async (req, res) => {
+  const client = new MongoClient(MONGO_URI_RALF);
+  try {
+    const db = client.db("HollywoodBarberShop");
+
+    const clients = await db
+      .collection("Clients")
+      .find({}, { projection: { reservations: 0, note: 0 } })
+      .toArray();
+    res.status(200).json({ status: 200, clients: clients });
+  } catch {
+    res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
+  }
+};
 const getUserInfoInWebTools = async (req, res) => {
   const client = new MongoClient(MONGO_URI_RALF);
 
@@ -554,16 +632,54 @@ const blockSlot = async (req, res) => {
 };
 
 const sendReminders = async (req, res) => {
-  const { to, message } = req.body;
+  const client = new MongoClient(process.env.MONGO_URI_RALF);
+
   try {
-    await twilioClient.messages.create({
-      body: message,
-      messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-      to: to,
-    });
-    res.status(200).json({ status: 200, message: "success" });
+    await client.connect();
+    const db = client.db("HollywoodBarberShop");
+
+    // Format tomorrow's date the same way you store it
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Example output: "Tue May 07 2024"
+    const tomorrowString = tomorrow.toDateString(); // toDateString gives exactly that format
+
+    // Find reservations where date matches tomorrowString
+    const reservations = await db
+      .collection("reservations")
+      .find({ date: tomorrowString })
+      .toArray();
+
+    if (!reservations.length) {
+      return res
+        .status(200)
+        .json({ status: 200, message: "No reservations for tomorrow" });
+    }
+
+    // Send SMS reminders
+    const results = await Promise.all(
+      reservations.map((reservation) =>
+        (async () => {
+          const telnyx = await initTelnyx();
+          telnyx.messages.create({
+            messaging_profile_id: process.env.SMS_PROFILE_ID,
+            from: "+14388035805",
+            to: `+1${reservation.phone}`,
+            text: `Salut ${reservation.fname}, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${reservation.barber} à ${reservation.slot[0]}. À bientôt !`,
+          });
+        })()
+      )
+    );
+
+    res
+      .status(200)
+      .json({ status: 200, message: "Reminders sent", count: results.length });
   } catch (err) {
+    console.error("Error sending reminders:", err);
     res.status(500).json({ status: 500, message: err.message });
+  } finally {
+    await client.close();
   }
 };
 
@@ -996,16 +1112,20 @@ const deleteTimeOff = async (req, res) => {
 
 const deleteReservation = async (req, res) => {
   const _id = req.body.res_id;
-  const client_id = req.body.client_id;
-  const clientNumber = req.body.clientNumber;
   const client = new MongoClient(MONGO_URI_RALF);
   const sendSMS = req.body.sendSMS;
   try {
     const db = client.db("HollywoodBarberShop");
+    const reservation = await db
+      .collection("reservations")
+      .findOne({ _id: _id });
     await db.collection("reservations").deleteOne({ _id: _id });
     await db
       .collection("Clients")
-      .updateOne({ _id: client_id }, { $pull: { reservations: _id } });
+      .updateOne(
+        { _id: reservation.client_id },
+        { $pull: { reservations: _id } }
+      );
 
     if (sendSMS === true) {
       // send message to client
@@ -1019,7 +1139,7 @@ const deleteReservation = async (req, res) => {
         `,
             messaging_profile_id: process.env.SMS_PROFILE_ID,
             from: "+14388035805",
-            to: `+1${clientNumber}`,
+            to: `+1${reservation.number}`,
           });
         })();
       } catch (err) {
@@ -1279,4 +1399,7 @@ module.exports = {
   getUserInfoInWebTools,
   getDataPage,
   getCalendar,
+  getBarbers,
+  getClientInfoForBooking,
+  getResById,
 };

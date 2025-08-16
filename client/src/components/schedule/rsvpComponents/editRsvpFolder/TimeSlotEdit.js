@@ -1,16 +1,12 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { LabelInfoWrapper, StyledLabel } from "./EditRsvp";
 import {
   getEndTimeEditRsvp,
   removeSlotsForOverLapping,
   selectNextSlot,
 } from "../../.././helpers";
-import { UserContext } from "../../../contexts/UserContext";
 import styled from "styled-components";
 import moment from "moment";
-import { ReservationContext } from "../../../contexts/ReservationContext";
-import { ServicesContext } from "../../../contexts/ServicesContext";
-// import { EmployeeServicesContext } from "../../../contexts/EmployeeServicesContext";
 
 const TimeSlotEdit = ({
   reservation,
@@ -19,17 +15,30 @@ const TimeSlotEdit = ({
   timeEdit,
   setTimeEdit,
   setFormData,
+  reservations,
 }) => {
   // useState/useContext: timeEdit for inner text of button, barberIsOff, availableSlots, reservations, userInfo(selectedBarber)
   const [barberIsOff, setBarberIsOff] = useState(false);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const { reservations } = useContext(ReservationContext);
-  const { userInfo } = useContext(UserContext);
-  const { services } = useContext(ServicesContext);
-  // const { servicesEmp } = useContext(EmployeeServicesContext);
+  const [userInfo, setUserInfo] = useState([]);
+  const [services, setServices] = useState([]);
   const selectedService = reservation.service;
   const startTime = formData.slot[0].split("-")[1];
   const [endTime, setEndTime] = useState("");
+
+  useEffect(() => {
+    fetch("https://hollywood-fairmount-admin.onrender.com/getServices")
+      .then((res) => res.json())
+      .then((result) => {
+        setServices(result.services);
+      });
+    fetch("https://hollywood-fairmount-admin.onrender.com/api/barbers")
+      .then((res) => res.json())
+      .then((result) => {
+        setUserInfo(result.barbers);
+      });
+  }, []);
+
   // function: format date to "Mon Jan 1"
   const formatDate = (date) => {
     const dateObj = new Date(date);
@@ -43,10 +52,14 @@ const TimeSlotEdit = ({
     return dateObj.toLocaleDateString(undefined, options);
   };
   const selectedDate = reservation.date;
-  const selectedBarberForm = userInfo.filter((barber) => {
-    return barber.given_name.toLowerCase() === reservation.barber.toLowerCase();
-  })[0];
+
   useEffect(() => {
+    if (!userInfo.length) return;
+    const selectedBarberForm = userInfo.filter((barber) => {
+      return (
+        barber.given_name.toLowerCase() === reservation.barber.toLowerCase()
+      );
+    })[0];
     //if theres no selected barber
     if (Object.keys(selectedBarberForm).length === 0) {
       return;
@@ -108,11 +121,6 @@ const TimeSlotEdit = ({
           return reservation.slot[0].split("-")[1];
         }
       );
-      // const selectedServiceArray =
-      //   selectedBarberForm.given_name === "Ralph" ? services : servicesEmp;
-      // const newFormDataService = selectedServiceArray.find((service) => {
-      //   return service._id === selectedService._id;
-      // });
 
       const slotsToRemoveForOverlapping = removeSlotsForOverLapping(
         selectedService.duration,
@@ -132,15 +140,16 @@ const TimeSlotEdit = ({
       );
     }
   }, [
-    selectedBarberForm,
+    userInfo,
+    reservation.barber,
     reservations,
     selectedDate,
     selectedService,
     barberIsOff,
-    formData.service.duration,
     services,
     // servicesEmp,
   ]);
+
   // function: edit inner html of button
   const handleEditClick = () => {
     if (timeEdit === "Edit") {

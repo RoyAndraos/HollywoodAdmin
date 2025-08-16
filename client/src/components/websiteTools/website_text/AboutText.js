@@ -1,11 +1,9 @@
 import { useContext, useState } from "react";
-import { TextContext } from "../../contexts/TextContext";
 import { StyledInput } from "./UnderMenuText";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import styled from "styled-components";
-const AboutText = () => {
-  const { text, setText } = useContext(TextContext);
+const AboutText = ({ text, setText }) => {
   const { setNotification } = useContext(NotificationContext);
   const initialAboutText = text.filter((text) => text._id === "about")[0]
     .content;

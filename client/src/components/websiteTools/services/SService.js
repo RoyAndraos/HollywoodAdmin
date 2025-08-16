@@ -1,15 +1,11 @@
 import { useState, useContext } from "react";
 import styled from "styled-components";
 import Cookies from "js-cookie";
-import { ServicesContext } from "../../contexts/ServicesContext";
 import { NotificationContext } from "../../contexts/NotficationContext";
 import { objectsAreEqual } from "../../helpers";
-// import { EmployeeServicesContext } from "../../contexts/EmployeeServicesContext";
-// import { LoginRoleContext } from "../../contexts/LoginRoleContext";
-const SService = ({ service }) => {
+
+const SService = ({ service, setServices }) => {
   const { setNotification } = useContext(NotificationContext);
-  const { setServices } = useContext(ServicesContext);
-  // const { setServicesEmp } = useContext(EmployeeServicesContext);
   const [serviceEdit, setServiceEdit] = useState(service);
   const [initialService] = useState(service);
   // const { role } = useContext(LoginRoleContext);
@@ -42,17 +38,6 @@ const SService = ({ service }) => {
             }
           });
         });
-        // } else {
-        //   setServicesEmp((prevServices) => {
-        //     return prevServices.map((service) => {
-        //       if (service._id === result.data._id) {
-        //         return result.data;
-        //       } else {
-        //         return service;
-        //       }
-        //     });
-        //   });
-        // }
       })
       .catch((err) => setNotification("Something went wrong"));
   };

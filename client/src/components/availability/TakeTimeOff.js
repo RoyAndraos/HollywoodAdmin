@@ -1,36 +1,23 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "./datepick.css";
 import styled from "styled-components";
-import { UserContext } from "../contexts/UserContext";
 import { NotificationContext } from "../contexts/NotficationContext";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { ReservationContext } from "../contexts/ReservationContext";
-import { ServicesContext } from "../contexts/ServicesContext";
-import { TextContext } from "../contexts/TextContext";
 import Loader from "../Loader";
-import { ClientsContext } from "../contexts/ClientsContext";
-// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
-import format from "date-fns/format"; // Importing date-fns to format dates
-import { BlockedSlotsContext } from "../contexts/BlockedSlotsContext";
+import format from "date-fns/format";
 
 const TakeTimeOff = () => {
   const { barberId } = useParams();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
-  const { userInfo, setUserInfo } = useContext(UserContext);
+  const [userInfo, setUserInfo] = useState([]);
   const { setNotification } = useContext(NotificationContext);
   const [showBarbers, setShowBarbers] = useState(false);
   const [selectedBarber, setSelectedBarber] = useState();
   const navigate = useNavigate();
-  const { setReservations, reservations } = useContext(ReservationContext);
-  const { setServices, services } = useContext(ServicesContext);
-  const { clients, setClients } = useContext(ClientsContext);
-  // const { servicesEmp, setServicesEmp } = useContext(EmployeeServicesContext);
-  const { setText, text } = useContext(TextContext);
-  const { blockedSlots, setBlockedSlots } = useContext(BlockedSlotsContext);
 
   useEffect(() => {
     if (!userInfo) {
@@ -47,25 +34,10 @@ const TakeTimeOff = () => {
           .then((res) => res.json())
           .then((result) => {
             setUserInfo(result.userInfo);
-            setReservations(result.reservations);
-            setServices(result.services);
-            setText(result.text);
-            // setServicesEmp(result.employeeServices);
-            setClients(result.clients);
-            setBlockedSlots(result.blockedSlots);
           });
       }
     }
-  }, [
-    setReservations,
-    setServices,
-    setUserInfo,
-    setText,
-    userInfo,
-    setClients,
-    setBlockedSlots,
-    // setServicesEmp,
-  ]);
+  }, [setUserInfo, userInfo]);
 
   useEffect(() => {
     const barber = userInfo.filter((barber) => barber._id === barberId);
@@ -172,13 +144,8 @@ const TakeTimeOff = () => {
       });
   };
   if (
-    !reservations ||
-    !services ||
-    !text ||
     !userInfo ||
-    !clients ||
     // !servicesEmp ||
-    !blockedSlots ||
     !selectedBarber
   )
     return <Loader />;

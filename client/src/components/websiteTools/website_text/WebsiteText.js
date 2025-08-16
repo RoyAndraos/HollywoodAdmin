@@ -1,12 +1,11 @@
-import React from "react";
 import { styled } from "styled-components";
 import AboutText from "./AboutText";
 import UnderMenuText from "./UnderMenuText";
-const WebsiteText = () => {
+const WebsiteText = ({ text, setText }) => {
   return (
     <Wrapper>
-      <UnderMenuText />
-      <AboutText />
+      <UnderMenuText text={text} setText={(text, setText)} />
+      <AboutText text={text} setText={(text, setText)} />
     </Wrapper>
   );
 };

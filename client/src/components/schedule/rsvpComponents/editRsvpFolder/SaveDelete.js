@@ -1,16 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { ReservationContext } from "../../../contexts/ReservationContext";
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../../../contexts/NotficationContext";
 import Cookies from "js-cookie";
 import { isEqual } from "../../../helpers";
-import { NotificationLogsContext } from "../../../contexts/NotificationLogsContext";
 const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
-  // useContext: notification, reservations
   const { setNotification } = useContext(NotificationContext);
-  const { reservations, setReservations } = useContext(ReservationContext);
-  const { setNotificationLogs } = useContext(NotificationLogsContext);
   const [hasNoteChanged, setHasNoteChanged] = useState(initialNote !== note);
   const [sendSMS, setSendSMS] = useState(true);
   const [isFormDataDifferent, setIsFormDataDifferent] = useState(
@@ -28,12 +23,6 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
 
   // function: delete reservation from database and context
   const handleDeleteReservation = (e) => {
-    const client_id = reservations.filter(
-      (reservation) => reservation._id === params
-    )[0].client_id;
-    const clientNumber = reservations.filter(
-      (reservation) => reservation._id === params
-    )[0].number;
     const token = Cookies.get("token");
     const headers = {
       authorization: token,
@@ -44,8 +33,6 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
       method: "DELETE",
       body: JSON.stringify({
         res_id: params,
-        client_id: client_id,
-        clientNumber: clientNumber,
         sendSMS: sendSMS,
       }),
       headers: {
@@ -59,13 +46,6 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
       .then((response) => {
         if (response.status === 200) {
           setNotification("Reservation deleted successfully");
-          setReservations(
-            reservations.filter((reservation) => reservation._id !== params)
-          );
-          //remove the reservation from the notification logs
-          setNotificationLogs((prev) => [
-            ...prev.filter((log) => log._id !== params),
-          ]);
 
           navigate("/schedule");
         }
@@ -112,14 +92,6 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
       })
       .then((response) => {
         if (response.status === 200) {
-          setReservations(
-            reservations.map((reservation) => {
-              if (reservation._id === params) {
-                return formData;
-              }
-              return reservation;
-            })
-          );
           setNotification("Reservation updated successfully");
           navigate("/schedule");
         }

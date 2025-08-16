@@ -1,6 +1,5 @@
 import { styled } from "styled-components";
 import { NavLink } from "react-router-dom";
-import NotifLogs from "./NotifLogs";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
@@ -40,7 +39,6 @@ const NavBar = () => {
           Logout
         </Logout>
       </StyledNavLink>
-      <NotifLogs />
     </Wrapper>
   );
 };

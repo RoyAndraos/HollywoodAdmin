@@ -1,10 +1,20 @@
-import React, { useContext, useState } from "react";
-import { UserContext } from "../../../contexts/UserContext";
+import { useEffect, useState } from "react";
 import { LabelInfoWrapper, StyledLabel, EditButton } from "./EditRsvp";
 import styled from "styled-components";
+import Loader from "../../../Loader";
 const BarberFormEdit = ({ reservation, handleChange }) => {
-  const { userInfo } = useContext(UserContext);
+  const [userInfo, setUserInfo] = useState([]);
   const [barberEdit, setBarberEdit] = useState("false");
+  useEffect(() => {
+    fetch("https://hollywood-fairmount-admin.onrender.com/api/barbers")
+      .then((res) => res.json())
+      .then((result) => {
+        setUserInfo(result.barbers);
+      });
+  }, []);
+  if (!userInfo) {
+    return <Loader />;
+  }
   return (
     <LabelInfoWrapper>
       <StyledLabel>Barber </StyledLabel>

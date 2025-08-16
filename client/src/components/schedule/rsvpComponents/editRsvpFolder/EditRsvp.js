@@ -1,5 +1,4 @@
-import { useContext, useState, useEffect } from "react";
-import { ReservationContext } from "../../../contexts/ReservationContext";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { FaArrowLeft } from "react-icons/fa";
@@ -15,7 +14,6 @@ import LastNameFormEdit from "./LastNameFormEdit";
 import Cookies from "js-cookie";
 
 const EditRsvp = () => {
-  const { reservations } = useContext(ReservationContext);
   const [timeEdit, setTimeEdit] = useState("Edit");
   const params = useParams()._id;
   const navigate = useNavigate();
@@ -23,22 +21,28 @@ const EditRsvp = () => {
   const [formData, setFormData] = useState({});
   const [note, setNote] = useState("");
   const [initialNote, setInitialNote] = useState("");
+  const [reservations, setReservations] = useState([]);
+  useEffect(() => {
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/getReservationsById?_id=${params}`
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((result) => {
+        setReservations(result.reservations);
+      });
+  }, [params]);
 
   useEffect(() => {
-    if (!reservations) {
-      navigate("/schedule");
-      return;
-    }
     const foundReservation = reservations.find(
       (reservation) => reservation._id === params
     );
     if (foundReservation) {
       setThisReservation(foundReservation);
       setFormData(foundReservation);
-    } else {
-      navigate("/schedule");
     }
-  }, [reservations, params, navigate]);
+  }, [reservations, params]);
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -110,6 +114,7 @@ const EditRsvp = () => {
           timeEdit={timeEdit}
           setTimeEdit={setTimeEdit}
           setFormData={setFormData}
+          reservations={reservations}
         />
         <NumberFormEdit
           handleChange={handleChange}

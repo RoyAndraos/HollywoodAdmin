@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import { UserContext } from "../../contexts/UserContext";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import EditProfileForm from "./EditProfileForm";
 import { NotificationContext } from "../../contexts/NotficationContext";
@@ -10,8 +9,7 @@ import ralf from "../../assets/ralf.webp";
 import ty from "../../assets/Ty.webp";
 import Loader from "../../Loader";
 import jordi from "../../assets/jordi.webp";
-const BarberProfiles = () => {
-  const { userInfo, setUserInfo } = useContext(UserContext);
+const BarberProfiles = ({ userInfo, setUserInfo }) => {
   const { setNotification } = useContext(NotificationContext);
   const [editModes, setEditModes] = useState({});
   const [barberInfo, setBarberInfo] = useState({});
@@ -140,14 +138,91 @@ const BarberProfiles = () => {
       });
   };
   let isEditMode;
-
+  if (!userInfo.length) {
+    return <Loader />;
+  }
   return (
     <Wrapper>
-      {role === "admin" ? (
-        userInfo.map((barber) => {
-          isEditMode = editModes[barber._id];
-          return (
-            <BarberWrapper key={barber._id}>
+      {role === "admin"
+        ? userInfo.map((barber) => {
+            isEditMode = editModes[barber._id];
+            return (
+              <BarberWrapper key={barber._id}>
+                {isEditMode ? (
+                  // Render Edit Form with inputs and Save/Cancel buttons
+                  // Display barber's information in input fields
+                  <EditProfileForm
+                    handleChange={handleChange}
+                    handleSave={handleSave}
+                    handleToggleEditMode={handleToggleEditMode}
+                    barber={barber}
+                    key={"edit" + barber._id}
+                    setEditModes={setEditModes}
+                  />
+                ) : (
+                  // Render Display Mode
+                  <Container>
+                    {barber.description ? (
+                      <DisplayWrapper>
+                        <Name>
+                          {barber.given_name} {barber.family_name}
+                        </Name>
+                        <Email>{barber.email}</Email>
+                        {barber.description && barber.description !== "" && (
+                          <Description>{barber.description}</Description>
+                        )}
+                        {barber.french_description &&
+                          barber.french_description !== "" && (
+                            <Description>
+                              {barber.french_description}
+                            </Description>
+                          )}
+                      </DisplayWrapper>
+                    ) : (
+                      <DisplayWrapper>
+                        <Loader />
+                      </DisplayWrapper>
+                    )}
+                    {barber.given_name === "Ralph" && (
+                      <BarberImage
+                        src={ralf}
+                        alt={userInfo[0].given_name + " picture"}
+                      />
+                    )}
+                    {barber.given_name === "Ty" && (
+                      <BarberImage
+                        src={ty}
+                        alt={userInfo[1].given_name + " picture"}
+                      />
+                    )}
+                    {barber.given_name !== "Ralph" &&
+                      barber.given_name !== "Ty" && (
+                        <BarberImage
+                          src={jordi}
+                          alt={barber.given_name + " picture"}
+                        />
+                      )}
+                    <ButtonWrapper key={"notEdit" + barber._id}>
+                      <EditButton
+                        onClick={() => handleToggleEditMode(barber._id)}
+                      >
+                        Edit
+                      </EditButton>
+                      <CancelButton
+                        key={"cancel" + barber._id}
+                        onClick={() => handleDelete(barber._id)}
+                      >
+                        Delete
+                      </CancelButton>
+                    </ButtonWrapper>
+                  </Container>
+                )}
+              </BarberWrapper>
+            );
+          })
+        : role === "jordi" && (
+            <BarberWrapper key={userInfo[1]._id}>
+              {(isEditMode = editModes[userInfo[1]._id])}
               {isEditMode ? (
                 // Render Edit Form with inputs and Save/Cancel buttons
                 // Display barber's information in input fields
@@ -155,60 +230,38 @@ const BarberProfiles = () => {
                   handleChange={handleChange}
                   handleSave={handleSave}
                   handleToggleEditMode={handleToggleEditMode}
-                  barber={barber}
-                  key={"edit" + barber._id}
+                  barber={userInfo[1]}
+                  key={"edit" + userInfo[1]._id}
                   setEditModes={setEditModes}
                 />
               ) : (
                 // Render Display Mode
                 <Container>
-                  {barber.description ? (
-                    <DisplayWrapper>
-                      <Name>
-                        {barber.given_name} {barber.family_name}
-                      </Name>
-                      <Email>{barber.email}</Email>
-                      {barber.description && barber.description !== "" && (
-                        <Description>{barber.description}</Description>
+                  <DisplayWrapper>
+                    <Name>
+                      {userInfo[1].given_name} {userInfo[1].family_name}
+                    </Name>
+                    <Email>{userInfo[1].email}</Email>
+                    {userInfo[1].description &&
+                      userInfo[1].description !== "" && (
+                        <Description>{userInfo[1].description}</Description>
                       )}
-                      {barber.french_description &&
-                        barber.french_description !== "" && (
-                          <Description>{barber.french_description}</Description>
-                        )}
-                    </DisplayWrapper>
-                  ) : (
-                    <DisplayWrapper>
-                      <Loader />
-                    </DisplayWrapper>
-                  )}
-                  {barber.given_name === "Ralph" && (
+                  </DisplayWrapper>
+                  {userInfo[1].picture !== "" && (
                     <BarberImage
-                      src={ralf}
-                      alt={userInfo[0].given_name + " picture"}
-                    />
-                  )}
-                  {barber.given_name === "Ty" && (
-                    <BarberImage
-                      src={ty}
+                      src={userInfo[1].picture}
                       alt={userInfo[1].given_name + " picture"}
                     />
                   )}
-                  {barber.given_name !== "Ralph" &&
-                    barber.given_name !== "Ty" && (
-                      <BarberImage
-                        src={jordi}
-                        alt={barber.given_name + " picture"}
-                      />
-                    )}
-                  <ButtonWrapper key={"notEdit" + barber._id}>
+                  <ButtonWrapper key={"notEdit" + userInfo[1]._id}>
                     <EditButton
-                      onClick={() => handleToggleEditMode(barber._id)}
+                      onClick={() => handleToggleEditMode(userInfo[1]._id)}
                     >
                       Edit
                     </EditButton>
                     <CancelButton
-                      key={"cancel" + barber._id}
-                      onClick={() => handleDelete(barber._id)}
+                      key={"cancel" + userInfo[1]._id}
+                      onClick={() => handleDelete(userInfo[1]._id)}
                     >
                       Delete
                     </CancelButton>
@@ -216,105 +269,7 @@ const BarberProfiles = () => {
                 </Container>
               )}
             </BarberWrapper>
-          );
-        })
-      ) : role === "ty" ? (
-        <BarberWrapper key={userInfo[1]._id}>
-          {(isEditMode = editModes[userInfo[1]._id])}
-          {isEditMode ? (
-            // Render Edit Form with inputs and Save/Cancel buttons
-            // Display barber's information in input fields
-            <EditProfileForm
-              handleChange={handleChange}
-              handleSave={handleSave}
-              handleToggleEditMode={handleToggleEditMode}
-              barber={userInfo[1]}
-              key={"edit" + userInfo[1]._id}
-              setEditModes={setEditModes}
-            />
-          ) : (
-            // Render Display Mode
-            <Container>
-              <DisplayWrapper>
-                <Name>
-                  {userInfo[1].given_name} {userInfo[1].family_name}
-                </Name>
-                <Email>{userInfo[1].email}</Email>
-                {userInfo[1].description && userInfo[1].description !== "" && (
-                  <Description>{userInfo[1].description}</Description>
-                )}
-              </DisplayWrapper>
-              {userInfo[1].picture !== "" && (
-                <BarberImage
-                  src={userInfo[1].picture}
-                  alt={userInfo[1].given_name + " picture"}
-                />
-              )}
-              <ButtonWrapper key={"notEdit" + userInfo[1]._id}>
-                <EditButton
-                  onClick={() => handleToggleEditMode(userInfo[1]._id)}
-                >
-                  Edit
-                </EditButton>
-                <CancelButton
-                  key={"cancel" + userInfo[1]._id}
-                  onClick={() => handleDelete(userInfo[1]._id)}
-                >
-                  Delete
-                </CancelButton>
-              </ButtonWrapper>
-            </Container>
           )}
-        </BarberWrapper>
-      ) : (
-        <BarberWrapper key={userInfo[2]._id}>
-          {(isEditMode = editModes[userInfo[2]._id])}
-          {isEditMode ? (
-            // Render Edit Form with inputs and Save/Cancel buttons
-            // Display barber's information in input fields
-            <EditProfileForm
-              handleChange={handleChange}
-              handleSave={handleSave}
-              handleToggleEditMode={handleToggleEditMode}
-              barber={userInfo[2]}
-              key={"edit" + userInfo[2]._id}
-              setEditModes={setEditModes}
-            />
-          ) : (
-            // Render Display Mode
-            <Container>
-              <DisplayWrapper>
-                <Name>
-                  {userInfo[2].given_name} {userInfo[2].family_name}
-                </Name>
-                <Email>{userInfo[2].email}</Email>
-                {userInfo[2].description && userInfo[2].description !== "" && (
-                  <Description>{userInfo[2].description}</Description>
-                )}
-              </DisplayWrapper>
-              {userInfo[2].picture !== "" && (
-                <BarberImage
-                  src={jordi}
-                  alt={userInfo[2].given_name + " picture"}
-                />
-              )}
-              <ButtonWrapper key={"notEdit" + userInfo[2]._id}>
-                <EditButton
-                  onClick={() => handleToggleEditMode(userInfo[2]._id)}
-                >
-                  Edit
-                </EditButton>
-                <CancelButton
-                  key={"cancel" + userInfo[2]._id}
-                  onClick={() => handleDelete(userInfo[2]._id)}
-                >
-                  Delete
-                </CancelButton>
-              </ButtonWrapper>
-            </Container>
-          )}
-        </BarberWrapper>
-      )}
       {role === "admin" && (
         <BarberWrapper>
           <AddBarber>Add Barber</AddBarber>

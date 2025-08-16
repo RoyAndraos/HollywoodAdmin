@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { styled } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { getDailyHours } from "../helpers";
@@ -9,7 +9,6 @@ import Loader from "../Loader";
 import { IsMobileContext } from "../contexts/IsMobileContext";
 import DailyAvailability from "./DailyAvailability";
 import { LoginRoleContext } from "../contexts/LoginRoleContext";
-// import { EmployeeServicesContext } from "../contexts/EmployeeServicesContext";
 const TimeSelect = () => {
   // useContext/useState: user, notification selectedBarber, switch selectedBarber, selectedCells (slot cells that are selected)
   const [userInfo, setUserInfo] = useState([]);

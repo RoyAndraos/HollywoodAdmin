@@ -10,7 +10,9 @@ const HoveredEvent = ({ res }) => {
       setLoading(false);
       return;
     }
-    fetch(`http://localhost:4000/getClientNote/${res.client_id}`)
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/getClientNote/${res.client_id}`
+    )
       .then((res) => res.json())
       .then((result) => {
         setNote(result.data);

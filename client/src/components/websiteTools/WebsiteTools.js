@@ -25,7 +25,9 @@ const WebsiteTools = () => {
     }
   }, [role, setRole]);
   useEffect(() => {
-    fetch(`http://localhost:4000/getUserInfoInWebTools`)
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/getUserInfoInWebTools`
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch user info");

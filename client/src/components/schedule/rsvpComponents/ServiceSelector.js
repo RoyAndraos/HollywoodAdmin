@@ -8,7 +8,7 @@ const ServiceSelector = ({ selectedService, setSelectedService }) => {
   const [services, setServices] = useState([]);
   const [showDuration, setShowDuration] = useState(false);
   useEffect(() => {
-    fetch("http://localhost:4000/getServices", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/getServices", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

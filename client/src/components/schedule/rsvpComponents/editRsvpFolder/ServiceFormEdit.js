@@ -6,7 +6,7 @@ const ServiceFormEdit = ({ reservation, handleChange }) => {
   const [services, setServices] = useState([]);
   const [serviceEdit, setServiceEdit] = useState("false");
   useEffect(() => {
-    fetch("http://localhost:4000/getServices")
+    fetch("https://hollywood-fairmount-admin.onrender.com/getServices")
       .then((res) => res.json())
       .then((result) => {
         setServices(result.data);

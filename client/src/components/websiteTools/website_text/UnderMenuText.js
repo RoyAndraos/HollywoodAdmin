@@ -20,7 +20,7 @@ const UnderMenuText = ({ text, setText }) => {
       authorization: token,
     };
     e.preventDefault();
-    fetch("http://localhost:4000/updateText", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/updateText", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

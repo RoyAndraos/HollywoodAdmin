@@ -17,9 +17,9 @@ const Schedule = () => {
   useEffect(() => {
     if (currentView === "day") {
       setLoading(true);
-      // http://localhost:4000/
+      // https://hollywood-fairmount-admin.onrender.com/
       fetch(
-        `http://localhost:4000/api/calendar?view=${currentView}&day=${currentDay.toISOString()}`,
+        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&day=${currentDay.toISOString()}`,
         {
           method: "GET",
           headers: {
@@ -44,7 +44,7 @@ const Schedule = () => {
 
       setLoading(true);
       fetch(
-        `http://localhost:4000/api/calendar?view=${currentView}&month=${currentMonth}&year=${currentYear}`,
+        `https://hollywood-fairmount-admin.onrender.com/api/calendar?view=${currentView}&month=${currentMonth}&year=${currentYear}`,
         {
           method: "GET",
           headers: {

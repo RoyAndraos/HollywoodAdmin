@@ -35,17 +35,20 @@ const BarberProfiles = ({ userInfo, setUserInfo }) => {
       authorization: token,
     };
     // Send PATCH request to server with barberInfo
-    fetch("http://localhost:4000/updateBarberProfile", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      body: JSON.stringify({
-        barberId: profileId,
-        barberInfo: barberInfo,
-      }),
-    })
+    fetch(
+      "https://hollywood-fairmount-admin.onrender.com/updateBarberProfile",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({
+          barberId: profileId,
+          barberInfo: barberInfo,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         if (result.status === 200) {
@@ -76,16 +79,19 @@ const BarberProfiles = ({ userInfo, setUserInfo }) => {
       authorization: token,
     };
     // Send DELETE request to server with barberId
-    fetch("http://localhost:4000/deleteBarberProfile", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      body: JSON.stringify({
-        barberId: profileId,
-      }),
-    })
+    fetch(
+      "https://hollywood-fairmount-admin.onrender.com/deleteBarberProfile",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({
+          barberId: profileId,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         if (result.status === 200) {
@@ -111,7 +117,7 @@ const BarberProfiles = ({ userInfo, setUserInfo }) => {
       availability: initialAvailability,
     };
     // Send POST request to server with barberInfo
-    fetch("http://localhost:4000/addBarber", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/addBarber", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

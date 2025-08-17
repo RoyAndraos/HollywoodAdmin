@@ -341,12 +341,15 @@ const NewCalendar = ({
     }
   };
   const handleDeleteBlockedSlot = async (event) => {
-    fetch(`http://localhost:4000/deleteBlockedSlot/${event._id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/deleteBlockedSlot/${event._id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         if (result.status === 200) {

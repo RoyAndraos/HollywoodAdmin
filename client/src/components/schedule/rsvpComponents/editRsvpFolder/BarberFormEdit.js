@@ -6,7 +6,7 @@ const BarberFormEdit = ({ reservation, handleChange }) => {
   const [userInfo, setUserInfo] = useState([]);
   const [barberEdit, setBarberEdit] = useState("false");
   useEffect(() => {
-    fetch("http://localhost:4000/api/barbers")
+    fetch("https://hollywood-fairmount-admin.onrender.com/api/barbers")
       .then((res) => res.json())
       .then((result) => {
         setUserInfo(result.barbers);

@@ -27,12 +27,12 @@ const TimeSlotEdit = ({
   const [endTime, setEndTime] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:4000/getServices")
+    fetch("https://hollywood-fairmount-admin.onrender.com/getServices")
       .then((res) => res.json())
       .then((result) => {
         setServices(result.services);
       });
-    fetch("http://localhost:4000/api/barbers")
+    fetch("https://hollywood-fairmount-admin.onrender.com/api/barbers")
       .then((res) => res.json())
       .then((result) => {
         setUserInfo(result.barbers);

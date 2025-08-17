@@ -17,7 +17,7 @@ const SService = ({ service, setServices }) => {
     const headers = {
       authorization: token,
     };
-    fetch(`http://localhost:4000/updateServices`, {
+    fetch(`https://hollywood-fairmount-admin.onrender.com/updateServices`, {
       method: "PATCH",
       body: JSON.stringify(serviceEdit),
       headers: {
@@ -46,13 +46,16 @@ const SService = ({ service, setServices }) => {
     const headers = {
       authorization: token,
     };
-    fetch(`http://localhost:4000/deleteService/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-    })
+    fetch(
+      `https://hollywood-fairmount-admin.onrender.com/deleteService/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         setNotification("Service deleted successfully");

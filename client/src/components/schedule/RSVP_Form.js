@@ -45,7 +45,7 @@ const AddReservation = ({
   useEffect(() => {
     //fetch clients
     //https://hollywood-fairmount-admin.onrender.com
-    fetch("http://localhost:4000/getClientsForRSVP", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/getClientsForRSVP", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const AddReservation = ({
       date: formattedDate,
       slot: slot,
     };
-    fetch("http://localhost:4000/blockSlot", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/blockSlot", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -162,7 +162,7 @@ const AddReservation = ({
       lname: clientName.split(" ").slice(1).join(" ") || "",
     };
     // https://hollywood-fairmount-admin.onrender.com
-    fetch("http://localhost:4000/addReservation", {
+    fetch("https://hollywood-fairmount-admin.onrender.com/addReservation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

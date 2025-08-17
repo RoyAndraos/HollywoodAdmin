@@ -46,7 +46,6 @@ const NewCalendar = ({
   if (blockedSlots.length !== 0) {
     filteredBlockedSlots = [...blockedSlots];
   }
-
   if (role === "jordi") {
     filteredBlockedSlots = filteredBlockedSlots.filter((slot) => {
       return slot.barber === "Jordi";
@@ -54,15 +53,14 @@ const NewCalendar = ({
     filteredReservations = filteredReservations.filter((reservation) => {
       return reservation.barber === "Jordi";
     });
-  } else if (role === "ty") {
+  } else if (role === "ralf") {
     filteredBlockedSlots = filteredBlockedSlots.filter((slot) => {
-      return slot.barber === "Ty";
+      return slot.barber === "ralf";
     });
     filteredReservations = filteredReservations.filter((reservation) => {
-      return reservation.barber === "Ty";
+      return reservation.barber === "ralf";
     });
   }
-
   const blockedEvents = filteredBlockedSlots.map((slot) => {
     let time = slot.slot[0].split("-")[1];
     const toEdit = time.slice(-2);
@@ -144,16 +142,7 @@ const NewCalendar = ({
             element.style.backgroundColor = "#035e3f";
             element.style.borderBottom = "1px solid white";
             element.style.transition = "0.3s ease-in-out";
-          }
-          //  else if (element.innerHTML.includes("Ty")) {
-          //   element.style.width = "32%";
-          //   element.style.left = "33%";
-          //   element.style.zIndex = "100";
-          //   element.style.backgroundColor = "#e539a1";
-          //   element.style.borderBottom = "1px solid white";
-          //   element.style.transition = "0.3s ease-in-out";
-          // }
-          else {
+          } else {
             element.style.width = "50%";
             element.style.left = "50%";
             element.style.zIndex = "100";
@@ -183,17 +172,6 @@ const NewCalendar = ({
           });
         }
       }
-
-      // const dayViewColor = document.querySelectorAll(
-      //   ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-content .event-content-div"
-      // );
-      // dayViewColor.forEach((element) => {
-      //   if (element.innerHTML.includes("Ralph")) {
-      //     element.style.fontWeight = "bold";
-      //   } else {
-      //     element.style.fontWeight = "bold";
-      //   }
-      // });
 
       if (currentView === "agenda") {
         const agendaDate = document.querySelectorAll(".rbc-toolbar-label");

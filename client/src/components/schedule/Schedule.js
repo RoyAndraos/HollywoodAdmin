@@ -14,7 +14,6 @@ const Schedule = () => {
   const [currentDay, setCurrentDay] = useState(savedDay);
   const [loading, setLoading] = useState(true);
   const [blockedSlots, setBlockedSlots] = useState([]);
-
   useEffect(() => {
     if (currentView === "day") {
       setLoading(true);
@@ -29,6 +28,7 @@ const Schedule = () => {
       )
         .then((res) => res.json())
         .then((result) => {
+          console.log(result);
           setReservations(result.reservations);
           setBlockedSlots(result.blockedSlots);
           setLoading(false);
@@ -53,6 +53,7 @@ const Schedule = () => {
       )
         .then((res) => res.json())
         .then((result) => {
+          console.log(result);
           setReservations(result.reservations);
           setLoading(false);
         });

@@ -6,9 +6,7 @@ export const NotificationLogsContext = createContext("");
 export const NotificationLogsProvider = ({ children }) => {
   const [notificationLogs, setNotificationLogs] = useState([]);
   useEffect(() => {
-    const eventSource = new EventSource(
-      "https://hollywood-fairmount-admin.onrender.com/events"
-    );
+    const eventSource = new EventSource("http://localhost:4000/events");
     eventSource.onmessage = (event) => {
       const change = JSON.parse(event.data);
       // Update state with the new change

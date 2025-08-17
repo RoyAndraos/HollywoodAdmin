@@ -7,7 +7,7 @@ import React from "react";
 const ServiceChart = React.memo(({ startDate, type, reservations }) => {
   const [services, setServices] = useState([]);
   useEffect(() => {
-    fetch(`https://hollywood-fairmount-admin.onrender.com/getServices`)
+    fetch(`http://localhost:4000/getServices`)
       .then((response) => response.json())
       .then((data) => {
         setServices(data.data);

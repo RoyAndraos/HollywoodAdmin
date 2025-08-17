@@ -1,7 +1,7 @@
 import styled from "styled-components";
 const Reminder = ({ setShowReminders }) => {
   const handleSendReminders = () => {
-    fetch("https://hollywood-fairmount-admin.onrender.com/sendReminders")
+    fetch("http://localhost:4000/sendReminders")
       .then((res) => {
         res.json();
       })

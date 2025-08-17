@@ -36,12 +36,9 @@ const TimeSelect = () => {
           authorization: token,
         };
         // https://hollywood-fairmount-admin.onrender.com
-        fetch(
-          `https://hollywood-fairmount-admin.onrender.com/getAvailability`,
-          {
-            headers,
-          }
-        )
+        fetch(`http://localhost:4000/getAvailability`, {
+          headers,
+        })
           .then((res) => res.json())
           .then((result) => {
             setUserInfo(result.availability);
@@ -114,20 +111,17 @@ const TimeSelect = () => {
     if (dailyAvailabilityToggle) {
       updatedUserInfo[adminToBeUpdated].dailyAvailability = selectedDailyCells;
 
-      fetch(
-        "https://hollywood-fairmount-admin.onrender.com/updateDailyAvailability",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            ...headers,
-          },
-          body: JSON.stringify({
-            _id: selectedAdminInfo._id,
-            dailyAvailability: selectedDailyCells,
-          }),
-        }
-      )
+      fetch("http://localhost:4000/updateDailyAvailability", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({
+          _id: selectedAdminInfo._id,
+          dailyAvailability: selectedDailyCells,
+        }),
+      })
         .then((res) => res.json())
         .then((result) => {
           if (result.status === 200) {
@@ -137,20 +131,17 @@ const TimeSelect = () => {
         });
     } else {
       updatedUserInfo[adminToBeUpdated].availability = selectedCells;
-      fetch(
-        "https://hollywood-fairmount-admin.onrender.com/updateAvailability",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            ...headers,
-          },
-          body: JSON.stringify({
-            _id: selectedAdminInfo._id,
-            availability: selectedCells,
-          }),
-        }
-      )
+      fetch("http://localhost:4000/updateAvailability", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({
+          _id: selectedAdminInfo._id,
+          availability: selectedCells,
+        }),
+      })
         .then((res) => res.json())
         .then((result) => {
           if (result.status === 200) {

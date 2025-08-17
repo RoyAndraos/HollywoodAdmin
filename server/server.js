@@ -30,6 +30,7 @@ const { MongoClient } = require("mongodb");
     process.exit(1);
   }
 })();
+
 const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
 const changeStreamClient = new MongoClient(MONGO_URI_RALF);
 const sendData = async (req, res) => {
@@ -167,6 +168,7 @@ const initTelnyx = async () => {
 
 const getResById = async (req, res) => {
   try {
+    const db = await connectMongo();
     const { _id } = req.query;
     if (!_id) {
       return res.status(400).json({ error: "Missing id in query" });
@@ -192,6 +194,7 @@ const getResById = async (req, res) => {
 
 const getBarbers = async (req, res) => {
   try {
+    const db = await connectMongo();
     const barbers = await db
       .collection("admin")
       .find(
@@ -218,6 +221,7 @@ const getBarbers = async (req, res) => {
 
 const getAvailability = async (req, res) => {
   try {
+    const db = await connectMongo();
     const availabilityData = await db
       .collection("admin")
       .find(
@@ -249,6 +253,7 @@ const getCalendar = async (req, res) => {
   if (view === "day") {
     formatted = new Date(day).toDateString();
     try {
+      const db = await connectMongo();
       const calendarData = await db
         .collection("reservations")
         .find({ date: formatted })
@@ -268,6 +273,7 @@ const getCalendar = async (req, res) => {
     }
   } else if (view === "month") {
     try {
+      const db = await connectMongo();
       const monthYearRegex = new RegExp(`${month.slice(0, 3)}.*${year}`, "i");
 
       const calendarData = await db
@@ -292,6 +298,7 @@ const getDataPage = async (req, res) => {
   const { startDate, endDate } = req.query; // Expecting something like: "2024-03-01" and "2024-04-01"
 
   try {
+    const db = await connectMongo();
     const [clients, reservations] = await Promise.all([
       db.collection("Clients").find().toArray(),
       db
@@ -323,6 +330,7 @@ const getClients = async (req, res) => {
   const skip = (page - 1) * limit; // Calculate skip value
 
   try {
+    const db = await connectMongo();
     const clients = await db
       .collection("Clients")
       .find()
@@ -345,6 +353,7 @@ const getClientNotes = async (req, res) => {
   const _id = req.params.client_id;
 
   try {
+    const db = await connectMongo();
     const clientData = await db.collection("Clients").findOne({ _id: _id });
     res.status(200).json({ status: 200, data: clientData.note });
   } catch (err) {
@@ -360,6 +369,7 @@ const getSearchResults = async (req, res) => {
   const skip = (page - 1) * limit;
 
   try {
+    const db = await connectMongo();
     let query = {};
 
     // If searchTerm is provided and not 'all', construct search query
@@ -393,6 +403,7 @@ const getSearchResults = async (req, res) => {
 };
 const getServices = async (req, res) => {
   try {
+    const db = await connectMongo();
     const services = await db.collection("services").find().toArray();
     res.status(200).json({ status: 200, data: services });
   } catch (err) {
@@ -402,6 +413,7 @@ const getServices = async (req, res) => {
 };
 const getClientInfoForBooking = async (req, res) => {
   try {
+    const db = await connectMongo();
     const clients = await db
       .collection("Clients")
       .find({}, { projection: { reservations: 0, note: 0 } })
@@ -413,6 +425,7 @@ const getClientInfoForBooking = async (req, res) => {
 };
 const getUserInfoInWebTools = async (req, res) => {
   try {
+    const db = await connectMongo();
     const [userInfo, services, text, clients, reservations] = await Promise.all(
       [
         db
@@ -459,6 +472,7 @@ const getUserInfoInWebTools = async (req, res) => {
 
 const getUserInfo = async (req, res) => {
   try {
+    const db = await connectMongo();
     // Get the current date and determine the months to query
     const now = new Date();
     const months = [
@@ -565,6 +579,7 @@ const blockSlot = async (req, res) => {
 
   const _id = uuid();
   try {
+    const db = await connectMongo();
     const query = {
       _id: _id,
       date: block.date,
@@ -580,6 +595,7 @@ const blockSlot = async (req, res) => {
 
 const sendReminders = async (req, res) => {
   try {
+    const db = await connectMongo();
     // Format tomorrow's date the same way you store it
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -626,6 +642,7 @@ const sendReminders = async (req, res) => {
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
+    const db = await connectMongo();
     const correctUsername =
       process.env.LOGIN_USERNAME.toLowerCase() === username.toLowerCase();
     const correctPassword = process.env.LOGIN_PASSWORD === password;
@@ -665,6 +682,7 @@ const logout = async (req, res) => {
   const body = req.body;
 
   try {
+    const db = await connectMongo();
     await db.collection("revoked").insertOne(body);
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
@@ -697,6 +715,7 @@ const addReservation = async (req, res) => {
   const client_id = uuid();
 
   try {
+    const db = await connectMongo();
     const isClient = await db
       .collection("Clients")
       .findOne({ number: reservation.number });
@@ -736,6 +755,7 @@ const addReservation = async (req, res) => {
           `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
         );
         try {
+          const db = await connectMongo();
           (async () => {
             const telnyx = await initTelnyx();
             await telnyx.messages.create({
@@ -818,6 +838,7 @@ Annulation: ${shortUrl}
 
       if (reservation.sendSMS) {
         try {
+          const db = await connectMongo();
           const shortUrl = await shortenUrl(
             `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
           );
@@ -863,6 +884,7 @@ const addTimeOff = async (req, res) => {
   const { startDate, endDate, _id } = req.body;
 
   try {
+    const db = await connectMongo();
     // Ensure start and end dates are in UTC for the entire day
     const start = moment.utc(startDate).startOf("day").toISOString();
     const end = moment.utc(endDate).endOf("day").toISOString();
@@ -898,6 +920,7 @@ const uploadImage = async (req, res) => {
   };
 
   try {
+    const db = await connectMongo();
     await db.collection("admin").updateOne(
       {
         _id: filename,
@@ -920,6 +943,7 @@ const addBarber = async (req, res) => {
   const _id = uuid();
 
   try {
+    const db = await connectMongo();
     const newBarber = {
       _id: _id,
       given_name: barberInfo.given_name,
@@ -948,6 +972,7 @@ const deleteBlockedSlot = async (req, res) => {
   const { _id } = req.params;
 
   try {
+    const db = await connectMongo();
     await db.collection("blockedSlots").deleteOne({ _id: _id });
     res
       .status(200)
@@ -960,6 +985,7 @@ const deleteService = async (req, res) => {
   const { _id } = req.params;
 
   try {
+    const db = await connectMongo();
     await db.collection("services").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
   } catch {
@@ -971,6 +997,7 @@ const deleteBarberProfile = async (req, res) => {
   const { barberId } = req.body;
 
   try {
+    const db = await connectMongo();
     await db.collection("admin").deleteOne({ _id: barberId });
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
@@ -981,6 +1008,7 @@ const deleteBarberProfile = async (req, res) => {
 
 const deleteImage = async (req, res) => {
   try {
+    const db = await connectMongo();
     const query = { _id: req.params._id };
     await db.collection("Images").deleteOne(query);
     res.status(200).json({ status: 200, data: "success" });
@@ -993,6 +1021,7 @@ const deleteTimeOff = async (req, res) => {
   const { _id, startDate, endDate } = req.body;
 
   try {
+    const db = await connectMongo();
     const query = {
       _id: _id,
     };
@@ -1016,6 +1045,7 @@ const deleteReservation = async (req, res) => {
 
   const sendSMS = req.body.sendSMS;
   try {
+    const db = await connectMongo();
     const reservation = await db
       .collection("reservations")
       .findOne({ _id: _id });
@@ -1030,6 +1060,7 @@ const deleteReservation = async (req, res) => {
     if (sendSMS === true) {
       // send message to client
       try {
+        const db = await connectMongo();
         (async () => {
           const telnyx = await initTelnyx();
           await telnyx.messages.create({
@@ -1064,6 +1095,7 @@ const deleteClient = async (req, res) => {
   const _id = req.params._id;
 
   try {
+    const db = await connectMongo();
     await db.collection("Clients").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
   } catch (err) {
@@ -1082,6 +1114,7 @@ const updateAvailability = async (req, res) => {
   const { _id, availability } = req.body;
 
   try {
+    const db = await connectMongo();
     const query = { _id: _id };
     const newValues = { $set: { availability: availability } };
     const result = await db.collection("admin").updateOne(query, newValues);
@@ -1095,6 +1128,7 @@ const updateDailyAvailability = async (req, res) => {
   const { _id, dailyAvailability } = req.body;
 
   try {
+    const db = await connectMongo();
     const query = { _id: _id };
     const newValues = { $set: { dailyAvailability: dailyAvailability } };
     await db.collection("admin").updateOne(query, newValues);
@@ -1108,6 +1142,7 @@ const updateReservation = async (req, res) => {
   const reservation = req.body;
 
   try {
+    const db = await connectMongo();
     const query = { _id: reservation._id };
     const newValues = {
       $set: {
@@ -1132,6 +1167,7 @@ const updateBarberProfile = async (req, res) => {
   const { barberId, barberInfo } = req.body;
 
   try {
+    const db = await connectMongo();
     const query = { _id: barberId };
     const newValues = {
       $set: {
@@ -1155,6 +1191,7 @@ const updateText = async (req, res) => {
   const { textId, content, french } = req.body;
 
   try {
+    const db = await connectMongo();
     await db
       .collection("web_text")
       .updateOne(
@@ -1169,6 +1206,7 @@ const updateText = async (req, res) => {
 };
 const updateClient = async (req, res) => {
   try {
+    const db = await connectMongo();
     const { _id, ...updatedData } = req.body; // Extract _id and updated fields
 
     const query = { _id: _id };
@@ -1193,6 +1231,7 @@ const updateServices = async (req, res) => {
   const serviceEdit = req.body;
 
   try {
+    const db = await connectMongo();
     // if (role === "admin") {
     await db
       .collection("services")
@@ -1216,6 +1255,7 @@ const updateClientNote = async (req, res) => {
   const { client_id, note } = req.body;
 
   try {
+    const db = await connectMongo();
     await db
       .collection("Clients")
       .updateOne({ _id: client_id }, { $set: { note: note } });

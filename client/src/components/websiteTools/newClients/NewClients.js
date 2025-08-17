@@ -22,14 +22,11 @@ const NewClients = () => {
   };
   const handleSave = async () => {
     try {
-      const response = await fetch(
-        `https://hollywood-fairmount-admin.onrender.com/updateClient`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editableClient),
-        }
-      );
+      const response = await fetch(`http://localhost:4000/updateClient`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editableClient),
+      });
 
       if (response.ok) {
         fetchClients(); // Refresh client list
@@ -44,7 +41,7 @@ const NewClients = () => {
   const fetchClients = async () => {
     try {
       const response = await fetch(
-        `https://hollywood-fairmount-admin.onrender.com/clients?page=${currentPage}&limit=${clientsPerPage}`
+        `http://localhost:4000/clients?page=${currentPage}&limit=${clientsPerPage}`
       );
       const data = await response.json();
       setClients(data.data);
@@ -62,9 +59,7 @@ const NewClients = () => {
     if (searchTerm === "") {
       fetchClients();
     } else {
-      fetch(
-        `https://hollywood-fairmount-admin.onrender.com/search/${searchTerm}`
-      )
+      fetch(`http://localhost:4000/search/${searchTerm}`)
         .then((res) => res.json())
         .then((data) => {
           setClients(data.data);
@@ -76,7 +71,7 @@ const NewClients = () => {
   const handleDeleteClient = async (clientId) => {
     try {
       const response = await fetch(
-        `https://hollywood-fairmount-admin.onrender.com/deleteClient/${clientId}`,
+        `http://localhost:4000/deleteClient/${clientId}`,
         {
           method: "DELETE",
         }

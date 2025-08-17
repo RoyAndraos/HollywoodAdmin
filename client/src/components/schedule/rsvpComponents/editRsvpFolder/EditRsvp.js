@@ -23,9 +23,7 @@ const EditRsvp = () => {
   const [initialNote, setInitialNote] = useState("");
   const [reservations, setReservations] = useState([]);
   useEffect(() => {
-    fetch(
-      `https://hollywood-fairmount-admin.onrender.com/getReservationsById?_id=${params}`
-    )
+    fetch(`http://localhost:4000/getReservationsById?_id=${params}`)
       .then((res) => {
         return res.json();
       })
@@ -48,7 +46,7 @@ const EditRsvp = () => {
     const token = Cookies.get("token");
     if (token && thisReservation) {
       fetch(
-        `https://hollywood-fairmount-admin.onrender.com/getClientNote/${thisReservation.client_id}`,
+        `http://localhost:4000/getClientNote/${thisReservation.client_id}`,
         {
           method: "GET",
           headers: {

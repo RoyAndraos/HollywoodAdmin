@@ -11,7 +11,7 @@ const NavBar = () => {
   const role = Cookies.get("role");
   const handleLogout = () => {
     const token = Cookies.get("token");
-    fetch("https://hollywood-fairmount-admin.onrender.com/logout", {
+    fetch("http://localhost:4000/logout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: token }),

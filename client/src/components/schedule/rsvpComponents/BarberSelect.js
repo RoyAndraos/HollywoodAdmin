@@ -5,7 +5,7 @@ import { StyledLabel } from "../RSVP_Form";
 const BarberSelect = ({ selectedBarberForm, setBarber }) => {
   const [userInfo, setUserInfo] = useState([]);
   useEffect(() => {
-    fetch("https://hollywood-fairmount-admin.onrender.com/api/barbers", {
+    fetch("http://localhost:4000/api/barbers", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -42,7 +42,7 @@ const Data = () => {
     };
     //https://hollywood-fairmount-admin.onrender.com
     fetch(
-      `https://hollywood-fairmount-admin.onrender.com/getDataPage?startDate=${startDate}&endDate=${endDate}`,
+      `http://localhost:4000/getDataPage?startDate=${startDate}&endDate=${endDate}`,
       {
         headers: headers,
       }

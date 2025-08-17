@@ -29,7 +29,7 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
     };
     e.preventDefault();
 
-    fetch(`https://hollywood-fairmount-admin.onrender.com/deleteReservation`, {
+    fetch(`http://localhost:4000/deleteReservation`, {
       method: "DELETE",
       body: JSON.stringify({
         res_id: params,
@@ -61,7 +61,7 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
     };
     e.preventDefault();
     if (hasNoteChanged) {
-      fetch(`https://hollywood-fairmount-admin.onrender.com/updateClientNote`, {
+      fetch(`http://localhost:4000/updateClientNote`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const SaveDelete = ({ formData, initialFormData, initialNote, note }) => {
         })
         .catch(() => setNotification("Something went wrong"));
     }
-    fetch(`https://hollywood-fairmount-admin.onrender.com/updateReservation`, {
+    fetch(`http://localhost:4000/updateReservation`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

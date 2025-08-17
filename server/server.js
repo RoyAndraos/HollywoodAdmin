@@ -407,7 +407,7 @@ const getClientInfoForBooking = async (req, res) => {
       .find({}, { projection: { reservations: 0, note: 0 } })
       .toArray();
     res.status(200).json({ status: 200, clients: clients });
-  } catch {
+  } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
   }
 };

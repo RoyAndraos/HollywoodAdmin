@@ -54,7 +54,6 @@ const Schedule = () => {
         .then((res) => res.json())
         .then((result) => {
           setReservations(result.reservations);
-          setBlockedSlots(result.blockedSlots);
           setLoading(false);
         });
     }

@@ -42,7 +42,10 @@ const NewCalendar = ({
   const { setNotification } = useContext(NotificationContext);
   const role = Cookies.get("role");
   let filteredReservations = [...reservations];
-  let filteredBlockedSlots = [...blockedSlots];
+  let filteredBlockedSlots = [];
+  if (blockedSlots.length !== 0) {
+    filteredBlockedSlots = [...blockedSlots];
+  }
 
   if (role === "jordi") {
     filteredBlockedSlots = filteredBlockedSlots.filter((slot) => {

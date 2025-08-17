@@ -27,7 +27,7 @@ export const NotificationLogsProvider = ({ children }) => {
     return () => {
       eventSource.close();
     };
-  }, [setReservations]);
+  }, []);
 
   return (
     <NotificationLogsContext.Provider

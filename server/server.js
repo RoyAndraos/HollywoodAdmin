@@ -20,9 +20,17 @@ const mailtrapClient = new MailtrapClient({
 //MONGO STUFF
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
+const { connectMongo } = require("./mongo");
 const { MongoClient } = require("mongodb");
+(async () => {
+  try {
+    await connectMongo(); // call connect once at startup
+  } catch (err) {
+    console.error("Failed to connect to MongoDB:", err);
+    process.exit(1);
+  }
+})();
 const MONGO_URI_RALF = process.env.MONGO_URI_RALF;
-
 const changeStreamClient = new MongoClient(MONGO_URI_RALF);
 const sendData = async (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
@@ -117,9 +125,9 @@ const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
 // const verifyToken = async (req, res, next) => {
 //   const token = req.headers.authorization;
 //   try {
-//     const client = new MongoClient(MONGO_URI_RALF);
-//     await client.connect();
-//     const db = client.db("HollywoodBarberShop");
+//
+//
+//
 //     const isRevoked = await db.collection("revoked").findOne({ token: token });
 //     if (isRevoked) {
 //       await client.close();
@@ -146,7 +154,6 @@ const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
 //-------------------------------------------------------------------------------------------------------------
 const accountSid = process.env.SMS_SSID;
 const authToken = process.env.SMS_AUTH_TOKEN;
-const twilioClient = require("twilio")(accountSid, authToken);
 const telnyxApiKey = process.env.SMS_API_KEY_TELNYX;
 const initTelnyx = async () => {
   const Telnyx = (await import("telnyx")).default;
@@ -159,9 +166,6 @@ const initTelnyx = async () => {
 //-------------------------------------------------------------------------------------------------------------
 
 const getResById = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
-  await client.connect();
-  const db = client.db("HollywoodBarberShop");
   try {
     const { _id } = req.query;
     if (!_id) {
@@ -183,16 +187,10 @@ const getResById = async (req, res) => {
         .status(200)
         .json({ status: 200, reservations: allReservations });
     }
-  } catch {
-  } finally {
-    await client.close();
-  }
+  } catch {}
 };
 
 const getBarbers = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
-  await client.connect();
-  const db = client.db("HollywoodBarberShop");
   try {
     const barbers = await db
       .collection("admin")
@@ -215,15 +213,10 @@ const getBarbers = async (req, res) => {
   } catch (error) {
     console.error("Error fetching barbers:", error);
     res.status(500).json({ message: "Internal server error" });
-  } finally {
-    await client.close();
   }
 };
 
 const getAvailability = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
-  await client.connect();
-  const db = client.db("HollywoodBarberShop");
   try {
     const availabilityData = await db
       .collection("admin")
@@ -247,16 +240,12 @@ const getAvailability = async (req, res) => {
   } catch (error) {
     console.error("Error fetching availability data:", error);
     res.status(500).json({ message: "Internal server error" });
-  } finally {
-    await client.close();
   }
 };
 const getCalendar = async (req, res) => {
   const { view, day, month, year } = req.query;
   let formatted;
-  const client = new MongoClient(MONGO_URI_RALF);
-  await client.connect();
-  const db = client.db("HollywoodBarberShop");
+
   if (view === "day") {
     formatted = new Date(day).toDateString();
     try {
@@ -302,12 +291,7 @@ const getCalendar = async (req, res) => {
 const getDataPage = async (req, res) => {
   const { startDate, endDate } = req.query; // Expecting something like: "2024-03-01" and "2024-04-01"
 
-  const client = new MongoClient(MONGO_URI_RALF);
-  await client.connect();
-
   try {
-    const db = client.db("HollywoodBarberShop");
-
     const [clients, reservations] = await Promise.all([
       db.collection("Clients").find().toArray(),
       db
@@ -331,18 +315,14 @@ const getDataPage = async (req, res) => {
   } catch (err) {
     console.error("Error getting data page:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 const getClients = async (req, res) => {
   const page = parseInt(req.query.page); // Current page number, default to 1
   const limit = parseInt(req.query.limit); // Number of items per page, default to 10
   const skip = (page - 1) * limit; // Calculate skip value
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const clients = await db
       .collection("Clients")
       .find()
@@ -358,24 +338,18 @@ const getClients = async (req, res) => {
   } catch (err) {
     console.error("Error getting clients:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const getClientNotes = async (req, res) => {
   const _id = req.params.client_id;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const clientData = await db.collection("Clients").findOne({ _id: _id });
     res.status(200).json({ status: 200, data: clientData.note });
   } catch (err) {
     console.error("Error getting client notes:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
@@ -384,10 +358,8 @@ const getSearchResults = async (req, res) => {
   const page = parseInt(req.query.page);
   const limit = parseInt(req.query.limit);
   const skip = (page - 1) * limit;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     let query = {};
 
     // If searchTerm is provided and not 'all', construct search query
@@ -417,28 +389,19 @@ const getSearchResults = async (req, res) => {
       .json({ status: 200, data: clients, numberOfPages: numberOfPages });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 const getServices = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   try {
-    const db = client.db("HollywoodBarberShop");
     const services = await db.collection("services").find().toArray();
     res.status(200).json({ status: 200, data: services });
   } catch (err) {
     console.error("Error getting services:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 const getClientInfoForBooking = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
   try {
-    const db = client.db("HollywoodBarberShop");
-
     const clients = await db
       .collection("Clients")
       .find({}, { projection: { reservations: 0, note: 0 } })
@@ -446,15 +409,10 @@ const getClientInfoForBooking = async (req, res) => {
     res.status(200).json({ status: 200, clients: clients });
   } catch {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 const getUserInfoInWebTools = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
-
   try {
-    const db = client.db("HollywoodBarberShop");
     const [userInfo, services, text, clients, reservations] = await Promise.all(
       [
         db
@@ -496,17 +454,11 @@ const getUserInfoInWebTools = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const getUserInfo = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
-
   try {
-    const db = client.db("HollywoodBarberShop");
-
     // Get the current date and determine the months to query
     const now = new Date();
     const months = [
@@ -598,8 +550,6 @@ const getUserInfo = async (req, res) => {
   } catch (err) {
     console.error("Error in getUserInfo:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
@@ -612,10 +562,9 @@ const getUserInfo = async (req, res) => {
 
 const blockSlot = async (req, res) => {
   const { block } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
+
   const _id = uuid();
   try {
-    const db = client.db("HollywoodBarberShop");
     const query = {
       _id: _id,
       date: block.date,
@@ -626,18 +575,11 @@ const blockSlot = async (req, res) => {
     res.status(200).json({ status: 200, _id: _id, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const sendReminders = async (req, res) => {
-  const client = new MongoClient(process.env.MONGO_URI_RALF);
-
   try {
-    await client.connect();
-    const db = client.db("HollywoodBarberShop");
-
     // Format tomorrow's date the same way you store it
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -678,8 +620,6 @@ const sendReminders = async (req, res) => {
   } catch (err) {
     console.error("Error sending reminders:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
@@ -723,17 +663,13 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   const body = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     await db.collection("revoked").insertOne(body);
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     console.error("Error logging out:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
@@ -757,11 +693,10 @@ const shortenUrl = async (longUrl) => {
 const addReservation = async (req, res) => {
   const reservation = req.body.reservation;
   const _id = uuid();
-  const client = new MongoClient(MONGO_URI_RALF);
+
   const client_id = uuid();
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const isClient = await db
       .collection("Clients")
       .findOne({ number: reservation.number });
@@ -921,21 +856,17 @@ Annulation: ${shortUrl}`,
   } catch (err) {
     console.error("Error adding reservation:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const addTimeOff = async (req, res) => {
   const { startDate, endDate, _id } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
     // Ensure start and end dates are in UTC for the entire day
     const start = moment.utc(startDate).startOf("day").toISOString();
     const end = moment.utc(endDate).endOf("day").toISOString();
 
-    const db = client.db("HollywoodBarberShop");
     await db.collection("admin").updateOne(
       {
         _id: _id,
@@ -953,8 +884,6 @@ const addTimeOff = async (req, res) => {
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 const uploadImage = async (req, res) => {
@@ -967,11 +896,8 @@ const uploadImage = async (req, res) => {
     filename: filename,
     src: fileSrc,
   };
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
-
     await db.collection("admin").updateOne(
       {
         _id: filename,
@@ -986,18 +912,14 @@ const uploadImage = async (req, res) => {
   } catch (err) {
     console.error("Error updating image:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const addBarber = async (req, res) => {
   const barberInfo = req.body.barberInfo;
   const _id = uuid();
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const newBarber = {
       _id: _id,
       given_name: barberInfo.given_name,
@@ -1014,8 +936,6 @@ const addBarber = async (req, res) => {
   } catch (err) {
     console.error("Error adding barber:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 //-------------------------------------------------------------------------------------------------------------
@@ -1026,70 +946,53 @@ const addBarber = async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------
 const deleteBlockedSlot = async (req, res) => {
   const { _id } = req.params;
-  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const db = client.db("HollywoodBarberShop");
     await db.collection("blockedSlots").deleteOne({ _id: _id });
     res
       .status(200)
       .json({ status: 200, _id: _id, message: "blocked slot deleted" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 const deleteService = async (req, res) => {
   const { _id } = req.params;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     await db.collection("services").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
   } catch {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const deleteBarberProfile = async (req, res) => {
   const { barberId } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     await db.collection("admin").deleteOne({ _id: barberId });
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     console.error("Error deleting barber profile:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const deleteImage = async (req, res) => {
-  const client = new MongoClient(MONGO_URI_RALF);
-
   try {
-    const db = client.db("HollywoodBarberShop");
     const query = { _id: req.params._id };
     await db.collection("Images").deleteOne(query);
     res.status(200).json({ status: 200, data: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const deleteTimeOff = async (req, res) => {
   const { _id, startDate, endDate } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const db = client.db("HollywoodBarberShop");
     const query = {
       _id: _id,
     };
@@ -1105,17 +1008,14 @@ const deleteTimeOff = async (req, res) => {
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const deleteReservation = async (req, res) => {
   const _id = req.body.res_id;
-  const client = new MongoClient(MONGO_URI_RALF);
+
   const sendSMS = req.body.sendSMS;
   try {
-    const db = client.db("HollywoodBarberShop");
     const reservation = await db
       .collection("reservations")
       .findOne({ _id: _id });
@@ -1157,23 +1057,17 @@ const deleteReservation = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const deleteClient = async (req, res) => {
   const _id = req.params._id;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     await db.collection("Clients").deleteOne({ _id: _id });
     res.status(200).json({ status: 200, _id: _id });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
@@ -1186,44 +1080,34 @@ const deleteClient = async (req, res) => {
 
 const updateAvailability = async (req, res) => {
   const { _id, availability } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { availability: availability } };
     const result = await db.collection("admin").updateOne(query, newValues);
     res.status(200).json({ status: 200, data: result });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const updateDailyAvailability = async (req, res) => {
   const { _id, dailyAvailability } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const query = { _id: _id };
     const newValues = { $set: { dailyAvailability: dailyAvailability } };
     await db.collection("admin").updateOne(query, newValues);
     res.status(200).json({ status: 200, data: dailyAvailability });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const updateReservation = async (req, res) => {
   const reservation = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const query = { _id: reservation._id };
     const newValues = {
       $set: {
@@ -1241,17 +1125,13 @@ const updateReservation = async (req, res) => {
     res.status(200).json({ status: 200, message: "success" });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const updateBarberProfile = async (req, res) => {
   const { barberId, barberInfo } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     const query = { _id: barberId };
     const newValues = {
       $set: {
@@ -1268,17 +1148,13 @@ const updateBarberProfile = async (req, res) => {
   } catch (err) {
     console.error("Error updating barber profile:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const updateText = async (req, res) => {
   const { textId, content, french } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     await db
       .collection("web_text")
       .updateOne(
@@ -1289,17 +1165,11 @@ const updateText = async (req, res) => {
   } catch (err) {
     console.error("Error updating text:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 const updateClient = async (req, res) => {
   try {
     const { _id, ...updatedData } = req.body; // Extract _id and updated fields
-
-    const client = new MongoClient(MONGO_URI_RALF);
-    await client.connect();
-    const db = client.db("HollywoodBarberShop");
 
     const query = { _id: _id };
     const update = { $set: updatedData }; // Use $set to update only changed fields
@@ -1321,9 +1191,8 @@ const updateClient = async (req, res) => {
 
 const updateServices = async (req, res) => {
   const serviceEdit = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
+
   try {
-    const db = client.db("HollywoodBarberShop");
     // if (role === "admin") {
     await db
       .collection("services")
@@ -1340,17 +1209,13 @@ const updateServices = async (req, res) => {
   } catch (err) {
     console.error("Error updating services:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 
 const updateClientNote = async (req, res) => {
   const { client_id, note } = req.body;
-  const client = new MongoClient(MONGO_URI_RALF);
 
   try {
-    const db = client.db("HollywoodBarberShop");
     await db
       .collection("Clients")
       .updateOne({ _id: client_id }, { $set: { note: note } });
@@ -1358,8 +1223,6 @@ const updateClientNote = async (req, res) => {
   } catch (err) {
     console.error("Error updating client note:", err);
     res.status(500).json({ status: 500, message: err.message });
-  } finally {
-    await client.close();
   }
 };
 //-------------------------------------------------------------------------------------------------------------

@@ -177,8 +177,8 @@ const AddReservation = ({
         if (data.status === 200) {
           reservation._id = data.res_id;
           reservation.client_id = data.client_id;
-          setReservations([...reservations, reservation]);
           setNotification("Reservation added successfully");
+          window.location.reload();
         }
       })
       .catch(() => setNotification("Something went wrong"));

@@ -107,6 +107,7 @@ const NewCalendar = ({
       };
     })
     .concat(blockedEvents);
+
   const views = {
     month: true,
     day: true,

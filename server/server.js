@@ -642,13 +642,9 @@ const sendReminders = async (req, res) => {
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
-    const db = await connectMongo();
     const correctUsername =
       process.env.LOGIN_USERNAME.toLowerCase() === username.toLowerCase();
     const correctPassword = process.env.LOGIN_PASSWORD === password;
-    const correctEmployeeUsername =
-      process.env.EMPLOYEE_USERNAME.toLowerCase() === username.toLowerCase();
-    const correctEmployeePassword = process.env.EMPLOYEE_PASSWORD === password;
     const correctJordiUsername =
       process.env.JORDI_USERNAME.toLowerCase() === username.toLowerCase();
     const correctJordiPassword = process.env.JORDI_PASSWORD === password;
@@ -657,11 +653,6 @@ const login = async (req, res) => {
         expiresIn: "13h",
       });
       res.status(200).json({ status: 200, token: token, role: "admin" });
-    } else if (correctEmployeeUsername && correctEmployeePassword) {
-      const token = jwt.sign({ userId: "employee" }, JWT_TOKEN_KEY, {
-        expiresIn: "13h",
-      });
-      res.status(200).json({ status: 200, token: token, role: "ty" });
     } else if (correctJordiUsername && correctJordiPassword) {
       const token = jwt.sign({ userId: "employee" }, JWT_TOKEN_KEY, {
         expiresIn: "13h",

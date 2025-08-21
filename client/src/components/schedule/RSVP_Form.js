@@ -382,7 +382,8 @@ const AddReservation = ({
           />
           <Book
             style={{ marginLeft: "25%" }}
-            key="reminders"
+            key={"reminders"}
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               setShowReminders(!showReminders);
@@ -439,7 +440,7 @@ const AddReservation = ({
             </div>
           </CheckboxWrapper>
           <Book
-            key="reserve"
+            key={"reserve"}
             type="submit"
             disabled={
               error ||
@@ -454,7 +455,7 @@ const AddReservation = ({
             Book
           </Book>
           <Book
-            key="block"
+            key={"block"}
             type="button"
             onClick={(e) => {
               e.preventDefault();

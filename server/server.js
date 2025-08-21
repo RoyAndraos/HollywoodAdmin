@@ -609,7 +609,7 @@ const sendReminders = async (req, res) => {
       .find({ date: tomorrowString })
       .toArray();
 
-    if (!reservations.length) {
+    if (reservations.length === 0) {
       return res
         .status(200)
         .json({ status: 200, message: "No reservations for tomorrow" });
@@ -619,8 +619,9 @@ const sendReminders = async (req, res) => {
     const results = await Promise.all(
       reservations.map((reservation) =>
         (async () => {
-          const telnyx = await initTelnyx();
-          telnyx.messages.create({
+          const telnyx = await initTelnyx(); // re-init for each reservation
+          return;
+          await telnyx.messages.create({
             messaging_profile_id: process.env.SMS_PROFILE_ID,
             from: "+14388035805",
             to: `+1${reservation.phone}`,
@@ -1051,7 +1052,6 @@ const deleteReservation = async (req, res) => {
     if (sendSMS === true) {
       // send message to client
       try {
-        const db = await connectMongo();
         (async () => {
           const telnyx = await initTelnyx();
           await telnyx.messages.create({

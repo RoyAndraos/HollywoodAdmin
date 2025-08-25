@@ -619,12 +619,12 @@ const sendReminders = async (req, res) => {
     const results = await Promise.all(
       reservations.map((reservation) =>
         (async () => {
+          console.log(reservation.number);
           const telnyx = await initTelnyx(); // re-init for each reservation
-          return;
           await telnyx.messages.create({
             messaging_profile_id: process.env.SMS_PROFILE_ID,
             from: "+14388035805",
-            to: `+1${reservation.phone}`,
+            to: `+1${reservation.number}`,
             text: `Salut ${reservation.fname}, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${reservation.barber} à ${reservation.slot[0]}. À bientôt !`,
           });
         })()

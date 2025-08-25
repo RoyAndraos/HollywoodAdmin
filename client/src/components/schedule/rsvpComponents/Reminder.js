@@ -1,5 +1,8 @@
+import { useContext } from "react";
 import styled from "styled-components";
+import { NotificationContext } from "../../contexts/NotficationContext";
 const Reminder = ({ setShowReminders }) => {
+  const { setNotification } = useContext(NotificationContext);
   const handleSendReminders = () => {
     //
     fetch("https://hollywood-fairmount-admin.onrender.com/sendReminders")
@@ -7,7 +10,8 @@ const Reminder = ({ setShowReminders }) => {
         return res.json();
       })
       .then((result) => {
-        console.log(result);
+        setShowReminders(false);
+        setNotification(result.message);
       });
   };
   return (

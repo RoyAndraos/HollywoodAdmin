@@ -20,7 +20,9 @@ const Reminder = ({ setShowReminders }) => {
         <Button
           key={"sendSMS"}
           $close={false}
-          onClick={() => {
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
             handleSendReminders();
           }}
         >

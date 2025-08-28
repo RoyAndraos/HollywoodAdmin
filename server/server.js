@@ -623,7 +623,7 @@ const sendReminders = async (req, res) => {
           const telnyx = await initTelnyx(); // re-init for each reservation
           await telnyx.messages.create({
             messaging_profile_id: process.env.SMS_PROFILE_ID,
-            from: "+14388035805",
+            from: "+18334041832",
             to: `+1${reservation.number}`,
             text: `Salut ${reservation.fname}, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${reservation.barber} à ${reservation.slot[0]}. À bientôt !`,
           });
@@ -747,7 +747,6 @@ const addReservation = async (req, res) => {
           `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
         );
         try {
-          const db = await connectMongo();
           (async () => {
             const telnyx = await initTelnyx();
             await telnyx.messages.create({
@@ -762,7 +761,7 @@ Annulation: ${shortUrl}
             `,
               // messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
               messaging_profile_id: process.env.SMS_PROFILE_ID,
-              from: "+14388035805",
+              from: "+18334041832",
               to: reservationToSend.number,
             });
           })();
@@ -830,7 +829,6 @@ Annulation: ${shortUrl}
 
       if (reservation.sendSMS) {
         try {
-          const db = await connectMongo();
           const shortUrl = await shortenUrl(
             `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
           );
@@ -844,8 +842,8 @@ Réservation confirmée pour ${reservation.fname} le ${frenchDate} à ${
             } avec ${reservation.barber}.
 Annulation: ${shortUrl}`,
             messaging_profile_id: process.env.SMS_PROFILE_ID,
-            from: "+14388035805", // make sure this number is linked to the profile
-            to: `+1${reservationToSend.number}`, // must be in E.164 format (e.g., +15145551234)
+            from: "+18334041832",
+            to: `+1${reservationToSend.number}`,
           });
         } catch (smsError) {
           console.error(
@@ -1060,7 +1058,7 @@ const deleteReservation = async (req, res) => {
             Hello, your reservation has been cancelled. ~Hollywood Barbershop
         `,
             messaging_profile_id: process.env.SMS_PROFILE_ID,
-            from: "+14388035805",
+            from: "+18334041832",
             to: `+1${reservation.number}`,
           });
         })();

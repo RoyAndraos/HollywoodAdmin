@@ -15,9 +15,6 @@ const WebsiteTools = () => {
   const [services, setServices] = useState([]);
   const [text, setText] = useState([]);
   const { role, setRole } = useContext(LoginRoleContext);
-  const [clients, setClients] = useState([]);
-  const [reservations, setReservations] = useState([]);
-  const [blockedSlots, setBlockedSlots] = useState([]);
   useEffect(() => {
     if (!role) {
       const cookieRole = Cookies.get("role");
@@ -38,23 +35,10 @@ const WebsiteTools = () => {
         setUserInfo(result.userInfo);
         setServices(result.services);
         setText(result.text);
-        setClients(result.clients);
-        setReservations(result.reservations);
-        setBlockedSlots(result.blockedSlots);
       })
       .catch((error) => console.error(error));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  if (
-    (!userInfo ||
-      !services ||
-      !text ||
-      !blockedSlots ||
-      // || !servicesEmp
-      !clients,
-    !reservations)
-  )
-    return <Loader />;
+  if (!userInfo || !services || !text) return <Loader />;
   return (
     <Wrapper>
       <ToolBar

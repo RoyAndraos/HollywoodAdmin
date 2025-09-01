@@ -426,44 +426,20 @@ const getClientInfoForBooking = async (req, res) => {
 const getUserInfoInWebTools = async (req, res) => {
   try {
     const db = await connectMongo();
-    const [userInfo, services, text, clients, reservations] = await Promise.all(
-      [
-        db
-          .collection("admin")
-          .find({}, { projection: { picture: 0 } })
-          .toArray(),
-        db.collection("services").find().toArray(),
-        db.collection("web_text").find().toArray(),
-        db.collection("Clients").find().toArray(),
-        // db.collection("servicesEmp").find().toArray(),
-        db
-          .collection("reservations")
-          .find(
-            {},
-            {
-              projection: {
-                client_id: 0,
-                fname: 0,
-                lname: 0,
-                email: 0,
-                number: 0,
-                barber: 0,
-                slot: 0,
-              },
-            }
-          )
-          .toArray(),
-      ]
-    );
+    const [userInfo, services, text] = await Promise.all([
+      db
+        .collection("admin")
+        .find({}, { projection: { picture: 0 } })
+        .toArray(),
+      db.collection("services").find().toArray(),
+      db.collection("web_text").find().toArray(),
+    ]);
 
     res.status(200).json({
       status: 200,
       userInfo: userInfo,
       services: services,
       text: text,
-      clients: clients,
-      // employeeServices: employeeServices,
-      reservations: reservations,
     });
   } catch (err) {
     res.status(500).json({ status: 500, message: err.message });

@@ -20,24 +20,17 @@ const TakeTimeOff = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userInfo) {
-      const token = Cookies.get("token");
-      if (!token) {
-        return;
-      } else {
-        const headers = {
-          authorization: token,
-        };
-        fetch(`https://hollywood-fairmount-admin.onrender.com/getUserInfo`, {
-          headers,
-        })
-          .then((res) => res.json())
-          .then((result) => {
-            setUserInfo(result.userInfo);
-          });
-      }
-    }
-  }, [setUserInfo, userInfo]);
+    fetch("https://hollywood-fairmount-admin.onrender.com/api/barbers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUserInfo(data.barbers);
+      });
+  }, []);
 
   useEffect(() => {
     const barber = userInfo.filter((barber) => barber._id === barberId);

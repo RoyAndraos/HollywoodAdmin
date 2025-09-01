@@ -19,7 +19,6 @@ const AddReservation = ({
   slotBeforeCheck,
   setSlotBeforeCheck,
   reservations,
-  setReservations,
 }) => {
   const { setNotification } = useContext(NotificationContext);
   const [selectedBarberForm, setBarber] = useState({});

@@ -10,6 +10,7 @@ const Reminder = ({ setShowReminders }) => {
         return res.json();
       })
       .then((result) => {
+        console.log(result);
         setShowReminders(false);
         setNotification(result.message);
       });

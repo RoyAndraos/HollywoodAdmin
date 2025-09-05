@@ -155,6 +155,7 @@ const JWT_TOKEN_KEY = process.env.JWT_TOKEN_KEY;
 //-------------------------------------------------------------------------------------------------------------
 const accountSid = process.env.SMS_SSID;
 const authToken = process.env.SMS_AUTH_TOKEN;
+const twilioClient = require("twilio")(accountSid, authToken);
 const telnyxApiKey = process.env.SMS_API_KEY_TELNYX;
 const initTelnyx = async () => {
   const Telnyx = (await import("telnyx")).default;
@@ -593,23 +594,24 @@ const sendReminders = async (req, res) => {
 
     // Send SMS reminders
     const results = await Promise.all(
-      reservations.map((reservation) =>
-        (async () => {
-          console.log(reservation.number);
-          const telnyx = await initTelnyx(); // re-init for each reservation
-          await telnyx.messages.create({
-            messaging_profile_id: process.env.SMS_PROFILE_ID,
-            from: "+18334041832",
-            to: `+1${reservation.number}`,
-            text: `Salut ${reservation.fname}, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${reservation.barber} à ${reservation.slot[0]}. À bientôt !`,
-          });
-        })()
-      )
+      reservations.map(async (reservation) => {
+        //     // (async () => {
+        //     // const telnyx = await initTelnyx(); // re-init for each reservation
+        await twilioClient.messages.create({
+          messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+          //       // from: "+18334041832",
+          to: reservation.number,
+          body: `Salut ${reservation.fname}, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${reservation.barber} à ${reservation.slot[0]}. À bientôt !`,
+        });
+        //     // })()
+      })
     );
 
-    res
-      .status(200)
-      .json({ status: 200, message: "Reminders sent", count: results.length });
+    res.status(200).json({
+      status: 200,
+      count: results.length,
+      message: "Reminders sent",
+    });
   } catch (err) {
     console.error("Error sending reminders:", err);
     res.status(500).json({ status: 500, message: err.message });
@@ -723,24 +725,24 @@ const addReservation = async (req, res) => {
           `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
         );
         try {
-          (async () => {
-            const telnyx = await initTelnyx();
-            await telnyx.messages.create({
-              text: `No Reply ~Hollywood Barbershop
+          // (async () => {
+          //   const telnyx = await initTelnyx();
+          await twilioClient.messages.create({
+            body: `No Reply ~Hollywood Barbershop
              réservation confirmée pour ${
                reservation.fname
              } le ${frenchDate} à ${reservation.slot[0].split("-")[1]} avec ${
-                reservation.barber
-              }.
+              reservation.barber
+            }.
 
 Annulation: ${shortUrl}
             `,
-              // messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-              messaging_profile_id: process.env.SMS_PROFILE_ID,
-              from: "+18334041832",
-              to: reservationToSend.number,
-            });
-          })();
+            messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+            // messaging_profile_id: process.env.SMS_PROFILE_ID,
+            // from: "+18334041832",
+            to: reservationToSend.number,
+          });
+          // })();
         } catch (err) {
           console.error(
             "Telnyx error:",
@@ -809,17 +811,17 @@ Annulation: ${shortUrl}
             `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
           );
 
-          const telnyx = await initTelnyx(); // make sure this returns new Telnyx(apiKey)
+          // const telnyx = await initTelnyx(); // make sure this returns new Telnyx(apiKey)
 
-          await telnyx.messages.create({
-            text: `No Reply ~Hollywood Barbershop
+          await twilioClient.messages.create({
+            body: `No Reply ~Hollywood Barbershop
 Réservation confirmée pour ${reservation.fname} le ${frenchDate} à ${
               reservation.slot[0].split("-")[1]
             } avec ${reservation.barber}.
 Annulation: ${shortUrl}`,
-            messaging_profile_id: process.env.SMS_PROFILE_ID,
-            from: "+18334041832",
-            to: `+1${reservationToSend.number}`,
+            messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+            // from: "+18334041832",
+            to: reservationToSend.number,
           });
         } catch (smsError) {
           console.error(
@@ -1026,18 +1028,16 @@ const deleteReservation = async (req, res) => {
     if (sendSMS === true) {
       // send message to client
       try {
-        (async () => {
-          const telnyx = await initTelnyx();
-          await telnyx.messages.create({
-            text: `Bonjour, votre réservation a été annulée. ~Hollywood Barbershop
+        // const telnyx = await initTelnyx();
+        await twilioClient.messages.create({
+          text: `Bonjour, votre réservation a été annulée. ~Hollywood Barbershop
 
             Hello, your reservation has been cancelled. ~Hollywood Barbershop
         `,
-            messaging_profile_id: process.env.SMS_PROFILE_ID,
-            from: "+18334041832",
-            to: `+1${reservation.number}`,
-          });
-        })();
+          messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+          // from: "+18334041832",
+          to: reservation.number,
+        });
       } catch (err) {
         console.error(
           "Telnyx error:",

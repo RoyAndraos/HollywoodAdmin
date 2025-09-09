@@ -172,6 +172,14 @@ const NewCalendar = ({
             element.style.transition = "0.3s ease-in-out";
           });
         }
+        if (isMobile) {
+          const dayViewElementLabels = document.querySelectorAll(
+            ".rbc-day-slot .rbc-events-container .rbc-event .rbc-event-label"
+          );
+          dayViewElementLabels.forEach((element) => {
+            element.style.display = "none";
+          });
+        }
       }
 
       if (currentView === "agenda") {

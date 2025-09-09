@@ -203,7 +203,7 @@ const NewCalendar = ({
         }
       }
     }, 300); // Delay to ensure DOM is fully rendered
-  }, [currentView, role]);
+  }, [currentView, role, isMobile]);
 
   useEffect(() => {
     const handleDebouncedApplyStyles = () => {

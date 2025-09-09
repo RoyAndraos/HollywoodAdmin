@@ -661,23 +661,6 @@ const logout = async (req, res) => {
   }
 };
 
-const shortenUrl = async (longUrl) => {
-  const encodedUrl = encodeURIComponent(longUrl);
-  const apiUrl = `https://is.gd/create.php?format=simple&url=${encodedUrl}`;
-
-  const response = await fetch(apiUrl);
-  if (!response.ok) {
-    throw new Error(`is.gd API error: ${response.statusText}`);
-  }
-
-  const shortUrl = await response.text();
-  if (shortUrl.startsWith("Error:")) {
-    throw new Error(`is.gd API returned error: ${shortUrl}`);
-  }
-
-  return shortUrl;
-};
-
 const addReservation = async (req, res) => {
   const reservation = req.body.reservation;
   const _id = uuid();
@@ -721,9 +704,6 @@ const addReservation = async (req, res) => {
       await db.collection("reservations").insertOne(reservationToSend);
 
       if (reservation.sendSMS) {
-        const shortUrl = await shortenUrl(
-          `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
-        );
         try {
           // (async () => {
           //   const telnyx = await initTelnyx();
@@ -735,7 +715,9 @@ const addReservation = async (req, res) => {
               reservation.barber
             }.
 
-Annulation: ${shortUrl}
+Annulation: https://hollywoodfairmountbarbers.com/cancel/${
+              reservationToSend._id
+            }
             `,
             messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
             // messaging_profile_id: process.env.SMS_PROFILE_ID,
@@ -807,10 +789,6 @@ Annulation: ${shortUrl}
 
       if (reservation.sendSMS) {
         try {
-          const shortUrl = await shortenUrl(
-            `https://hollywoodfairmountbarbers.com/cancel/${reservationToSend._id}`
-          );
-
           // const telnyx = await initTelnyx(); // make sure this returns new Telnyx(apiKey)
 
           await twilioClient.messages.create({
@@ -818,7 +796,9 @@ Annulation: ${shortUrl}
 Réservation confirmée pour ${reservation.fname} le ${frenchDate} à ${
               reservation.slot[0].split("-")[1]
             } avec ${reservation.barber}.
-Annulation: ${shortUrl}`,
+Annulation: https://hollywoodfairmountbarbers.com/cancel/${
+              reservationToSend._id
+            }`,
             messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
             // from: "+18334041832",
             to: reservationToSend.number,

@@ -250,9 +250,23 @@ const getAvailability = async (req, res) => {
 const getCalendar = async (req, res) => {
   const { view, day, month, year } = req.query;
   let formatted;
-
+  const options = {
+    timeZone: "America/Toronto",
+    weekday: "short",
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  };
   if (view === "day") {
-    formatted = new Date(day).toDateString();
+    const parts = new Intl.DateTimeFormat("en-US", options).formatToParts(
+      new Date(day)
+    );
+    formatted =
+      `${parts.find((p) => p.type === "weekday").value} ` +
+      `${parts.find((p) => p.type === "month").value} ` +
+      `${parts.find((p) => p.type === "day").value} ` +
+      `${parts.find((p) => p.type === "year").value}`;
+    console.log("Formatted date:", formatted);
     try {
       const db = await connectMongo();
       const calendarData = await db
@@ -573,40 +587,64 @@ const blockSlot = async (req, res) => {
 const sendReminders = async (req, res) => {
   try {
     const db = await connectMongo();
-    // Format tomorrow's date the same way you store it
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Example output: "Tue May 07 2024"
-    const tomorrowString = tomorrow.toDateString(); // toDateString gives exactly that format
+    // ---- 1. GET TOMORROW IN MONTREAL TIME ----
+    // Convert current time to Montreal local time using a string trick
+    const nowMtlString = new Date().toLocaleString("en-CA", {
+      timeZone: "America/Toronto",
+    });
 
-    // Find reservations where date matches tomorrowString
+    const nowMtl = new Date(nowMtlString);
+    nowMtl.setDate(nowMtl.getDate() + 1); // Add one day (Montreal-safe)
+
+    // ---- 2. FORMAT EXACTLY LIKE toDateString() (NO COMMAS) ----
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Toronto",
+      weekday: "short",
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    });
+
+    const parts = formatter.formatToParts(nowMtl);
+
+    const tomorrowString =
+      `${parts.find((p) => p.type === "weekday").value} ` +
+      `${parts.find((p) => p.type === "month").value} ` +
+      `${parts.find((p) => p.type === "day").value} ` +
+      `${parts.find((p) => p.type === "year").value}`;
+
+    console.log("🔍 Montreal Tomorrow:", tomorrowString);
+
+    // ---- 3. QUERY DB FOR EXACT DATE MATCH ----
     const reservations = await db
       .collection("reservations")
       .find({ date: tomorrowString })
       .toArray();
 
     if (reservations.length === 0) {
-      return res
-        .status(200)
-        .json({ status: 200, message: "No reservations for tomorrow" });
+      return res.status(200).json({
+        status: 200,
+        message: "No reservations for tomorrow",
+      });
     }
 
-    // Send SMS reminders
+    // ---- 4. SEND REMINDERS ----
     const results = await Promise.all(
       reservations.map(async (reservation) => {
-        //     // (async () => {
-        //     // const telnyx = await initTelnyx(); // re-init for each reservation
-        await twilioClient.messages.create({
+        return await twilioClient.messages.create({
           messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-          //       // from: "+18334041832",
           to: reservation.number,
-          body: `Salut ${reservation.fname}, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${reservation.barber} à ${reservation.slot[0]}. À bientôt !`,
+          body: `Salut ${
+            reservation.fname
+          }, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${
+            reservation.barber
+          } à ${reservation.slot[0].split("-")[1]}. À bientôt !`,
         });
-        //     // })()
       })
     );
 
+    // ---- 5. RESPONSE ----
     res.status(200).json({
       status: 200,
       count: results.length,

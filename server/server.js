@@ -588,16 +588,22 @@ const sendReminders = async (req, res) => {
   try {
     const db = await connectMongo();
 
-    // ---- 1. GET TOMORROW IN MONTREAL TIME ----
-    // Convert current time to Montreal local time using a string trick
-    const nowMtlString = new Date().toLocaleString("en-CA", {
+    // ---- 1. GET TODAY IN MONTREAL ----
+    const todayParts = new Intl.DateTimeFormat("en-CA", {
       timeZone: "America/Toronto",
-    });
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    }).formatToParts(new Date());
 
-    const nowMtl = new Date(nowMtlString);
-    nowMtl.setDate(nowMtl.getDate() + 1); // Add one day (Montreal-safe)
+    let year = parseInt(todayParts.find((p) => p.type === "year").value);
+    let month = parseInt(todayParts.find((p) => p.type === "month").value);
+    let day = parseInt(todayParts.find((p) => p.type === "day").value);
 
-    // ---- 2. FORMAT EXACTLY LIKE toDateString() (NO COMMAS) ----
+    // ---- 2. ADD 1 DAY SAFELY (NO UTC SHIFT) ----
+    const tomorrow = new Date(year, month - 1, day + 1);
+
+    // ---- 3. FORMAT EXACTLY LIKE toDateString() ----
     const formatter = new Intl.DateTimeFormat("en-US", {
       timeZone: "America/Toronto",
       weekday: "short",
@@ -606,17 +612,17 @@ const sendReminders = async (req, res) => {
       year: "numeric",
     });
 
-    const parts = formatter.formatToParts(nowMtl);
+    const parts = formatter.formatToParts(tomorrow);
 
     const tomorrowString =
       `${parts.find((p) => p.type === "weekday").value} ` +
       `${parts.find((p) => p.type === "month").value} ` +
-      `${parts.find((p) => p.type === "day").value} ` +
+      `${parts.find((p) => p.type === "day").value.trim()} ` +
       `${parts.find((p) => p.type === "year").value}`;
 
-    console.log("🔍 Montreal Tomorrow:", tomorrowString);
+    console.log("🔥 Montreal Tomorrow:", tomorrowString);
 
-    // ---- 3. QUERY DB FOR EXACT DATE MATCH ----
+    // ---- 4. GET RESERVATIONS MATCHING EXACT DATE ----
     const reservations = await db
       .collection("reservations")
       .find({ date: tomorrowString })
@@ -629,10 +635,10 @@ const sendReminders = async (req, res) => {
       });
     }
 
-    // ---- 4. SEND REMINDERS ----
+    // ---- 5. SEND TEXT REMINDERS ----
     const results = await Promise.all(
-      reservations.map(async (reservation) => {
-        return await twilioClient.messages.create({
+      reservations.map((reservation) =>
+        twilioClient.messages.create({
           messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
           to: reservation.number,
           body: `Salut ${
@@ -640,11 +646,11 @@ const sendReminders = async (req, res) => {
           }, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${
             reservation.barber
           } à ${reservation.slot[0].split("-")[1]}. À bientôt !`,
-        });
-      })
+        })
+      )
     );
 
-    // ---- 5. RESPONSE ----
+    // ---- 6. RESPONSE ----
     res.status(200).json({
       status: 200,
       count: results.length,

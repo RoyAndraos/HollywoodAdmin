@@ -4,13 +4,12 @@ import { NotificationContext } from "../../contexts/NotficationContext";
 const Reminder = ({ setShowReminders }) => {
   const { setNotification } = useContext(NotificationContext);
   const handleSendReminders = () => {
-    //
+    //https://hollywood-fairmount-admin.onrender.com
     fetch("https://hollywood-fairmount-admin.onrender.com/sendReminders")
       .then((res) => {
         return res.json();
       })
       .then((result) => {
-        console.log(result);
         setShowReminders(false);
         setNotification(result.message);
       });

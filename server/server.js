@@ -588,41 +588,42 @@ const sendReminders = async (req, res) => {
   try {
     const db = await connectMongo();
 
-    // ---- 1. GET TODAY IN MONTREAL ----
-    const todayParts = new Intl.DateTimeFormat("en-CA", {
+    // ---- 1. Extract Montreal date parts safely ----
+    const now = new Date();
+
+    const parts = new Intl.DateTimeFormat("en-CA", {
       timeZone: "America/Toronto",
       year: "numeric",
       month: "numeric",
       day: "numeric",
-    }).formatToParts(new Date());
+    }).formatToParts(now);
 
-    let year = parseInt(todayParts.find((p) => p.type === "year").value);
-    let month = parseInt(todayParts.find((p) => p.type === "month").value);
-    let day = parseInt(todayParts.find((p) => p.type === "day").value);
+    const year = parseInt(parts.find((p) => p.type === "year").value);
+    const month = parseInt(parts.find((p) => p.type === "month").value);
+    const day = parseInt(parts.find((p) => p.type === "day").value);
 
-    // ---- 2. ADD 1 DAY SAFELY (NO UTC SHIFT) ----
+    // ---- 2. Add 1 day WITHOUT timezone bugs ----
     const tomorrow = new Date(year, month - 1, day + 1);
 
-    // ---- 3. FORMAT EXACTLY LIKE toDateString() ----
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Toronto",
-      weekday: "short",
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-    });
+    // ---- 3. Format exactly like toDateString() in Montreal ----
+    const tomorrowString = (() => {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Toronto",
+        weekday: "short",
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      }).formatToParts(tomorrow);
 
-    const parts = formatter.formatToParts(tomorrow);
+      return (
+        `${parts.find((p) => p.type === "weekday").value} ` +
+        `${parts.find((p) => p.type === "month").value} ` +
+        `${parts.find((p) => p.type === "day").value} ` +
+        `${parts.find((p) => p.type === "year").value}`
+      );
+    })();
 
-    const tomorrowString =
-      `${parts.find((p) => p.type === "weekday").value} ` +
-      `${parts.find((p) => p.type === "month").value} ` +
-      `${parts.find((p) => p.type === "day").value.trim()} ` +
-      `${parts.find((p) => p.type === "year").value}`;
-
-    console.log("🔥 Montreal Tomorrow:", tomorrowString);
-
-    // ---- 4. GET RESERVATIONS MATCHING EXACT DATE ----
+    // ---- 4. Query Mongo ----
     const reservations = await db
       .collection("reservations")
       .find({ date: tomorrowString })
@@ -635,25 +636,25 @@ const sendReminders = async (req, res) => {
       });
     }
 
-    // ---- 5. SEND TEXT REMINDERS ----
-    const results = await Promise.all(
-      reservations.map((reservation) =>
-        twilioClient.messages.create({
-          messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-          to: reservation.number,
-          body: `Salut ${
-            reservation.fname
-          }, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${
-            reservation.barber
-          } à ${reservation.slot[0].split("-")[1]}. À bientôt !`,
-        })
-      )
-    );
+    // ---- 5. Send SMS ----
+    // const results = await Promise.all(
+    //   reservations.map((reservation) =>
+    //     twilioClient.messages.create({
+    //       messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+    //       to: reservation.number,
+    //       body: `Salut ${
+    //         reservation.fname
+    //       }, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${
+    //         reservation.barber
+    //       } à ${reservation.slot[0].split("-")[1]}. À bientôt !`,
+    //     })
+    //   )
+    // );
+    console.log(reservations);
 
-    // ---- 6. RESPONSE ----
     res.status(200).json({
       status: 200,
-      count: results.length,
+      count: reservations.length,
       message: "Reminders sent",
     });
   } catch (err) {

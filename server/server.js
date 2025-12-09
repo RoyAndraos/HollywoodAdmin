@@ -637,19 +637,19 @@ const sendReminders = async (req, res) => {
     }
 
     // ---- 5. Send SMS ----
-    // const results = await Promise.all(
-    //   reservations.map((reservation) =>
-    //     twilioClient.messages.create({
-    //       messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
-    //       to: reservation.number,
-    //       body: `Salut ${
-    //         reservation.fname
-    //       }, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${
-    //         reservation.barber
-    //       } à ${reservation.slot[0].split("-")[1]}. À bientôt !`,
-    //     })
-    //   )
-    // );
+    const results = await Promise.all(
+      reservations.map((reservation) =>
+        twilioClient.messages.create({
+          messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
+          to: reservation.number,
+          body: `Salut ${
+            reservation.fname
+          }, un rappel pour votre rendez-vous demain au Hollywood Barbershop avec ${
+            reservation.barber
+          } à ${reservation.slot[0].split("-")[1]}. À bientôt !`,
+        })
+      )
+    );
     console.log(reservations);
 
     res.status(200).json({

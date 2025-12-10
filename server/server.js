@@ -636,8 +636,21 @@ const sendReminders = async (req, res) => {
       });
     }
 
-    // ---- 5. Send SMS ----
-    const results = await Promise.all(
+    res.status(200).json({
+      status: 200,
+      reservations: reservations,
+      message: "Reminders sent",
+    });
+  } catch (err) {
+    console.error("Error sending reminders:", err);
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+const sendSMSReminders = async (req, res) => {
+  const { reservations } = req.body;
+  try {
+    await Promise.all(
       reservations.map((reservation) =>
         twilioClient.messages.create({
           messagingServiceSid: "MG92cdedd67c5d2f87d2d5d1ae14085b4b",
@@ -650,15 +663,12 @@ const sendReminders = async (req, res) => {
         })
       )
     );
-    console.log(reservations);
-
     res.status(200).json({
       status: 200,
-      count: reservations.length,
-      message: "Reminders sent",
+      message: "SMS reminders sent successfully",
     });
   } catch (err) {
-    console.error("Error sending reminders:", err);
+    console.error("Error sending SMS reminders:", err);
     res.status(500).json({ status: 500, message: err.message });
   }
 };
@@ -747,7 +757,6 @@ const addReservation = async (req, res) => {
       };
 
       await db.collection("reservations").insertOne(reservationToSend);
-
       if (reservation.sendSMS) {
         try {
           // (async () => {
@@ -759,7 +768,6 @@ const addReservation = async (req, res) => {
              } le ${frenchDate} à ${reservation.slot[0].split("-")[1]} avec ${
               reservation.barber
             }.
-
 Annulation: https://hollywoodfairmountbarbers.com/cancel/${
               reservationToSend._id
             }
@@ -778,8 +786,15 @@ Annulation: https://hollywoodfairmountbarbers.com/cancel/${
         }
       } else if (reservation.sendEmail) {
         const emailData = {
-          from: "hello@hollywoodfairmountbarbers.com",
-          to: reservationToSend.email,
+          from: {
+            email: "hello@hollywoodfairmountbarbers.com",
+            name: "Hollywood Barbershop",
+          },
+          to: [
+            {
+              email: reservationToSend.email,
+            },
+          ],
           subject: "Reservation Confirmation",
           text: `No Reply ~Hollywood Barbershop
             Bonjour ${reservation.fname} ${
@@ -798,12 +813,13 @@ Annulation: https://hollywoodfairmountbarbers.com/cancel/${
             reservation.service.english
           } for ${reservation.service.price} CAD. 
               Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
-                reservation._id
+                reservationToSend._id
               }
             `,
           category: "Reservation Confirmation",
         };
-        await mailtrapClient.sendEmail(emailData);
+        const emailResult = await mailtrapClient.send(emailData);
+        console.log("Email sent:", emailResult);
       }
 
       res.status(200).json({
@@ -859,6 +875,42 @@ Annulation: https://hollywoodfairmountbarbers.com/cancel/${
             detail: smsError.raw?.errors ?? smsError.message,
           });
         }
+      } else if (reservation.sendEmail) {
+        const emailData = {
+          from: {
+            email: "hello@hollywoodfairmountbarbers.com",
+            name: "Hollywood Barbershop",
+          },
+          to: [
+            {
+              email: reservationToSend.email,
+            },
+          ],
+          subject: "Reservation Confirmation",
+          text: `No Reply ~Hollywood Barbershop
+            Bonjour ${reservation.fname} ${
+            reservation.lname || ""
+          }, votre réservation au Hollywood Barbershop est confirmée pour aujourd'hui à ${
+            reservation.slot[0].split("-")[1]
+          } avec ${reservation.barber}. Vous recevrez une ${
+            reservation.service.name
+          } pour ${reservation.service.price} CAD. ~Hollywood Barbershop
+    
+            Hello ${reservation.fname} ${
+            reservation.lname || ""
+          }, your reservation at Hollywood Barbershop is confirmed for today at ${
+            reservation.slot[0].split("-")[1]
+          } with ${reservation.barber}. You will be getting a ${
+            reservation.service.english
+          } for ${reservation.service.price} CAD. 
+              Pour annuler (to cancel): https://hollywoodfairmountbarbers.com/cancel/${
+                reservationToSend._id
+              }
+            `,
+          category: "Reservation Confirmation",
+        };
+        const emailResult = await mailtrapClient.send(emailData);
+        console.log("Email sent:", emailResult);
       }
       res.status(200).json({
         status: 200,
@@ -1295,4 +1347,5 @@ module.exports = {
   getBarbers,
   getClientInfoForBooking,
   getResById,
+  sendSMSReminders,
 };

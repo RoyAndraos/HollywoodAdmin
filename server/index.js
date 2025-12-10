@@ -43,6 +43,7 @@ const {
   getBarbers,
   getClientInfoForBooking,
   getResById,
+  sendSMSReminders,
 } = require("./server");
 
 const app = express();
@@ -87,6 +88,7 @@ app.post("/login", login);
 app.post("/addReservation", addReservation);
 app.post("/addBarber", addBarber);
 app.post("/blockSlot", blockSlot);
+app.post("/sendSMSReminders", sendSMSReminders);
 app.patch("/updateClient", updateClient);
 app.patch("/upload", uploadImage);
 app.patch("/updateAvailability", updateAvailability);
